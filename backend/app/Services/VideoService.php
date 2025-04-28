@@ -42,4 +42,32 @@ class VideoService
         
         return $video;
     }
+
+    /**
+     * Stream a video file.
+     */
+    public function streamVideo($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        // Get the file path from the URL
+        $path = str_replace('/storage/', '', parse_url($video->video_url, PHP_URL_PATH));
+        $fullPath = storage_path('app/public/' . $path);
+        
+        // Check if file exists
+        if (!file_exists($fullPath)) {
+            return false;
+        }
+        
+        // Get file info
+        $fileSize = filesize($fullPath);
+        $fileName = basename($fullPath);
+        
+        // Stream the file
+        return [
+            'path' => $fullPath,
+            'name' => $fileName,
+            'size' => $fileSize
+        ];
+    }
 }
