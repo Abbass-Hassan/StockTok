@@ -70,4 +70,16 @@ class VideoService
             'size' => $fileSize
         ];
     }
+
+    
+    /**
+     * Get videos uploaded by a specific user.
+     */
+    public function getUserVideos($userId, $perPage = 15)
+    {
+        return Video::where('user_id', $userId)
+                    ->where('is_active', true)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+    }
 }
