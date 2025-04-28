@@ -68,4 +68,39 @@ class AuthService
         
         return true;
     }
+
+
+    /**
+     * Update user profile information after registration.
+     */
+    public function completeProfile($user, $data)
+    {
+        // Get the appropriate user type
+        $userTypeId = null;
+        if (isset($data['user_type'])) {
+            $typeName = $data['user_type'] === 'Creator' ? 'creator' : 'regular';
+            $userType = UserType::where('type_name', $typeName)->first();
+            $userTypeId = $userType->id;
+        }
+        
+        // Handle profile photo upload if provided
+        $profilePhotoUrl = $user->profile_photo_url;
+        if (isset($data['profile_photo']) && $data['profile_photo']) {
+            // Use the FileHandling trait method
+            $path = $this->storeFile($data['profile_photo'], 'profile-photos');
+            $profilePhotoUrl = $this->getFileUrl($path);
+        }
+        
+        // Update user profile
+        $user->update([
+            'username' => $data['username'],
+            'name' => $data['name'],
+            'phone' => $data['phone'] ?? null,
+            'bio' => $data['bio'] ?? null,
+            'profile_photo_url' => $profilePhotoUrl,
+            'user_type_id' => $userTypeId,
+        ]);
+        
+        return $user;
+    }
 }
