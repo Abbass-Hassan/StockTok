@@ -36,4 +36,22 @@ class AuthService
         
         return $user;
     }
+
+    /**
+     * Attempt to login a user.
+     */
+    public function login($credentials)
+    {
+        if (!Auth::attempt($credentials)) {
+            return false;
+        }
+        
+        $user = Auth::user();
+        $token = $user->createToken('auth_token')->plainTextToken;
+        
+        return [
+            'user' => $user,
+            'token' => $token
+        ];
+    }
 }
