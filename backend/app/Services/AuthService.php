@@ -54,4 +54,18 @@ class AuthService
             'token' => $token
         ];
     }
+
+    /**
+     * Logout the current user.
+     */
+    public function logout()
+    {
+        $user = Auth::user();
+        
+        if ($user) {
+            $user->tokens()->delete();
+        }
+        
+        return true;
+    }
 }
