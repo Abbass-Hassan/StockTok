@@ -89,4 +89,16 @@ class FollowService
                    ->orderBy('created_at', 'desc')
                    ->paginate($perPage);
     }
+
+
+    /**
+     * Get users followed by a user.
+     */
+    public function getFollowing($userId, $perPage = 15)
+    {
+        return Follow::with('following')
+                   ->where('follower_id', $userId)
+                   ->orderBy('created_at', 'desc')
+                   ->paginate($perPage);
+    }
 }
