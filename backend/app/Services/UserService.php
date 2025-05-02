@@ -45,4 +45,32 @@ class UserService
             'created_at' => $user->created_at
         ];
     }
+
+    /**
+     * Update user profile.
+     */
+    public function updateProfile($user, $data)
+    {
+        // Handle profile photo upload if provided
+        if (isset($data['profile_photo']) && $data['profile_photo']) {
+            $path = $this->storeFile($data['profile_photo'], 'profile-photos');
+            $data['profile_photo_url'] = $this->getFileUrl($path);
+        }
+        
+        // Update user fields that are provided
+        $fieldsToUpdate = [
+            'username', 'name', 'phone', 'bio', 'profile_photo_url'
+        ];
+        
+        $updateData = [];
+        foreach ($fieldsToUpdate as $field) {
+            if (isset($data[$field])) {
+                $updateData[$field] = $data[$field];
+            }
+        }
+        
+        $user->update($updateData);
+        
+        return $user;
+    }
 }
