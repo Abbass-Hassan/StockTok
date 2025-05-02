@@ -78,5 +78,18 @@ class InvestmentService
         return LikesInvestment::with(['user', 'video'])
                             ->findOrFail($investmentId);
     }
+
+
+    /**
+     * Get all investments made by a user.
+     */
+    public function getUserInvestments($userId, $perPage = 15)
+    {
+        return LikesInvestment::with('video')
+                            ->where('user_id', $userId)
+                            ->where('status', 'active')
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($perPage);
+    }
     
 }
