@@ -109,4 +109,18 @@ class VideoService
         
         return true;
     }
+
+    /**
+     * Update video caption and metadata.
+     */
+    public function updateVideo($videoId, $data)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        $video->update([
+            'caption' => $data['caption'] ?? $video->caption,
+        ]);
+        
+        return $video;
+    }
 }
