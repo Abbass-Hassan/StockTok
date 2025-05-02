@@ -51,4 +51,30 @@ class FollowService
             'following' => $followingUser
         ];
     }
+
+
+    /**
+     * Unfollow a user.
+     */
+    public function unfollowUser($follower, $followingId)
+    {
+        $follow = Follow::where('follower_id', $follower->id)
+                      ->where('following_id', $followingId)
+                      ->first();
+        
+        if (!$follow) {
+            return [
+                'success' => false,
+                'message' => 'Not following this user'
+            ];
+        }
+        
+        // Delete the follow relationship
+        $follow->delete();
+        
+        return [
+            'success' => true,
+            'message' => 'Successfully unfollowed user'
+        ];
+    }
 }
