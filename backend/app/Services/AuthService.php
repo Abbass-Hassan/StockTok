@@ -14,42 +14,42 @@ class AuthService
     use FileHandling;
 
     /**
- * Register a new user.
- */
-public function register($data)
-{
-    // Find the regular user type
-    $regularUserType = UserType::where('type_name', 'regular')->first();
-    
-    // Use a temporary unique username (with timestamp to ensure uniqueness)
-    $tempUsername = 'user_' . time() . '_' . rand(1000, 9999);
-    
-    // Create user
-    $user = User::create([
-        'user_type_id' => $regularUserType->id,
-        'email' => $data['email'],
-        'password' => Hash::make($data['password']),
-        'username' => $tempUsername, // Temporary placeholder
-    ]);
-    
-    // Create wallet for user
-    $wallet = $user->wallet()->create([
-        'balance' => 0,
-        'last_updated' => now(),
-    ]);
-    
-    // Create initial transaction record for wallet creation
-    Transaction::create([
-        'wallet_id' => $wallet->id,
-        'amount' => 0,
-        'transaction_type' => 'wallet_creation',
-        'status' => 'completed',
-        'description' => 'Initial wallet creation',
-        'fee_amount' => 0
-    ]);
-    
-    return $user;
-}
+     * Register a new user.
+     */
+    public function register($data)
+    {
+        // Find the regular user type
+        $regularUserType = UserType::where('type_name', 'regular')->first();
+        
+        // Use a temporary unique username (with timestamp to ensure uniqueness)
+        $tempUsername = 'user_' . time() . '_' . rand(1000, 9999);
+        
+        // Create user
+        $user = User::create([
+            'user_type_id' => $regularUserType->id,
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'username' => $tempUsername, // Temporary placeholder
+        ]);
+        
+        // Create wallet for user
+        $wallet = $user->wallet()->create([
+            'balance' => 0,
+            'last_updated' => now(),
+        ]);
+        
+        // Create initial transaction record for wallet creation
+        Transaction::create([
+            'wallet_id' => $wallet->id,
+            'amount' => 0,
+            'transaction_type' => 'wallet_creation',
+            'status' => 'completed',
+            'description' => 'Initial wallet creation',
+            'fee_amount' => 0
+        ]);
+        
+        return $user;
+    }
 
     /**
      * Attempt to login a user.

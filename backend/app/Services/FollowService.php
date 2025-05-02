@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Follow;
 use App\Models\User;
-use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
 
 class FollowService
