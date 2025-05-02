@@ -125,4 +125,13 @@ class FollowService
     {
         return Follow::where('following_id', $userId)->count();
     }
+
+
+    /**
+     * Get following count for a user.
+     */
+    public function getFollowingCount($userId)
+    {
+        return Follow::where('follower_id', $userId)->count();
+    }
 }
