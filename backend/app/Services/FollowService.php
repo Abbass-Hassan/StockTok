@@ -77,4 +77,16 @@ class FollowService
             'message' => 'Successfully unfollowed user'
         ];
     }
+
+
+    /**
+     * Get followers of a user.
+     */
+    public function getFollowers($userId, $perPage = 15)
+    {
+        return Follow::with('follower')
+                   ->where('following_id', $userId)
+                   ->orderBy('created_at', 'desc')
+                   ->paginate($perPage);
+    }
 }
