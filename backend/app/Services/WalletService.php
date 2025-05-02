@@ -122,5 +122,52 @@ class WalletService
                         ->orderBy('created_at', 'desc')
                         ->paginate($perPage);
     }
+
+
+    /**
+     * Get earnings summary for a user.
+     */
+    public function getEarningsSummary($user)
+    {
+        $wallet = $user->wallet;
+        
+        // Get total deposited
+        $totalDeposited = Transaction::where('wallet_id', $wallet->id)
+                                    ->where('transaction_type', 'deposit')
+                                    ->sum('amount');
+        
+        // Get total withdrawn
+        $totalWithdrawn = Transaction::where('wallet_id', $wallet->id)
+                                    ->where('transaction_type', 'withdrawal')
+                                    ->sum('amount');
+        
+        // Get total earned from investments
+        $totalInvestmentReturns = Transaction::where('wallet_id', $wallet->id)
+                                            ->where('transaction_type', 'investment_return')
+                                            ->sum('amount');
+        
+        // Get total earned as creator
+        $totalCreatorEarnings = Transaction::where('wallet_id', $wallet->id)
+                                          ->where('transaction_type', 'creator_earning')
+                                          ->sum('amount');
+        
+        // Get total spent on investments
+        $totalInvestmentSpent = Transaction::where('wallet_id', $wallet->id)
+                                          ->where('transaction_type', 'like_investment')
+                                          ->sum('amount');
+        
+        // Calculate net earnings
+        $netEarnings = $totalInvestmentReturns + $totalCreatorEarnings;
+        
+        return [
+            'total_deposited' => $totalDeposited,
+            'total_withdrawn' => $totalWithdrawn,
+            'total_investment_returns' => $totalInvestmentReturns,
+            'total_creator_earnings' => $totalCreatorEarnings,
+            'total_investment_spent' => $totalInvestmentSpent,
+            'net_earnings' => $netEarnings,
+            'current_balance' => $wallet->balance
+        ];
+    }
     
 }
