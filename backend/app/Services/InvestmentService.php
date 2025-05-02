@@ -91,5 +91,18 @@ class InvestmentService
                             ->orderBy('created_at', 'desc')
                             ->paginate($perPage);
     }
+
+
+    /**
+     * Get all investments on a specific video.
+     */
+    public function getVideoInvestments($videoId, $perPage = 15)
+    {
+        return LikesInvestment::with('user')
+                            ->where('video_id', $videoId)
+                            ->where('status', 'active')
+                            ->orderBy('amount', 'desc')
+                            ->paginate($perPage);
+    }
     
 }
