@@ -108,5 +108,33 @@ class CommentService
                     ->orderBy('created_at', 'desc')
                     ->paginate($perPage);
     }
+
+
+    /**
+     * Update a comment.
+     */
+    public function updateComment($user, $commentId, $content)
+    {
+        $comment = Comment::findOrFail($commentId);
+        
+        // Check if user owns the comment
+        if ($comment->user_id != $user->id) {
+            return [
+                'success' => false,
+                'message' => 'You do not have permission to update this comment'
+            ];
+        }
+        
+        // Update the comment
+        $comment->update([
+            'content' => $content
+        ]);
+        
+        return [
+            'success' => true,
+            'comment' => $comment,
+            'message' => 'Comment updated successfully'
+        ];
+    }
     
 }
