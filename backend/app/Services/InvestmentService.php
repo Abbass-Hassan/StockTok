@@ -69,5 +69,14 @@ class InvestmentService
             ];
         });
     }
+
+    /**
+     * Get details of a specific investment.
+     */
+    public function getInvestmentDetails($investmentId)
+    {
+        return LikesInvestment::with(['user', 'video'])
+                            ->findOrFail($investmentId);
+    }
     
 }
