@@ -82,4 +82,17 @@ class VideoService
                     ->orderBy('created_at', 'desc')
                     ->paginate($perPage);
     }
+
+
+    /**
+     * Increment view count for a video.
+     */
+    public function incrementViewCount($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        $video->increment('view_count');
+        
+        return $video->view_count;
+    }
 }
