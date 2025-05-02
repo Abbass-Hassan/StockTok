@@ -17,4 +17,11 @@ class UserService
         return User::findOrFail($userId);
     }
     
+    /**
+     * Get user by username.
+     */
+    public function getUserByUsername($username)
+    {
+        return User::where('username', $username)->firstOrFail();
+    }
 }
