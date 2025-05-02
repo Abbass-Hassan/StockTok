@@ -96,5 +96,17 @@ class CommentService
                     ->orderBy('created_at', 'asc')
                     ->paginate($perPage);
     }
+
+
+    /**
+     * Get comments by a user.
+     */
+    public function getUserComments($userId, $perPage = 15)
+    {
+        return Comment::with(['video', 'parent'])
+                    ->where('user_id', $userId)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+    }
     
 }
