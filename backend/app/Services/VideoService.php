@@ -95,4 +95,18 @@ class VideoService
         
         return $video->view_count;
     }
+
+    /**
+     * Delete (deactivate) a video.
+     */
+    public function deleteVideo($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        $video->update([
+            'is_active' => false
+        ]);
+        
+        return true;
+    }
 }
