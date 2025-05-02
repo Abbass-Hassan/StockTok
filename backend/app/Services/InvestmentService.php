@@ -104,5 +104,37 @@ class InvestmentService
                             ->orderBy('amount', 'desc')
                             ->paginate($perPage);
     }
+
+    
+    /**
+     * Calculate current returns for an investment.
+     */
+    public function calculateReturns($investmentId)
+    {
+        $investment = LikesInvestment::with('video')->findOrFail($investmentId);
+        $video = $investment->video;
+        
+        // Calculate what percentage of the video this investment owns
+        $ownershipPercentage = $investment->amount / $video->current_value;
+        
+        // Calculate current value of the investment
+        $currentInvestmentValue = $video->current_value * $ownershipPercentage;
+        
+        // Calculate return percentage
+        $returnPercentage = (($currentInvestmentValue - $investment->amount) / $investment->amount) * 100;
+        
+        // Update the investment record
+        $investment->update([
+            'current_value' => $currentInvestmentValue,
+            'return_percentage' => $returnPercentage
+        ]);
+        
+        return [
+            'investment' => $investment,
+            'original_amount' => $investment->amount,
+            'current_value' => $currentInvestmentValue,
+            'return_percentage' => $returnPercentage
+        ];
+    }
     
 }
