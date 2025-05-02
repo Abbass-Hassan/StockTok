@@ -136,5 +136,14 @@ class CommentService
             'message' => 'Comment updated successfully'
         ];
     }
+
+
+    /**
+     * Get comment count for a video.
+     */
+    public function getCommentCount($videoId)
+    {
+        return Comment::where('video_id', $videoId)->count();
+    }
     
 }
