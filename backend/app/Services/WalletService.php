@@ -111,5 +111,16 @@ class WalletService
             ];
         });
     }
+
+
+    /**
+     * Get transaction history for a wallet.
+     */
+    public function getTransactionHistory($wallet, $perPage = 15)
+    {
+        return Transaction::where('wallet_id', $wallet->id)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
+    }
     
 }
