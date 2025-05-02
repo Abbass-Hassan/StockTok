@@ -116,4 +116,13 @@ class FollowService
             'is_following' => $follow ? true : false
         ];
     }
+
+
+    /**
+     * Get follower count for a user.
+     */
+    public function getFollowerCount($userId)
+    {
+        return Follow::where('following_id', $userId)->count();
+    }
 }
