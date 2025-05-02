@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Video extends Model
 {
     use HasFactory;
-
+    use Searchable;
+    
     protected $fillable = [
         'user_id',
         'video_url',
