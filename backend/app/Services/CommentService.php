@@ -84,5 +84,17 @@ class CommentService
                     ->orderBy('created_at', 'desc')
                     ->paginate($perPage);
     }
+
+
+    /**
+     * Get replies to a specific comment.
+     */
+    public function getCommentReplies($commentId, $perPage = 15)
+    {
+        return Comment::with('user')
+                    ->where('parent_id', $commentId)
+                    ->orderBy('created_at', 'asc')
+                    ->paginate($perPage);
+    }
     
 }
