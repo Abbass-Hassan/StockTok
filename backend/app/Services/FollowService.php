@@ -101,4 +101,19 @@ class FollowService
                    ->orderBy('created_at', 'desc')
                    ->paginate($perPage);
     }
+
+
+    /**
+     * Check if a user is following another user.
+     */
+    public function isFollowing($followerId, $followingId)
+    {
+        $follow = Follow::where('follower_id', $followerId)
+                      ->where('following_id', $followingId)
+                      ->first();
+        
+        return [
+            'is_following' => $follow ? true : false
+        ];
+    }
 }
