@@ -179,5 +179,27 @@ class InvestmentService
         
         return $profitability;
     }
+
+
+    /**
+     * Get creator earnings summary for a video.
+     */
+    public function getCreatorEarningsSummary($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        $creator = User::findOrFail($video->user_id);
+        
+        // Get all creator earning transactions for this video
+        $earnings = Transaction::where('wallet_id', $creator->wallet->id)
+                              ->where('related_video_id', $videoId)
+                              ->where('transaction_type', 'creator_earning')
+                              ->sum('amount');
+        
+        return [
+            'video_id' => $videoId,
+            'total_investments' => $video->like_investment_count,
+            'total_earnings' => $earnings
+        ];
+    }
     
 }
