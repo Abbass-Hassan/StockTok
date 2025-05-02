@@ -103,4 +103,35 @@ class AuthService
         
         return $user;
     }
+
+    /**
+ * Reset password request.
+ */
+public function resetPassword($email)
+{
+    $user = User::where('email', $email)->first();
+    
+    if (!$user) {
+        return false;
+    }
+    
+    // Generate password reset token
+    $token = \Illuminate\Support\Str::random(60);
+    
+    // Store the token
+    \DB::table('password_resets')->updateOrInsert(
+        ['email' => $email],
+        [
+            'email' => $email,
+            'token' => Hash::make($token),
+            'created_at' => now()
+        ]
+    );
+    
+    // Return the token (in a real app, you'd send this via email)
+    return [
+        'email' => $email,
+        'token' => $token
+    ];
+}
 }
