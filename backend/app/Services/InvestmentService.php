@@ -18,8 +18,14 @@ class InvestmentService
     {
         // Start a database transaction to ensure all operations complete successfully
         return DB::transaction(function () use ($user, $videoId, $amount) {
-            // Find the video
+            // Find the video and creator
             $video = Video::findOrFail($videoId);
+            $creator = User::findOrFail($video->user_id);
+            
+            // Calculate shares
+            $creatorShare = $amount * 0.25; // 25% to creator
+            $platformFee = $amount * 0.05;  // 5% platform fee
+            $investmentAmount = $amount - $creatorShare - $platformFee;
             
             // Check if user has enough balance
             $wallet = $user->wallet;
@@ -34,18 +40,23 @@ class InvestmentService
             $investment = LikesInvestment::create([
                 'user_id' => $user->id,
                 'video_id' => $videoId,
-                'amount' => $amount,
+                'amount' => $investmentAmount,
                 'created_at' => now(),
                 'status' => 'active',
                 'return_percentage' => 0,
-                'current_value' => $amount
+                'current_value' => $investmentAmount
             ]);
             
             // Update user's wallet (decrease balance)
             $wallet->decrement('balance', $amount);
             $wallet->update(['last_updated' => now()]);
             
-            // Record the transaction
+            // Add creator's share to their wallet
+            $creatorWallet = $creator->wallet;
+            $creatorWallet->increment('balance', $creatorShare);
+            $creatorWallet->update(['last_updated' => now()]);
+            
+            // Record the investment transaction
             Transaction::create([
                 'wallet_id' => $wallet->id,
                 'amount' => -$amount,
@@ -55,17 +66,32 @@ class InvestmentService
                 'created_at' => now(),
                 'status' => 'completed',
                 'description' => 'Investment in video #' . $videoId,
-                'fee_amount' => 0 // No fee for version 1
+                'fee_amount' => $platformFee
+            ]);
+            
+            // Record the creator earning transaction
+            Transaction::create([
+                'wallet_id' => $creatorWallet->id,
+                'amount' => $creatorShare,
+                'transaction_type' => 'creator_earning',
+                'related_video_id' => $videoId,
+                'related_like_investment_id' => $investment->id,
+                'created_at' => now(),
+                'status' => 'completed',
+                'description' => 'Creator earnings from video #' . $videoId,
+                'fee_amount' => 0
             ]);
             
             // Update video stats
             $video->increment('like_investment_count');
-            $video->increment('current_value', $amount);
+            $video->increment('current_value', $investmentAmount);
             
             return [
                 'success' => true,
                 'investment' => $investment,
-                'video' => $video
+                'video' => $video,
+                'creator_share' => $creatorShare,
+                'platform_fee' => $platformFee
             ];
         });
     }
@@ -105,7 +131,7 @@ class InvestmentService
                             ->paginate($perPage);
     }
 
-    
+
     /**
      * Calculate current returns for an investment.
      */
