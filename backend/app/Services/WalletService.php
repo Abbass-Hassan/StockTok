@@ -63,5 +63,53 @@ class WalletService
             ];
         });
     }
+
+
+    /**
+     * Withdraw funds from a user's wallet.
+     */
+    public function withdraw($user, $amount, $withdrawalMethod = null)
+    {
+        return DB::transaction(function () use ($user, $amount, $withdrawalMethod) {
+            $wallet = $user->wallet;
+            
+            // Calculate platform fee (e.g., 5% of withdrawal amount)
+            $feePercentage = 0.05;
+            $feeAmount = $amount * $feePercentage;
+            $netWithdrawal = $amount - $feeAmount;
+            
+            // Check if user has enough balance
+            if ($wallet->balance < $amount) {
+                return [
+                    'success' => false,
+                    'message' => 'Insufficient funds'
+                ];
+            }
+            
+            // Update wallet balance
+            $wallet->decrement('balance', $amount);
+            $wallet->update(['last_updated' => now()]);
+            
+            // Record the transaction
+            $transaction = Transaction::create([
+                'wallet_id' => $wallet->id,
+                'amount' => -$amount,
+                'transaction_type' => 'withdrawal',
+                'payment_method' => $withdrawalMethod,
+                'created_at' => now(),
+                'status' => 'completed',
+                'description' => 'Withdrawal from wallet',
+                'fee_amount' => $feeAmount
+            ]);
+            
+            return [
+                'success' => true,
+                'transaction' => $transaction,
+                'wallet' => $wallet,
+                'fee' => $feeAmount,
+                'net_withdrawal' => $netWithdrawal
+            ];
+        });
+    }
     
 }
