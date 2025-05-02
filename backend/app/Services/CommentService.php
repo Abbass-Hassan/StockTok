@@ -71,5 +71,18 @@ class CommentService
             'message' => 'Comment deleted successfully'
         ];
     }
+
+    /**
+     * Get comments for a video.
+     */
+    public function getVideoComments($videoId, $perPage = 15)
+    {
+        // Get only top-level comments (not replies)
+        return Comment::with(['user', 'replies.user'])
+                    ->where('video_id', $videoId)
+                    ->whereNull('parent_id')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+    }
     
 }
