@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\UserType;
+use App\Models\Transaction;
 use App\Traits\FileHandling;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -20,18 +21,31 @@ class AuthService
         // Find the regular user type
         $regularUserType = UserType::where('type_name', 'regular')->first();
         
+        // Use a temporary unique username (with timestamp to ensure uniqueness)
+        $tempUsername = 'user_' . time() . '_' . rand(1000, 9999);
+        
         // Create user
         $user = User::create([
             'user_type_id' => $regularUserType->id,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'username' => $data['email'], // Default username from email
+            'username' => $tempUsername, // Temporary placeholder
         ]);
         
         // Create wallet for user
-        $user->wallet()->create([
+        $wallet = $user->wallet()->create([
             'balance' => 0,
             'last_updated' => now(),
+        ]);
+        
+        // Create initial transaction record for wallet creation
+        Transaction::create([
+            'wallet_id' => $wallet->id,
+            'amount' => 0,
+            'transaction_type' => 'wallet_creation',
+            'status' => 'completed',
+            'description' => 'Initial wallet creation',
+            'fee_amount' => 0
         ]);
         
         return $user;
@@ -102,5 +116,54 @@ class AuthService
         ]);
         
         return $user;
+    }
+
+    /**
+     * Reset password request.
+     */
+    public function resetPassword($email)
+    {
+        $user = User::where('email', $email)->first();
+        
+        if (!$user) {
+            return false;
+        }
+        
+        // Generate password reset token
+        $token = \Illuminate\Support\Str::random(60);
+        
+        // Store the token
+        \DB::table('password_resets')->updateOrInsert(
+            ['email' => $email],
+            [
+                'email' => $email,
+                'token' => Hash::make($token),
+                'created_at' => now()
+            ]
+        );
+        
+        // Return the token (in a real app, you'd send this via email)
+        return [
+            'email' => $email,
+            'token' => $token
+        ];
+    }
+
+    /**
+     * Update user password.
+     */
+    public function updatePassword($user, $oldPassword, $newPassword)
+    {
+        // Verify old password
+        if (!Hash::check($oldPassword, $user->password)) {
+            return false;
+        }
+        
+        // Update password
+        $user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+        
+        return true;
     }
 }

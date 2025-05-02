@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Video;
 use App\Models\User;
 use App\Traits\FileHandling;
+use Illuminate\Support\Facades\DB;
+use App\Models\Transaction;
 
 class VideoService
 {
@@ -15,32 +17,62 @@ class VideoService
      */
     public function uploadVideo($user, $videoData, $videoFile, $thumbnailFile = null)
     {
-        // Store video file
-        $videoPath = $this->storeFile($videoFile, 'videos');
-        $videoUrl = $this->getFileUrl($videoPath);
-        
-        // Store thumbnail if provided
-        $thumbnailUrl = null;
-        if ($thumbnailFile) {
-            $thumbnailPath = $this->storeFile($thumbnailFile, 'thumbnails');
-            $thumbnailUrl = $this->getFileUrl($thumbnailPath);
-        }
-        
-        // Create video record
-        $video = Video::create([
-            'user_id' => $user->id,
-            'video_url' => $videoUrl,
-            'thumbnail_url' => $thumbnailUrl,
-            'caption' => $videoData['caption'],
-            'initial_investment' => $videoData['initial_investment'] ?? 0,
-            'upload_fee' => 0, // No fee for version 1
-            'view_count' => 0,
-            'like_investment_count' => 0,
-            'current_value' => $videoData['initial_investment'] ?? 0,
-            'is_active' => true,
-        ]);
-        
-        return $video;
+        // Use DB transaction to ensure data integrity
+        return DB::transaction(function () use ($user, $videoData, $videoFile, $thumbnailFile) {
+            // Store video file
+            $videoPath = $this->storeFile($videoFile, 'videos');
+            $videoUrl = $this->getFileUrl($videoPath);
+            
+            // Store thumbnail if provided
+            $thumbnailUrl = null;
+            if ($thumbnailFile) {
+                $thumbnailPath = $this->storeFile($thumbnailFile, 'thumbnails');
+                $thumbnailUrl = $this->getFileUrl($thumbnailPath);
+            }
+            
+            // Get initial investment amount (default to 0 if not provided)
+            $initialInvestment = $videoData['initial_investment'] ?? 0;
+            
+            // Check if user has enough balance for initial investment
+            $wallet = $user->wallet;
+            if ($wallet->balance < $initialInvestment) {
+                throw new \Exception('Insufficient funds for initial investment');
+            }
+            
+            // Create video record
+            $video = Video::create([
+                'user_id' => $user->id,
+                'video_url' => $videoUrl,
+                'thumbnail_url' => $thumbnailUrl,
+                'caption' => $videoData['caption'],
+                'initial_investment' => $initialInvestment,
+                'upload_fee' => 0, // No fee for version 1
+                'view_count' => 0,
+                'like_investment_count' => 0,
+                'current_value' => $initialInvestment,
+                'is_active' => true,
+            ]);
+            
+            // If there's an initial investment, deduct from wallet and record transaction
+            if ($initialInvestment > 0) {
+                // Update wallet balance
+                $wallet->decrement('balance', $initialInvestment);
+                $wallet->update(['last_updated' => now()]);
+                
+                // Record the transaction
+                Transaction::create([
+                    'wallet_id' => $wallet->id,
+                    'amount' => -$initialInvestment,
+                    'transaction_type' => 'initial_investment',
+                    'related_video_id' => $video->id,
+                    'status' => 'completed',
+                    'description' => 'Initial investment for video #' . $video->id,
+                    'fee_amount' => 0 // No fee for version 1
+                ]);
+            }
+            
+            return $video;
+        });
     }
 
     /**
@@ -80,6 +112,59 @@ class VideoService
         return Video::where('user_id', $userId)
                     ->where('is_active', true)
                     ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+    }
+
+
+    /**
+     * Increment view count for a video.
+     */
+    public function incrementViewCount($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        $video->increment('view_count');
+        
+        return $video->view_count;
+    }
+
+    /**
+     * Delete (deactivate) a video.
+     */
+    public function deleteVideo($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        $video->update([
+            'is_active' => false
+        ]);
+        
+        return true;
+    }
+
+    /**
+     * Update video caption and metadata.
+     */
+    public function updateVideo($videoId, $data)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        $video->update([
+            'caption' => $data['caption'] ?? $video->caption,
+        ]);
+        
+        return $video;
+    }
+
+
+    /**
+     * Get trending videos based on number of likes.
+     */
+    public function getTrendingVideos($perPage = 15)
+    {
+        return Video::where('is_active', true)
+                    ->orderBy('like_investment_count', 'desc')  // Most likes first
+                    ->orderBy('created_at', 'desc')            // Newer videos first if same likes
                     ->paginate($perPage);
     }
 }
