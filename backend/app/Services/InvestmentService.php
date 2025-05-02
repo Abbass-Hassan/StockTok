@@ -22,10 +22,9 @@ class InvestmentService
             $video = Video::findOrFail($videoId);
             $creator = User::findOrFail($video->user_id);
             
-            // Calculate shares
+            // Calculate creator's share
             $creatorShare = $amount * 0.25; // 25% to creator
-            $platformFee = $amount * 0.05;  // 5% platform fee
-            $investmentAmount = $amount - $creatorShare - $platformFee;
+            $investmentAmount = $amount - $creatorShare;
             
             // Check if user has enough balance
             $wallet = $user->wallet;
@@ -66,7 +65,7 @@ class InvestmentService
                 'created_at' => now(),
                 'status' => 'completed',
                 'description' => 'Investment in video #' . $videoId,
-                'fee_amount' => $platformFee
+                'fee_amount' => 0  // No fee on investments
             ]);
             
             // Record the creator earning transaction
@@ -79,7 +78,7 @@ class InvestmentService
                 'created_at' => now(),
                 'status' => 'completed',
                 'description' => 'Creator earnings from video #' . $videoId,
-                'fee_amount' => 0
+                'fee_amount' => 0  // No fee on creator earnings
             ]);
             
             // Update video stats
@@ -90,8 +89,7 @@ class InvestmentService
                 'success' => true,
                 'investment' => $investment,
                 'video' => $video,
-                'creator_share' => $creatorShare,
-                'platform_fee' => $platformFee
+                'creator_share' => $creatorShare
             ];
         });
     }
