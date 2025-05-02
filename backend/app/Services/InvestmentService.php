@@ -160,5 +160,24 @@ class InvestmentService
             'return_percentage' => $returnPercentage
         ];
     }
+
+
+    /**
+     * Calculate profitability of a video.
+     */
+    public function calculateVideoProfitability($videoId)
+    {
+        $video = Video::findOrFail($videoId);
+        
+        $profitability = [
+            'initial_investment' => $video->initial_investment,
+            'current_value' => $video->current_value,
+            'total_growth' => (($video->current_value - $video->initial_investment) / $video->initial_investment) * 100,
+            'like_investment_count' => $video->like_investment_count,
+            'roi' => ($video->current_value / $video->initial_investment)
+        ];
+        
+        return $profitability;
+    }
     
 }
