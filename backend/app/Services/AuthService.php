@@ -29,9 +29,19 @@ class AuthService
         ]);
         
         // Create wallet for user
-        $user->wallet()->create([
+        $wallet = $user->wallet()->create([
             'balance' => 0,
             'last_updated' => now(),
+        ]);
+        
+        // Create initial transaction record for wallet creation
+        Transaction::create([
+            'wallet_id' => $wallet->id,
+            'amount' => 0,
+            'transaction_type' => 'wallet_creation',
+            'status' => 'completed',
+            'description' => 'Initial wallet creation',
+            'fee_amount' => 0
         ]);
         
         return $user;
