@@ -123,4 +123,16 @@ class VideoService
         
         return $video;
     }
+
+
+    /**
+     * Get trending videos based on number of likes.
+     */
+    public function getTrendingVideos($perPage = 15)
+    {
+        return Video::where('is_active', true)
+                    ->orderBy('like_investment_count', 'desc')  // Most likes first
+                    ->orderBy('created_at', 'desc')            // Newer videos first if same likes
+                    ->paginate($perPage);
+    }
 }
