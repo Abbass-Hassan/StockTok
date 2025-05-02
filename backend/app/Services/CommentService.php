@@ -44,5 +44,32 @@ class CommentService
             'video' => $video
         ];
     }
+
+
+    /**
+     * Delete a comment.
+     */
+    public function deleteComment($user, $commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+        
+        // Check if user owns the comment or is the video owner
+        $video = Video::findOrFail($comment->video_id);
+        
+        if ($comment->user_id != $user->id && $video->user_id != $user->id) {
+            return [
+                'success' => false,
+                'message' => 'You do not have permission to delete this comment'
+            ];
+        }
+        
+        // Delete the comment
+        $comment->delete();
+        
+        return [
+            'success' => true,
+            'message' => 'Comment deleted successfully'
+        ];
+    }
     
 }
