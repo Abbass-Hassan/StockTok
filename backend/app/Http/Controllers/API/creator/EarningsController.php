@@ -118,4 +118,34 @@ class EarningsController extends Controller
             'period_months' => $months
         ], 'Monthly earnings retrieved successfully');
     }
+
+
+    /**
+     * Get list of top investors for creator's content.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInvestorsList(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Get limit parameter (default: 10)
+        $limit = $request->get('limit', 10);
+        
+        // Ensure reasonable limit range
+        $limit = min(max($limit, 5), 50);
+        
+        // Get top investors for this creator
+        $topInvestors = $this->investmentService->getCreatorTopInvestors($user->id, $limit);
+        
+        // Get total number of unique investors
+        $totalInvestors = $this->investmentService->getCreatorTopInvestors($user->id, 1000)->count();
+        
+        return $this->successResponse([
+            'top_investors' => $topInvestors,
+            'total_unique_investors' => $totalInvestors,
+            'limit' => $limit
+        ], 'Top investors retrieved successfully');
+    }
 }
