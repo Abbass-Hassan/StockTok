@@ -26,4 +26,32 @@ class CreatorProfileController extends Controller
         $this->followService = $followService;
         $this->videoService = $videoService;
     }
+
+
+    /**
+     * Get the authenticated creator's profile information.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCreatorProfile()
+    {
+        $user = auth()->user();
+        
+        // Get basic profile information
+        $profile = $this->userService->getUserProfile($user->id);
+        
+        // Get follower count
+        $followerCount = $this->followService->getFollowerCount($user->id);
+        
+        // Enhance profile with creator-specific information
+        $enhancedProfile = array_merge($profile, [
+            'follower_count' => $followerCount,
+            'is_creator' => true
+        ]);
+        
+        return $this->successResponse(
+            ['profile' => $enhancedProfile],
+            'Creator profile retrieved successfully'
+        );
+    }
 }
