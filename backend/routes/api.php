@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/earnings/videos/{id}', [EarningsController::class, 'getVideoEarnings']);
         Route::get('/earnings/monthly', [EarningsController::class, 'getMonthlyEarnings']);
         Route::get('/earnings/investors', [EarningsController::class, 'getInvestorsList']);
+        Route::post('/earnings/payout', [EarningsController::class, 'requestPayout']);
 
     });
 });
