@@ -117,4 +117,32 @@ class AuthController extends Controller
     }
 
 
+    /**
+     * Update user password.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+            'new_password_confirmation' => 'required'
+        ]);
+        
+        $result = $this->authService->updatePassword(
+            auth()->user(),
+            $request->old_password,
+            $request->new_password
+        );
+        
+        if (!$result) {
+            return $this->errorResponse('Old password is incorrect', 400);
+        }
+        
+        return $this->successResponse(null, 'Password updated successfully');
+    }
+
+
 }
