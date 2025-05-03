@@ -90,4 +90,28 @@ class VideoDiscoveryController extends Controller
             'Following feed retrieved successfully'
         );
     }
+
+
+    /**
+     * Search for videos.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchVideos(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|min:2',
+        ]);
+        
+        $perPage = $request->get('per_page', 15);
+        $term = $request->get('query');
+        
+        $videos = $this->searchService->searchVideos($term, $perPage);
+        
+        return $this->successResponse(
+            ['videos' => $videos],
+            'Video search results retrieved successfully'
+        );
+    }
 }
