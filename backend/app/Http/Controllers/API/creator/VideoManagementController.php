@@ -71,4 +71,60 @@ class VideoManagementController extends Controller
             'Videos retrieved successfully'
         );
     }
+
+
+    /**
+     * Update video details.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateVideo(Request $request, $id)
+    {
+        // Validate the request
+        $request->validate([
+            'caption' => 'required|string|max:1000',
+        ]);
+        
+        // Verify ownership
+        $video = $this->videoService->getUserVideos(auth()->id())->where('id', $id)->first();
+        
+        if (!$video) {
+            return $this->errorResponse('Video not found or you do not have permission', 404);
+        }
+        
+        // Update the video
+        $updatedVideo = $this->videoService->updateVideo($id, $request->only(['caption']));
+        
+        return $this->successResponse(
+            ['video' => $updatedVideo],
+            'Video updated successfully'
+        );
+    }
+
+
+    /**
+     * Delete a video.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteVideo($id)
+    {
+        // Verify ownership
+        $video = $this->videoService->getUserVideos(auth()->id())->where('id', $id)->first();
+        
+        if (!$video) {
+            return $this->errorResponse('Video not found or you do not have permission', 404);
+        }
+        
+        // Delete the video
+        $this->videoService->deleteVideo($id);
+        
+        return $this->successResponse(
+            null,
+            'Video deleted successfully'
+        );
+    }
 }
