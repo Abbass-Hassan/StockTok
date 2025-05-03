@@ -138,8 +138,8 @@ class AuthService
         // Generate password reset token
         $token = \Illuminate\Support\Str::random(60);
         
-        // Store the token
-        \DB::table('password_resets')->updateOrInsert(
+        // Store the token using the table name from config
+        \DB::table(config('auth.passwords.users.table'))->updateOrInsert(
             ['email' => $email],
             [
                 'email' => $email,
