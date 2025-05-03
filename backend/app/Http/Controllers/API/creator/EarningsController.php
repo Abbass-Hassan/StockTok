@@ -87,4 +87,35 @@ class EarningsController extends Controller
             'profitability' => $profitability
         ], 'Video earnings retrieved successfully');
     }
+
+
+
+    /**
+     * Get monthly earnings trends.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMonthlyEarnings(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Get number of months to include (default: 6)
+        $months = $request->get('months', 6);
+        
+        // Limit to reasonable range
+        $months = min(max($months, 1), 24);
+        
+        // Get earnings data grouped by month
+        $monthlyEarnings = $this->walletService->getMonthlyEarnings($user, $months);
+        
+        // Get total earnings for this period
+        $totalEarnings = array_sum(array_column($monthlyEarnings, 'earnings'));
+        
+        return $this->successResponse([
+            'monthly_data' => $monthlyEarnings,
+            'total_earnings' => $totalEarnings,
+            'period_months' => $months
+        ], 'Monthly earnings retrieved successfully');
+    }
 }
