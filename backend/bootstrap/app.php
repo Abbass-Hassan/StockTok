@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'creator' => \App\Http\Middleware\EnsureUserIsCreator::class,
+            'regular' => \App\Http\Middleware\EnsureUserIsRegular::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

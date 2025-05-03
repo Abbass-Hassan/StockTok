@@ -52,8 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/stats', [CreatorProfileController::class, 'getCreatorStats']);
     });
 
-    // Regular user (investor) specific routes
-    Route::middleware('investor')->prefix('investor')->group(function () {
+    // Regular user specific routes
+    Route::middleware('regular')->prefix('regular')->group(function () {
         // Video discovery routes
         Route::prefix('videos')->group(function () {
             Route::get('/trending', [VideoDiscoveryController::class, 'getTrendingVideos']);
@@ -63,6 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}/stream', [VideoDiscoveryController::class, 'streamVideo']);
         });
         
-        // Other investor-specific routes will be added here
+        // Other regular user-specific routes will be added here
     });
 });
