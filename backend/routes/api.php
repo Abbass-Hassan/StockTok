@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Creator\VideoManagementController;
 use App\Http\Controllers\Api\Creator\EarningsController;
 use App\Http\Controllers\Api\Creator\CreatorProfileController;
 use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\VideoDiscoveryController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -37,21 +38,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/videos/{id}', [VideoManagementController::class, 'updateVideo']);
         Route::delete('/videos/{id}', [VideoManagementController::class, 'deleteVideo']);
 
-
-        //Earnings routes
+        // Earnings routes
         Route::get('/earnings/dashboard', [EarningsController::class, 'getDashboard']);
         Route::get('/earnings/videos/{id}', [EarningsController::class, 'getVideoEarnings']);
         Route::get('/earnings/monthly', [EarningsController::class, 'getMonthlyEarnings']);
         Route::get('/earnings/investors', [EarningsController::class, 'getInvestorsList']);
         Route::post('/earnings/payout', [EarningsController::class, 'requestPayout']);
 
-
         // Creator Profile routes
         Route::get('/profile', [CreatorProfileController::class, 'getCreatorProfile']);
         Route::put('/profile', [CreatorProfileController::class, 'updateCreatorProfile']);
         Route::get('/followers', [CreatorProfileController::class, 'getFollowerStats']);
         Route::get('/stats', [CreatorProfileController::class, 'getCreatorStats']);
+    });
 
-
+    // Regular user (investor) specific routes
+    Route::middleware('investor')->prefix('investor')->group(function () {
+        // Video discovery routes
+        Route::prefix('videos')->group(function () {
+            Route::get('/trending', [VideoDiscoveryController::class, 'getTrendingVideos']);
+            Route::get('/following', [VideoDiscoveryController::class, 'getFollowingFeed']);
+            Route::get('/search', [VideoDiscoveryController::class, 'searchVideos']);
+            Route::get('/{id}', [VideoDiscoveryController::class, 'getVideoDetails']);
+            Route::get('/{id}/stream', [VideoDiscoveryController::class, 'streamVideo']);
+        });
+        
+        // Other investor-specific routes will be added here
     });
 });
