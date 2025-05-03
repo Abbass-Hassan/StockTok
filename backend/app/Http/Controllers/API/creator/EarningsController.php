@@ -148,4 +148,36 @@ class EarningsController extends Controller
             'limit' => $limit
         ], 'Top investors retrieved successfully');
     }
+
+
+
+    /**
+     * Request a payout of earnings.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function requestPayout(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Validate the request
+        $request->validate([
+            'amount' => 'required|numeric|min:10'
+        ]);
+        
+        // Process withdrawal using wallet service
+        $result = $this->walletService->withdraw($user, $request->amount);
+        
+        if (!$result['success']) {
+            return $this->errorResponse($result['message'], 400);
+        }
+        
+        return $this->successResponse([
+            'transaction' => $result['transaction'],
+            'fee' => $result['fee'],
+            'net_withdrawal' => $result['net_withdrawal'],
+            'new_balance' => $result['wallet']->balance
+        ], 'Payout request processed successfully');
+    }
 }
