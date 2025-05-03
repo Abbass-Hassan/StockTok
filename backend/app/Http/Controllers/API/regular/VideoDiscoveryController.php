@@ -93,6 +93,28 @@ class VideoDiscoveryController extends Controller
 
 
     /**
+     * Stream a video file.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function streamVideo($id)
+    {
+        $videoInfo = $this->videoService->streamVideo($id);
+        
+        if (!$videoInfo) {
+            return $this->errorResponse('Video not found or cannot be streamed', 404);
+        }
+        
+        // Return a streaming response
+        return response()->file($videoInfo['path'], [
+            'Content-Type' => 'video/mp4',
+            'Content-Disposition' => 'inline; filename="' . $videoInfo['name'] . '"'
+        ]);
+    }
+
+
+    /**
      * Search for videos.
      *
      * @param Request $request
