@@ -8,6 +8,7 @@ use App\Traits\ApiResponse;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserProfileUpdateRequest;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -92,4 +93,28 @@ class AuthController extends Controller
             'user' => $user
         ], 'Profile completed successfully');
     }
+
+
+    /**
+     * Request password reset.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        
+        $result = $this->authService->resetPassword($request->email);
+        
+        if (!$result) {
+            return $this->errorResponse('User not found', 404);
+        }
+        
+        return $this->successResponse($result, 'Password reset link sent');
+    }
+
+
 }
