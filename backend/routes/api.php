@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Creator Profile routes
         Route::get('/profile', [CreatorProfileController::class, 'getCreatorProfile']);
         Route::put('/profile', [CreatorProfileController::class, 'updateCreatorProfile']);
+        Route::get('/followers', [CreatorProfileController::class, 'getFollowerStats']);
 
 
     });
