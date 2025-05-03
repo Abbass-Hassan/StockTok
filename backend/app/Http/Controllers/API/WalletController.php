@@ -70,4 +70,38 @@ class WalletController extends Controller
             'net_deposit' => $result['net_deposit']
         ], 'Funds deposited successfully');
     }
+
+
+    /**
+     * Withdraw funds from the user's wallet.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function withdrawFunds(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Validate the request
+        $request->validate([
+            'amount' => 'required|numeric|min:10',
+        ]);
+        
+        // Process the withdrawal
+        $result = $this->walletService->withdraw($user, $request->amount);
+        
+        if (!$result['success']) {
+            return $this->errorResponse(
+                $result['message'],
+                400
+            );
+        }
+        
+        return $this->successResponse([
+            'transaction' => $result['transaction'],
+            'wallet' => $result['wallet'],
+            'fee' => $result['fee'],
+            'net_withdrawal' => $result['net_withdrawal']
+        ], 'Funds withdrawn successfully');
+    }
 }
