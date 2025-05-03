@@ -36,4 +36,38 @@ class WalletController extends Controller
             'Wallet details retrieved successfully'
         );
     }
+
+
+    /**
+     * Deposit funds into the user's wallet.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function depositFunds(Request $request)
+    {
+        $user = auth()->user();
+        
+        // Validate the request
+        $request->validate([
+            'amount' => 'required|numeric|min:10',
+        ]);
+        
+        // Process the deposit
+        $result = $this->walletService->deposit($user, $request->amount);
+        
+        if (!isset($result['success']) || !$result['success']) {
+            return $this->errorResponse(
+                $result['message'] ?? 'Failed to process deposit',
+                400
+            );
+        }
+        
+        return $this->successResponse([
+            'transaction' => $result['transaction'],
+            'wallet' => $result['wallet'],
+            'fee' => $result['fee'],
+            'net_deposit' => $result['net_deposit']
+        ], 'Funds deposited successfully');
+    }
 }
