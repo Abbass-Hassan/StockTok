@@ -7,6 +7,7 @@ use App\Services\AuthService;
 use App\Traits\ApiResponse;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserProfileUpdateRequest;
 
 class AuthController extends Controller
 {
@@ -73,5 +74,22 @@ class AuthController extends Controller
         $this->authService->logout();
         
         return $this->successResponse(null, 'Logged out successfully');
+    }
+
+
+    /**
+     * Complete user profile after registration.
+     *
+     * @param UserProfileUpdateRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function completeProfile(UserProfileUpdateRequest $request)
+    {
+        // Use validated data from the request
+        $user = $this->authService->completeProfile(auth()->user(), $request->validated());
+        
+        return $this->successResponse([
+            'user' => $user
+        ], 'Profile completed successfully');
     }
 }
