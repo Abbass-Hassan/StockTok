@@ -17,4 +17,23 @@ class WalletController extends Controller
     {
         $this->walletService = $walletService;
     }
+
+
+    /**
+     * Get wallet details for the authenticated user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getWalletDetails()
+    {
+        $user = auth()->user();
+        
+        // Get wallet details
+        $wallet = $this->walletService->getWallet($user);
+        
+        return $this->successResponse(
+            ['wallet' => $wallet],
+            'Wallet details retrieved successfully'
+        );
+    }
 }
