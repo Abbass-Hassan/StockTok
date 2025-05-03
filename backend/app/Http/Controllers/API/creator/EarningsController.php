@@ -51,4 +51,40 @@ class EarningsController extends Controller
             'monthly_trend' => $monthlyTrend
         ], 'Earnings dashboard retrieved successfully');
     }
+
+
+
+    /**
+     * Get earnings for a specific video.
+     *
+     * @param int $id Video ID
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getVideoEarnings($id)
+    {
+        $user = auth()->user();
+        
+        // Verify ownership of the video
+        $video = $this->videoService->getUserVideos($user->id)->where('id', $id)->first();
+        
+        if (!$video) {
+            return $this->errorResponse('Video not found or you do not have permission', 404);
+        }
+        
+        // Get earnings summary for this video
+        $earnings = $this->investmentService->getCreatorEarningsSummary($id);
+        
+        // Get investment details for this video
+        $investments = $this->investmentService->getVideoInvestments($id);
+        
+        // Get profitability metrics
+        $profitability = $this->investmentService->calculateVideoProfitability($id);
+        
+        return $this->successResponse([
+            'video' => $video,
+            'earnings' => $earnings,
+            'investments' => $investments,
+            'profitability' => $profitability
+        ], 'Video earnings retrieved successfully');
+    }
 }
