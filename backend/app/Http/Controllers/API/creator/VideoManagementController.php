@@ -52,4 +52,23 @@ class VideoManagementController extends Controller
             );
         }
     }
+
+
+    /**
+     * Get videos uploaded by the logged-in creator.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyVideos(Request $request)
+    {
+        $perPage = $request->get('per_page', 15);
+        
+        $videos = $this->videoService->getUserVideos(auth()->id(), $perPage);
+        
+        return $this->successResponse(
+            ['videos' => $videos],
+            'Videos retrieved successfully'
+        );
+    }
 }
