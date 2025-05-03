@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Creator\VideoManagementController;
 use App\Http\Controllers\Api\Creator\EarningsController;
 use App\Http\Controllers\Api\Creator\CreatorProfileController;
+use App\Http\Controllers\Api\WalletController;
 
 use Illuminate\Support\Facades\Route;
 
