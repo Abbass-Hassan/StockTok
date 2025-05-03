@@ -98,4 +98,28 @@ class CreatorProfileController extends Controller
             'Creator profile updated successfully'
         );
     }
+
+
+    /**
+     * Get information about the creator's followers.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFollowerStats(Request $request)
+    {
+        $user = auth()->user();
+        $perPage = $request->get('per_page', 15);
+        
+        // Get paginated list of followers
+        $followers = $this->followService->getFollowers($user->id, $perPage);
+        
+        // Get total follower count
+        $followerCount = $this->followService->getFollowerCount($user->id);
+        
+        return $this->successResponse([
+            'followers' => $followers,
+            'total_count' => $followerCount
+        ], 'Follower statistics retrieved successfully');
+    }
 }
