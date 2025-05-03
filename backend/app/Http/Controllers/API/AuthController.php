@@ -61,4 +61,17 @@ class AuthController extends Controller
             'token' => $result['token']
         ], 'Login successful');
     }
+
+
+    /**
+     * Log out a user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        $this->authService->logout();
+        
+        return $this->successResponse(null, 'Logged out successfully');
+    }
 }
