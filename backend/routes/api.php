@@ -23,5 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/videos/{id}', [VideoManagementController::class, 'getVideoDetails']);
         Route::put('/videos/{id}', [VideoManagementController::class, 'updateVideo']);
         Route::delete('/videos/{id}', [VideoManagementController::class, 'deleteVideo']);
+
+
+        //Earnings routes
+        Route::get('/earnings/dashboard', [EarningsController::class, 'getDashboard']);
+        Route::get('/earnings/videos/{id}', [EarningsController::class, 'getVideoEarnings']);
     });
 });
