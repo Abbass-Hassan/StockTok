@@ -104,4 +104,28 @@ class WalletController extends Controller
             'net_withdrawal' => $result['net_withdrawal']
         ], 'Funds withdrawn successfully');
     }
+
+
+    /**
+     * Get transaction history for the authenticated user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTransactionHistory(Request $request)
+    {
+        $user = auth()->user();
+        $perPage = $request->get('per_page', 15);
+        
+        // Get the wallet
+        $wallet = $user->wallet;
+        
+        // Get transaction history
+        $transactions = $this->walletService->getTransactionHistory($wallet, $perPage);
+        
+        return $this->successResponse(
+            ['transactions' => $transactions],
+            'Transaction history retrieved successfully'
+        );
+    }
 }
