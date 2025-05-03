@@ -202,4 +202,37 @@ class InvestmentService
         ];
     }
     
+
+
+
+    /**
+     * Get top investors for a creator across all videos
+     */
+    public function getCreatorTopInvestors($creatorId, $limit = 10)
+    {
+        // Get all videos by this creator
+        $videoIds = Video::where('user_id', $creatorId)
+                        ->where('is_active', true)
+                        ->pluck('id');
+        
+        if ($videoIds->isEmpty()) {
+            return collect();
+        }
+        
+        // Get top investors across all videos
+        $topInvestors = LikesInvestment::whereIn('video_id', $videoIds)
+                    ->where('status', 'active')
+                    ->select(
+                        'user_id',
+                        DB::raw('SUM(amount) as total_invested'),
+                        DB::raw('COUNT(*) as investment_count')
+                    )
+                    ->with(['user:id,name,username,profile_photo_url'])
+                    ->groupBy('user_id')
+                    ->orderBy('total_invested', 'desc')
+                    ->limit($limit)
+                    ->get();
+        
+        return $topInvestors;
+    }
 }
