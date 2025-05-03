@@ -114,4 +114,66 @@ class VideoDiscoveryController extends Controller
             'Video search results retrieved successfully'
         );
     }
+
+
+    /**
+     * Get detailed information about a specific video.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getVideoDetails($id)
+    {
+        try {
+            // Find the video
+            $video = Video::findOrFail($id);
+            
+            if (!$video->is_active) {
+                return $this->errorResponse('Video not found or has been removed', 404);
+            }
+            
+            // Increment view count
+            $this->videoService->incrementViewCount($id);
+            
+            // Get creator information
+            $creator = $this->userService->getUserProfile($video->user_id);
+            
+            // Get profitability information
+            $profitability = $this->investmentService->calculateVideoProfitability($id);
+            
+            // Check if user follows the creator
+            $isFollowing = false;
+            if (auth()->check()) {
+                $followCheck = $this->followService->isFollowing(auth()->id(), $video->user_id);
+                $isFollowing = $followCheck['is_following'];
+            }
+            
+            // Check if user has invested in this video
+            $userInvestment = null;
+            if (auth()->check()) {
+                $investments = $this->investmentService->getUserInvestments(auth()->id());
+                foreach ($investments as $investment) {
+                    if ($investment->video_id == $id) {
+                        $userInvestment = [
+                            'investment_id' => $investment->id,
+                            'amount' => $investment->amount,
+                            'current_value' => $investment->current_value,
+                            'return_percentage' => $investment->return_percentage
+                        ];
+                        break;
+                    }
+                }
+            }
+            
+            return $this->successResponse([
+                'video' => $video,
+                'creator' => $creator,
+                'profitability' => $profitability,
+                'is_following_creator' => $isFollowing,
+                'user_investment' => $userInvestment
+            ], 'Video details retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error retrieving video details: ' . $e->getMessage(), 500);
+        }
+    }
 }
