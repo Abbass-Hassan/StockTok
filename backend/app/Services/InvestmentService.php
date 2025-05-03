@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\LikesInvestment;
+use App\Models\LikeInvestment;
 use App\Models\Video;
 use App\Models\User;
 use App\Models\Wallet;
@@ -36,7 +36,7 @@ class InvestmentService
             }
             
             // Create the investment record
-            $investment = LikesInvestment::create([
+            $investment = LikeInvestment::create([
                 'user_id' => $user->id,
                 'video_id' => $videoId,
                 'amount' => $investmentAmount,
@@ -99,7 +99,7 @@ class InvestmentService
      */
     public function getInvestmentDetails($investmentId)
     {
-        return LikesInvestment::with(['user', 'video'])
+        return LikeInvestment::with(['user', 'video'])
                             ->findOrFail($investmentId);
     }
 
@@ -109,7 +109,7 @@ class InvestmentService
      */
     public function getUserInvestments($userId, $perPage = 15)
     {
-        return LikesInvestment::with('video')
+        return LikeInvestment::with('video')
                             ->where('user_id', $userId)
                             ->where('status', 'active')
                             ->orderBy('created_at', 'desc')
@@ -122,7 +122,7 @@ class InvestmentService
      */
     public function getVideoInvestments($videoId, $perPage = 15)
     {
-        return LikesInvestment::with('user')
+        return LikeInvestment::with('user')
                             ->where('video_id', $videoId)
                             ->where('status', 'active')
                             ->orderBy('amount', 'desc')
@@ -135,7 +135,7 @@ class InvestmentService
      */
     public function calculateReturns($investmentId)
     {
-        $investment = LikesInvestment::with('video')->findOrFail($investmentId);
+        $investment = LikeInvestment::with('video')->findOrFail($investmentId);
         $video = $investment->video;
         
         // Calculate what percentage of the video this investment owns
@@ -220,7 +220,7 @@ class InvestmentService
         }
         
         // Get top investors across all videos
-        $topInvestors = LikesInvestment::whereIn('video_id', $videoIds)
+        $topInvestors = LikeInvestment::whereIn('video_id', $videoIds)
                     ->where('status', 'active')
                     ->select(
                         'user_id',
