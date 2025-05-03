@@ -17,7 +17,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/complete-profile', [AuthController::class, 'completeProfile']);
     Route::post('/update-password', [AuthController::class, 'updatePassword']);
-    
+
+    // Wallet routes
+    Route::prefix('wallet')->group(function () {
+        Route::get('/', [WalletController::class, 'getWalletDetails']);
+        Route::post('/deposit', [WalletController::class, 'depositFunds']);
+        Route::post('/withdraw', [WalletController::class, 'withdrawFunds']);
+        Route::get('/transactions', [WalletController::class, 'getTransactionHistory']);
+        Route::get('/summary', [WalletController::class, 'getWalletSummary']);
+    });
+
     // Creator-specific routes
     Route::middleware('creator')->prefix('creator')->group(function () {
         // Video Management
