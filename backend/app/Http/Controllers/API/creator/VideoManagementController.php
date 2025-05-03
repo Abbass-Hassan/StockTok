@@ -127,4 +127,33 @@ class VideoManagementController extends Controller
             'Video deleted successfully'
         );
     }
+
+
+    /**
+    * Get detailed information about a specific video.
+    *
+    * @param int $id
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function getVideoDetails($id)
+    {
+        // Verify ownership
+        $video = $this->videoService->getUserVideos(auth()->id())->where('id', $id)->first();
+        
+        if (!$video) {
+            return $this->errorResponse('Video not found or you do not have permission', 404);
+        }
+        
+        // Get profitability information
+        $profitability = $this->investmentService->calculateVideoProfitability($id);
+        
+        // Get creator earnings
+        $earnings = $this->investmentService->getCreatorEarningsSummary($id);
+        
+        return $this->successResponse([
+            'video' => $video,
+            'profitability' => $profitability,
+            'earnings' => $earnings
+        ], 'Video details retrieved successfully');
+    } 
 }
