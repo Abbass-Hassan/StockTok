@@ -122,4 +122,40 @@ class CreatorProfileController extends Controller
             'total_count' => $followerCount
         ], 'Follower statistics retrieved successfully');
     }
+
+
+    /**
+     * Get basic performance statistics for the creator.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCreatorStats()
+    {
+        $user = auth()->user();
+        
+        // Get videos uploaded by the creator
+        $videos = $this->videoService->getUserVideos($user->id, 100);
+        
+        // Calculate total views and investments
+        $totalViews = 0;
+        $totalInvestments = 0;
+        $totalVideos = $videos->total();
+        
+        foreach ($videos as $video) {
+            $totalViews += $video->view_count;
+            $totalInvestments += $video->like_investment_count;
+        }
+        
+        // Get follower count
+        $followerCount = $this->followService->getFollowerCount($user->id);
+        
+        return $this->successResponse([
+            'total_videos' => $totalVideos,
+            'total_views' => $totalViews,
+            'total_investments' => $totalInvestments,
+            'follower_count' => $followerCount,
+            'average_views_per_video' => $totalVideos > 0 ? round($totalViews / $totalVideos, 2) : 0,
+            'engagement_rate' => $totalViews > 0 ? round(($totalInvestments / $totalViews) * 100, 2) : 0
+        ], 'Creator statistics retrieved successfully');
+    }
 }
