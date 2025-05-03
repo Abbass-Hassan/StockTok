@@ -128,4 +128,24 @@ class WalletController extends Controller
             'Transaction history retrieved successfully'
         );
     }
+
+
+
+    /**
+     * Get financial summary for the authenticated user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getWalletSummary()
+    {
+        $user = auth()->user();
+        
+        // Get earnings summary
+        $summary = $this->walletService->getEarningsSummary($user);
+        
+        return $this->successResponse(
+            ['summary' => $summary],
+            'Wallet summary retrieved successfully'
+        );
+    }    
 }
