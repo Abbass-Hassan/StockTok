@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Creator\VideoManagementController;
+use App\Http\Controllers\Api\Creator\EarningsController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
