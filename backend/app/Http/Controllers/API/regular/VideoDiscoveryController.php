@@ -36,4 +36,22 @@ class VideoDiscoveryController extends Controller
         $this->searchService = $searchService;
     }
     
+
+    /**
+     * Get trending videos.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTrendingVideos(Request $request)
+    {
+        $perPage = $request->get('per_page', 15);
+        
+        $videos = $this->videoService->getTrendingVideos($perPage);
+        
+        return $this->successResponse(
+            ['videos' => $videos],
+            'Trending videos retrieved successfully'
+        );
+    }
 }
