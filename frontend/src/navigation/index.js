@@ -5,6 +5,7 @@ import Login from '../screens/Auth/Login';
 import HomeScreen from '../screens/Feed';
 import UploadVideo from '../screens/Creator/UploadVideo';
 import MyVideos from '../screens/Creator/MyVideos';
+import VideoPlayer from '../screens/Creator/VideoPlayer';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,14 @@ const Navigation = () => {
           component={MyVideos}
           options={{
             title: 'My Videos',
+          }}
+        />
+        <Stack.Screen
+          name="VideoPlayer"
+          component={VideoPlayer}
+          options={{
+            title: 'Video',
+            headerBackTitle: 'Back',
           }}
         />
       </Stack.Navigator>

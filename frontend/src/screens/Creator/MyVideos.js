@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {getMyVideos} from '../../api/videoApi';
 
-const MyVideos = ({navigation, route}) => {
+const MyVideos = ({navigation}) => {
   // State variables
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,10 +22,19 @@ const MyVideos = ({navigation, route}) => {
     try {
       setLoading(true);
 
-      // No need to pass token anymore
+      // Real API call to get your uploaded videos
       const response = await getMyVideos();
-      setVideos(response.data.videos.data || []);
+      console.log('API response:', response);
+
+      // Adjust this based on your actual API response structure
+      if (response && response.data && response.data.videos) {
+        setVideos(response.data.videos.data || []);
+      } else if (response && response.data) {
+        // If response.data.videos doesn't exist, try using response.data directly
+        setVideos(Array.isArray(response.data) ? response.data : []);
+      }
     } catch (error) {
+      console.error('Load videos error:', error);
       Alert.alert('Error', error.message || 'Failed to load videos');
     } finally {
       setLoading(false);
@@ -38,6 +47,15 @@ const MyVideos = ({navigation, route}) => {
     loadVideos();
   }, []);
 
+  // Reload videos when screen comes into focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadVideos();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   // Handle refresh
   const handleRefresh = () => {
     setRefreshing(true);
@@ -48,7 +66,7 @@ const MyVideos = ({navigation, route}) => {
   const renderVideoItem = ({item}) => (
     <TouchableOpacity
       style={styles.videoCard}
-      onPress={() => navigation.navigate('VideoDetails', {videoId: item.id})}>
+      onPress={() => navigation.navigate('VideoPlayer', {video: item})}>
       <Image
         source={{uri: item.thumbnail_url || 'https://via.placeholder.com/150'}}
         style={styles.thumbnail}
@@ -59,8 +77,8 @@ const MyVideos = ({navigation, route}) => {
           {item.caption}
         </Text>
         <View style={styles.statsRow}>
-          <Text style={styles.statText}>Views: {item.view_count}</Text>
-          <Text style={styles.statText}>Value: ${item.current_value}</Text>
+          <Text style={styles.statText}>Views: {item.view_count || 0}</Text>
+          <Text style={styles.statText}>Value: ${item.current_value || 0}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -90,7 +108,7 @@ const MyVideos = ({navigation, route}) => {
         <FlatList
           data={videos}
           renderItem={renderVideoItem}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item.id?.toString() || Math.random().toString()}
           contentContainerStyle={styles.listContainer}
           ListEmptyComponent={renderEmptyState}
           onRefresh={handleRefresh}

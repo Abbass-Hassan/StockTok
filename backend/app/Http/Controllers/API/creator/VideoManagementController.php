@@ -156,4 +156,41 @@ class VideoManagementController extends Controller
             'earnings' => $earnings
         ], 'Video details retrieved successfully');
     } 
+
+
+    /**
+     * Stream a video file.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function streamVideo($id)
+    {
+        try {
+            $videoInfo = $this->videoService->streamVideo($id);
+            
+            if (!$videoInfo) {
+                return $this->errorResponse('Video not found or cannot be streamed', 404);
+            }
+            
+            // Determine content type based on extension
+            $contentType = 'video/mp4'; // Default
+            if (strtolower($videoInfo['extension']) === 'mov') {
+                $contentType = 'video/quicktime';
+            }
+            
+            // Set headers for streaming
+            $headers = [
+                'Content-Type' => $contentType,
+                'Content-Disposition' => 'inline; filename="' . $videoInfo['name'] . '"',
+                'Accept-Ranges' => 'bytes',
+                'Content-Length' => $videoInfo['size']
+            ];
+            
+            // Return file response
+            return response()->file($videoInfo['path'], $headers);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error streaming video: ' . $e->getMessage(), 500);
+        }
+    }
 }

@@ -70,9 +70,40 @@ export const getMyVideos = async () => {
       },
     });
 
+    console.log('API response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Get videos error:', error.response?.data || error);
     throw new Error(error.response?.data?.message || 'Failed to fetch videos');
+  }
+};
+
+// Function to get video streaming URL
+export const getVideoStreamUrl = videoId => {
+  // This is the URL to your backend's video streaming endpoint for creators
+  return `${API_URL}/creator/videos/${videoId}/stream`;
+};
+
+// Function to get video details
+export const getVideoDetails = async videoId => {
+  try {
+    // Get token from storage
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/creator/videos/${videoId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get video details error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch video details',
+    );
   }
 };
