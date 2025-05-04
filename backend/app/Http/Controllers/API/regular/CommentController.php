@@ -136,4 +136,31 @@ class CommentController extends Controller
             'Comment deleted successfully'
         );
     }
+
+
+    /**
+     * Get replies to a comment.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCommentReplies(Request $request, $id)
+    {
+        $perPage = $request->get('per_page', 15);
+        
+        // Check if comment exists
+        $comment = \App\Models\Comment::find($id);
+        if (!$comment) {
+            return $this->errorResponse('Comment not found', 404);
+        }
+        
+        // Get replies
+        $replies = $this->commentService->getCommentReplies($id, $perPage);
+        
+        return $this->successResponse(
+            ['replies' => $replies],
+            'Comment replies retrieved successfully'
+        );
+    }
 }
