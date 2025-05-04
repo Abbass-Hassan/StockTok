@@ -77,4 +77,24 @@ class InvestmentController extends Controller
             'Investment created successfully'
         );
     }
+
+
+    /**
+     * Get all investments made by the authenticated user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyInvestments(Request $request)
+    {
+        $user = auth()->user();
+        $perPage = $request->get('per_page', 15);
+        
+        $investments = $this->investmentService->getUserInvestments($user->id, $perPage);
+        
+        return $this->successResponse(
+            ['investments' => $investments],
+            'Investments retrieved successfully'
+        );
+    }
 }
