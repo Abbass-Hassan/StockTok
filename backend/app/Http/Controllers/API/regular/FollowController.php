@@ -96,4 +96,26 @@ class FollowController extends Controller
             'Followers retrieved successfully'
         );
     }
+
+
+
+    /**
+     * Get users followed by a user.
+     *
+     * @param Request $request
+     * @param int $userId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFollowing(Request $request, $userId)
+    {
+        $perPage = $request->get('per_page', 15);
+        
+        // Get the following
+        $following = $this->followService->getFollowing($userId, $perPage);
+        
+        return $this->successResponse(
+            ['following' => $following],
+            'Following retrieved successfully'
+        );
+    }
 }
