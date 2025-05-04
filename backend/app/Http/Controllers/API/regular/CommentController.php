@@ -55,4 +55,31 @@ class CommentController extends Controller
             'Comment added successfully'
         );
     }
+
+
+    /**
+     * Get comments for a video.
+     *
+     * @param Request $request
+     * @param int $videoId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getVideoComments(Request $request, $videoId)
+    {
+        $perPage = $request->get('per_page', 15);
+        
+        // Check if video exists and is active
+        $video = \App\Models\Video::find($videoId);
+        if (!$video || !$video->is_active) {
+            return $this->errorResponse('Video not found or not available', 404);
+        }
+        
+        // Get comments
+        $comments = $this->commentService->getVideoComments($videoId, $perPage);
+        
+        return $this->successResponse(
+            ['comments' => $comments],
+            'Comments retrieved successfully'
+        );
+    }
 }
