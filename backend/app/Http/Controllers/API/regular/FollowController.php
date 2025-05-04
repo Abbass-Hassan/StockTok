@@ -23,5 +23,32 @@ class FollowController extends Controller
         $this->userService = $userService;
     }
     
-    // Methods will be added here
+    /**
+     * Follow a user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function followUser(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            'following_id' => 'required|integer|exists:users,id',
+        ]);
+        
+        $user = auth()->user();
+        $followingId = $request->following_id;
+        
+        // Follow the user
+        $result = $this->followService->followUser($user, $followingId);
+        
+        if (!$result['success']) {
+            return $this->errorResponse($result['message'], 400);
+        }
+        
+        return $this->successResponse(
+            ['follow' => $result['follow']],
+            'Successfully followed user'
+        );
+    }
 }
