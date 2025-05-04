@@ -90,4 +90,39 @@ class UserProfileController extends Controller
             'Profile updated successfully'
         );
     }
+
+
+    /**
+     * Get another user's public profile.
+     *
+     * @param int $userId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserProfile($userId)
+    {
+        $authUser = auth()->user();
+        
+        try {
+            // Get profile
+            $profile = $this->userService->getUserProfile($userId);
+            
+            // Add follower and following counts
+            $followerCount = $this->followService->getFollowerCount($userId);
+            $followingCount = $this->followService->getFollowingCount($userId);
+            
+            $profile['follower_count'] = $followerCount;
+            $profile['following_count'] = $followingCount;
+            
+            // Check if authenticated user is following this user
+            $isFollowing = $this->followService->isFollowing($authUser->id, $userId);
+            $profile['is_following'] = $isFollowing['is_following'];
+            
+            return $this->successResponse(
+                ['profile' => $profile],
+                'User profile retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse('User not found', 404);
+        }
+    }
 }
