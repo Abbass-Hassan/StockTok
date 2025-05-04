@@ -82,4 +82,34 @@ class CommentController extends Controller
             'Comments retrieved successfully'
         );
     }
+
+
+    /**
+     * Update a comment.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateComment(Request $request, $id)
+    {
+        // Validate request
+        $request->validate([
+            'content' => 'required|string|max:500',
+        ]);
+        
+        $user = auth()->user();
+        
+        // Update the comment
+        $result = $this->commentService->updateComment($user, $id, $request->content);
+        
+        if (!$result['success']) {
+            return $this->errorResponse($result['message'], 403);
+        }
+        
+        return $this->successResponse(
+            ['comment' => $result['comment']],
+            'Comment updated successfully'
+        );
+    }
 }
