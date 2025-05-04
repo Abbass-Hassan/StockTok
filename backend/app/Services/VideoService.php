@@ -113,6 +113,16 @@ class VideoService
         }
     }
 
+    /**
+     * Get a video by ID.
+     *
+     * @param int $id
+     * @return \App\Models\Video|null
+     */
+    public function getVideoById($id)
+    {
+        return Video::find($id);
+    }
     
     /**
      * Get videos uploaded by a specific user.

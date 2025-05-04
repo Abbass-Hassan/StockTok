@@ -48,15 +48,15 @@ class InvestmentController extends Controller
         // Check if user has sufficient balance
         $wallet = $this->walletService->getWallet($user);
         
-        if ($wallet->balance < $amount) {
+        if ($wallet['balance'] < $amount) {
             return $this->errorResponse(
                 'Insufficient funds. Please top up your wallet.',
                 400
             );
         }
         
-        // Check if video is active and available for investment
-        $video = $this->videoService->getVideoById($videoId);
+        // Check if video exists - use Video model directly since we don't have getVideoById
+        $video = \App\Models\Video::find($videoId);
         
         if (!$video || !$video->is_active) {
             return $this->errorResponse(
@@ -65,8 +65,8 @@ class InvestmentController extends Controller
             );
         }
         
-        // Process the investment
-        $result = $this->investmentService->createInvestment($user->id, $videoId, $amount);
+        // Process the investment - note we pass the user object directly
+        $result = $this->investmentService->investInVideo($user, $videoId, $amount);
         
         if (!$result['success']) {
             return $this->errorResponse($result['message'], 400);
@@ -77,8 +77,7 @@ class InvestmentController extends Controller
             'Investment created successfully'
         );
     }
-
-
+    
     /**
      * Get all investments made by the authenticated user.
      *
@@ -97,8 +96,7 @@ class InvestmentController extends Controller
             'Investments retrieved successfully'
         );
     }
-
-
+    
     /**
      * Get detailed information about a specific investment.
      *
@@ -109,28 +107,23 @@ class InvestmentController extends Controller
     {
         $user = auth()->user();
         
-        // Get the investment
-        $investment = $this->investmentService->getInvestmentById($id);
+        // Get the investment - using getInvestmentDetails instead of getInvestmentById
+        $investment = $this->investmentService->getInvestmentDetails($id);
         
         // Check if investment exists and belongs to the user
         if (!$investment || $investment->user_id !== $user->id) {
             return $this->errorResponse('Investment not found', 404);
         }
         
-        // Get related video information
-        $video = $this->videoService->getVideoById($investment->video_id);
-        
-        // Get performance metrics
-        $performance = $this->investmentService->calculateInvestmentPerformance($id);
+        // Calculate current returns for this investment
+        $performance = $this->investmentService->calculateReturns($id);
         
         return $this->successResponse([
             'investment' => $investment,
-            'video' => $video,
             'performance' => $performance
         ], 'Investment details retrieved successfully');
     }
-
-
+    
     /**
      * Get portfolio overview for the authenticated user.
      *
@@ -140,19 +133,39 @@ class InvestmentController extends Controller
     {
         $user = auth()->user();
         
-        // Get portfolio metrics
-        $portfolio = $this->investmentService->getPortfolioMetrics($user->id);
+        // Get all user's investments
+        $investments = $this->investmentService->getUserInvestments($user->id, 100);
         
-        // Get investment categories (how investments are distributed)
-        $categories = $this->investmentService->getInvestmentCategories($user->id);
+        // Calculate total invested
+        $totalInvested = $investments->sum('amount');
         
-        // Get performance over time
-        $performance = $this->investmentService->getPortfolioPerformance($user->id);
+        // Calculate current total value
+        $currentValue = $investments->sum('current_value');
+        
+        // Calculate return percentage
+        $returnPercentage = $totalInvested > 0 
+            ? (($currentValue - $totalInvested) / $totalInvested) * 100 
+            : 0;
+        
+        // Group investments by video creator
+        $byCreator = $investments->groupBy('video.user_id')
+            ->map(function($items) {
+                return [
+                    'creator_name' => $items->first()->video->user->name ?? 'Unknown Creator',
+                    'investment_count' => $items->count(),
+                    'total_invested' => $items->sum('amount'),
+                    'current_value' => $items->sum('current_value')
+                ];
+            });
         
         return $this->successResponse([
-            'portfolio' => $portfolio,
-            'categories' => $categories,
-            'performance' => $performance
+            'portfolio' => [
+                'total_invested' => $totalInvested,
+                'current_value' => $currentValue,
+                'return_percentage' => $returnPercentage,
+                'investment_count' => $investments->count()
+            ],
+            'by_creator' => $byCreator
         ], 'Portfolio overview retrieved successfully');
     }
 }
