@@ -61,6 +61,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [VideoDiscoveryController::class, 'getVideoDetails']);
             Route::get('/{id}/stream', [VideoDiscoveryController::class, 'streamVideo']);
         });
+
+        // Investment routes
+        Route::post('/investments', [InvestmentController::class, 'investInVideo']);
+        Route::get('/investments', [InvestmentController::class, 'getMyInvestments']);
+        Route::get('/investments/portfolio/overview', [InvestmentController::class, 'getPortfolioOverview']);
+        Route::get('/investments/{id}', [InvestmentController::class, 'getInvestmentDetails']);
         
     });
 });
