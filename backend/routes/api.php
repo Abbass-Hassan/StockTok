@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Creator\EarningsController;
 use App\Http\Controllers\Api\Creator\CreatorProfileController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\Regular\VideoDiscoveryController;
+use App\Http\Controllers\Api\Regular\InvestmentController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
