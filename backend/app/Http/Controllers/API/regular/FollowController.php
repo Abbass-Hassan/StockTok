@@ -159,4 +159,28 @@ class FollowController extends Controller
             'Follow status retrieved successfully'
         );
     }
+
+
+    /**
+     * Get follower and following counts for a user.
+     *
+     * @param int $userId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFollowCounts($userId)
+    {
+        // Get follower count
+        $followerCount = $this->followService->getFollowerCount($userId);
+        
+        // Get following count
+        $followingCount = $this->followService->getFollowingCount($userId);
+        
+        return $this->successResponse(
+            [
+                'follower_count' => $followerCount,
+                'following_count' => $followingCount
+            ],
+            'Follow counts retrieved successfully'
+        );
+    }
 }
