@@ -3,10 +3,12 @@ import {View, Text, StyleSheet, Alert} from 'react-native';
 import CustomTextInput from '../../components/common/TextInput';
 import CustomButton from '../../components/common/Button';
 import * as authApi from '../../api/auth';
+import {storeToken, storeUserData} from '../../utils/tokenStorage'; // Add this import
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -15,11 +17,23 @@ const Login = ({navigation}) => {
     }
 
     try {
+      setLoading(true); // Start loading
       const response = await authApi.login(email, password);
       console.log('Login successful:', response);
-      navigation.navigate('Home');
+
+      // Store token and user data
+      await storeToken(response.data.token);
+      await storeUserData(response.data.user);
+
+      // Navigate to Home and reset navigation stack
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Home'}],
+      });
     } catch (error) {
       Alert.alert('Error', 'Login failed');
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -40,7 +54,11 @@ const Login = ({navigation}) => {
         secureTextEntry={true}
       />
 
-      <CustomButton title="Login" onPress={handleLogin} />
+      <CustomButton
+        title="Login"
+        onPress={handleLogin}
+        loading={loading} // Update your Button component to accept this prop
+      />
     </View>
   );
 };

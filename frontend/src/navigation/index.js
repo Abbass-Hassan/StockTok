@@ -2,7 +2,9 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../screens/Auth/Login';
-import HomeScreen from '../screens/Feed'; // Import the Home screen
+import HomeScreen from '../screens/Feed';
+import UploadVideo from '../screens/Creator/UploadVideo';
+import MyVideos from '../screens/Creator/MyVideos';
 
 const Stack = createStackNavigator();
 
@@ -20,7 +22,21 @@ const Navigation = () => {
           component={HomeScreen}
           options={{
             title: 'StockTok',
-            headerLeft: null,
+            headerBackVisible: false, // Prevents going back to login
+          }}
+        />
+        <Stack.Screen
+          name="UploadVideo"
+          component={UploadVideo}
+          options={{
+            title: 'Upload Video',
+          }}
+        />
+        <Stack.Screen
+          name="MyVideos"
+          component={MyVideos}
+          options={{
+            title: 'My Videos',
           }}
         />
       </Stack.Navigator>
