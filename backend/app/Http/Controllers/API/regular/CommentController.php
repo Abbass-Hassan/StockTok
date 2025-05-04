@@ -163,4 +163,25 @@ class CommentController extends Controller
             'Comment replies retrieved successfully'
         );
     }
+
+
+    /**
+     * Get comments by the authenticated user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserComments(Request $request)
+    {
+        $user = auth()->user();
+        $perPage = $request->get('per_page', 15);
+        
+        // Get user comments
+        $comments = $this->commentService->getUserComments($user->id, $perPage);
+        
+        return $this->successResponse(
+            ['comments' => $comments],
+            'User comments retrieved successfully'
+        );
+    }
 }
