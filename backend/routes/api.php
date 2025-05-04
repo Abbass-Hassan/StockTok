@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Creator\CreatorProfileController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\Regular\VideoDiscoveryController;
 use App\Http\Controllers\Api\Regular\InvestmentController;
+use App\Http\Controllers\Api\Regular\CommentController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
@@ -28,6 +29,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/transactions', [WalletController::class, 'getTransactionHistory']);
         Route::get('/summary', [WalletController::class, 'getWalletSummary']);
     });
+    
+    // Common functionality routes (accessible by both regular users and creators)
+    Route::prefix('comments')->group(function () {
+        Route::post('/', [CommentController::class, 'addComment']);
+        Route::put('/{id}', [CommentController::class, 'updateComment']);
+        Route::delete('/{id}', [CommentController::class, 'deleteComment']);
+        Route::get('/{id}/replies', [CommentController::class, 'getCommentReplies']);
+        Route::get('/user', [CommentController::class, 'getUserComments']);
+    });
+    
+    // Video comments route
+    Route::get('/videos/{videoId}/comments', [CommentController::class, 'getVideoComments']);
 
     // Creator-specific routes
     Route::middleware('creator')->prefix('creator')->group(function () {
@@ -68,6 +81,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/investments', [InvestmentController::class, 'getMyInvestments']);
         Route::get('/investments/portfolio/overview', [InvestmentController::class, 'getPortfolioOverview']);
         Route::get('/investments/{id}', [InvestmentController::class, 'getInvestmentDetails']);
-        
     });
 });
