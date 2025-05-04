@@ -91,7 +91,13 @@ class AuthService
     {
         // Get the appropriate user type
         $userTypeId = null;
-        if (isset($data['user_type'])) {
+        
+        // Directly use user_type_id if provided
+        if (isset($data['user_type_id'])) {
+            $userTypeId = $data['user_type_id'];
+        }
+        // Fall back to user_type conversion if provided
+        elseif (isset($data['user_type'])) {
             $typeName = $data['user_type'] === 'Creator' ? 'creator' : 'regular';
             $userType = UserType::where('type_name', $typeName)->first();
             $userTypeId = $userType->id;
@@ -107,7 +113,7 @@ class AuthService
         
         // Update user profile
         $user->update([
-            'username' => $data['username'],
+            'username' => $data['username'] ?? $user->username, // Default to existing username if not provided
             'name' => $data['name'],
             'phone' => $data['phone'] ?? null,
             'bio' => $data['bio'] ?? null,
@@ -132,8 +138,8 @@ class AuthService
         // Generate password reset token
         $token = \Illuminate\Support\Str::random(60);
         
-        // Store the token
-        \DB::table('password_resets')->updateOrInsert(
+        // Store the token using the table name from config
+        \DB::table(config('auth.passwords.users.table'))->updateOrInsert(
             ['email' => $email],
             [
                 'email' => $email,

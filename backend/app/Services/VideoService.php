@@ -77,32 +77,52 @@ class VideoService
 
     /**
      * Stream a video file.
+     *
+     * @param int $videoId
+     * @return array|false
      */
     public function streamVideo($videoId)
     {
-        $video = Video::findOrFail($videoId);
-        
-        // Get the file path from the URL
-        $path = str_replace('/storage/', '', parse_url($video->video_url, PHP_URL_PATH));
-        $fullPath = storage_path('app/public/' . $path);
-        
-        // Check if file exists
-        if (!file_exists($fullPath)) {
+        try {
+            $video = Video::findOrFail($videoId);
+            
+            // Get the file path from the URL
+            $path = str_replace('/storage/', '', $video->video_url);
+            $fullPath = storage_path('app/public/' . $path);
+            
+            // Check if file exists
+            if (!file_exists($fullPath)) {
+                return false;
+            }
+            
+            // Get file info
+            $fileSize = filesize($fullPath);
+            $fileName = basename($fullPath);
+            $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+            
+            // Return file information
+            return [
+                'path' => $fullPath,
+                'name' => $fileName,
+                'size' => $fileSize,
+                'extension' => $extension
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Error in streamVideo: ' . $e->getMessage());
             return false;
         }
-        
-        // Get file info
-        $fileSize = filesize($fullPath);
-        $fileName = basename($fullPath);
-        
-        // Stream the file
-        return [
-            'path' => $fullPath,
-            'name' => $fileName,
-            'size' => $fileSize
-        ];
     }
 
+    /**
+     * Get a video by ID.
+     *
+     * @param int $id
+     * @return \App\Models\Video|null
+     */
+    public function getVideoById($id)
+    {
+        return Video::find($id);
+    }
     
     /**
      * Get videos uploaded by a specific user.

@@ -70,6 +70,7 @@ class UserService
         }
         
         $user->update($updateData);
+        $user->refresh();
         
         return $user;
     }

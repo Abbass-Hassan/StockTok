@@ -163,4 +163,51 @@ class WalletService
             'current_balance' => $wallet->balance
         ];
     }
+
+
+    /**
+     * Get earnings grouped by month
+     */
+    public function getMonthlyEarnings($user, $months = 6)
+    {
+        $wallet = $user->wallet;
+        $startDate = now()->subMonths($months)->startOfMonth();
+        
+        // Get creator earnings transactions grouped by month
+        $monthlyEarnings = Transaction::where('wallet_id', $wallet->id)
+            ->where('transaction_type', 'creator_earning')
+            ->where('created_at', '>=', $startDate)
+            ->select(
+                DB::raw('SUM(amount) as total'),
+                DB::raw('COUNT(*) as count'),
+                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month')
+            )
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+        
+        // Create a result array with all months (including those with zero earnings)
+        $results = [];
+        for ($i = 0; $i < $months; $i++) {
+            $monthKey = now()->subMonths($i)->format('Y-m');
+            $monthName = now()->subMonths($i)->format('F Y');
+            
+            $results[$monthKey] = [
+                'month' => $monthName,
+                'month_key' => $monthKey,
+                'earnings' => $monthlyEarnings->has($monthKey) 
+                    ? $monthlyEarnings[$monthKey]->total 
+                    : 0,
+                'transactions' => $monthlyEarnings->has($monthKey) 
+                    ? $monthlyEarnings[$monthKey]->count 
+                    : 0
+            ];
+        }
+        
+        // Sort by month (newest first)
+        krsort($results);
+        
+        return array_values($results);
+    }
 }

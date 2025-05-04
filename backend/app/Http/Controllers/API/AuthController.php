@@ -1,83 +1,148 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\UserProfileUpdateRequest;
 use App\Services\AuthService;
 use App\Traits\ApiResponse;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserProfileUpdateRequest;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     use ApiResponse;
-
+    
     protected $authService;
-
+    
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
     }
 
+
     /**
      * Register a new user.
+     *
+     * @param RegisterRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequest $request)
     {
-        $validatedData = $request->validated();
-        $user = $this->authService->register($validatedData);
-
-        return $this->successResponse(
-            ['user' => $user], 
-            'User registered successfully'
-        );
+        // Use validated data from the request
+        $user = $this->authService->register($request->validated());
+        
+        // Generate token
+        $token = $user->createToken('auth_token')->plainTextToken;
+        
+        return $this->successResponse([
+            'user' => $user,
+            'token' => $token
+        ], 'User registered successfully', 201);
     }
 
-    /**
-     * Complete user profile after registration.
-     */
-    public function completeProfile(UserProfileUpdateRequest $request)
-    {
-        $validatedData = $request->validated();
-        $user = $this->authService->completeProfile(auth()->user(), $validatedData);
-
-        return $this->successResponse(
-            ['user' => $user], 
-            'Profile updated successfully'
-        );
-    }
 
     /**
-     * Login a user.
+     * Log in a user.
+     *
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(LoginRequest $request)
     {
-        $validatedData = $request->validated();
+        // Use validated data from the request
+        $result = $this->authService->login($request->validated());
         
-        $loginData = $this->authService->login($validatedData);
-        
-        if (!$loginData) {
+        if (!$result) {
             return $this->errorResponse('Invalid credentials', 401);
         }
-
-        return $this->successResponse(
-            $loginData, 
-            'Login successful'
-        );
+        
+        return $this->successResponse([
+            'user' => $result['user'],
+            'token' => $result['token']
+        ], 'Login successful');
     }
 
+
     /**
-     * Logout the authenticated user.
+     * Log out a user.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function logout(Request $request)
+    public function logout()
     {
         $this->authService->logout();
         
-        return $this->successResponse(
-            null, 
-            'Logged out successfully'
-        );
+        return $this->successResponse(null, 'Logged out successfully');
     }
+
+
+    /**
+     * Complete user profile after registration.
+     *
+     * @param UserProfileUpdateRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function completeProfile(UserProfileUpdateRequest $request)
+    {
+        // Use validated data from the request
+        $user = $this->authService->completeProfile(auth()->user(), $request->validated());
+        
+        return $this->successResponse([
+            'user' => $user
+        ], 'Profile completed successfully');
+    }
+
+
+    /**
+     * Request password reset.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        
+        $result = $this->authService->resetPassword($request->email);
+        
+        if (!$result) {
+            return $this->errorResponse('User not found', 404);
+        }
+        
+        return $this->successResponse($result, 'Password reset link sent');
+    }
+
+
+    /**
+     * Update user password.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+            'new_password_confirmation' => 'required'
+        ]);
+        
+        $result = $this->authService->updatePassword(
+            auth()->user(),
+            $request->old_password,
+            $request->new_password
+        );
+        
+        if (!$result) {
+            return $this->errorResponse('Old password is incorrect', 400);
+        }
+        
+        return $this->successResponse(null, 'Password updated successfully');
+    }
+
+
 }
