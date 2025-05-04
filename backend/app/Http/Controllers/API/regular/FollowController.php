@@ -51,4 +51,28 @@ class FollowController extends Controller
             'Successfully followed user'
         );
     }
+
+
+    /**
+     * Unfollow a user.
+     *
+     * @param int $followingId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unfollowUser($followingId)
+    {
+        $user = auth()->user();
+        
+        // Unfollow the user
+        $result = $this->followService->unfollowUser($user, $followingId);
+        
+        if (!$result['success']) {
+            return $this->errorResponse($result['message'], 400);
+        }
+        
+        return $this->successResponse(
+            [],
+            $result['message']
+        );
+    }
 }
