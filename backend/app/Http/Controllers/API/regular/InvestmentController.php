@@ -97,4 +97,36 @@ class InvestmentController extends Controller
             'Investments retrieved successfully'
         );
     }
+
+
+    /**
+     * Get detailed information about a specific investment.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInvestmentDetails($id)
+    {
+        $user = auth()->user();
+        
+        // Get the investment
+        $investment = $this->investmentService->getInvestmentById($id);
+        
+        // Check if investment exists and belongs to the user
+        if (!$investment || $investment->user_id !== $user->id) {
+            return $this->errorResponse('Investment not found', 404);
+        }
+        
+        // Get related video information
+        $video = $this->videoService->getVideoById($investment->video_id);
+        
+        // Get performance metrics
+        $performance = $this->investmentService->calculateInvestmentPerformance($id);
+        
+        return $this->successResponse([
+            'investment' => $investment,
+            'video' => $video,
+            'performance' => $performance
+        ], 'Investment details retrieved successfully');
+    }
 }
