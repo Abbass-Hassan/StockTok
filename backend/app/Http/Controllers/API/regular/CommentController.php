@@ -112,4 +112,28 @@ class CommentController extends Controller
             'Comment updated successfully'
         );
     }
+
+
+    /**
+     * Delete a comment.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteComment($id)
+    {
+        $user = auth()->user();
+        
+        // Delete the comment
+        $result = $this->commentService->deleteComment($user, $id);
+        
+        if (!$result['success']) {
+            return $this->errorResponse($result['message'], 403);
+        }
+        
+        return $this->successResponse(
+            [],
+            'Comment deleted successfully'
+        );
+    }
 }
