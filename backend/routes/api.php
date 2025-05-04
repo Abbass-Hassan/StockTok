@@ -5,8 +5,7 @@ use App\Http\Controllers\Api\Creator\VideoManagementController;
 use App\Http\Controllers\Api\Creator\EarningsController;
 use App\Http\Controllers\Api\Creator\CreatorProfileController;
 use App\Http\Controllers\Api\WalletController;
-use App\Http\Controllers\Api\VideoDiscoveryController;
-
+use App\Http\Controllers\Api\Regular\VideoDiscoveryController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
@@ -63,6 +62,5 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}/stream', [VideoDiscoveryController::class, 'streamVideo']);
         });
         
-        // Other regular user-specific routes will be added here
     });
 });

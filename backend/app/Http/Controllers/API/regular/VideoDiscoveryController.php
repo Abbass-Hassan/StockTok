@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Regular;
 
 use App\Http\Controllers\Controller;
 use App\Models\Video;
@@ -100,17 +100,32 @@ class VideoDiscoveryController extends Controller
      */
     public function streamVideo($id)
     {
-        $videoInfo = $this->videoService->streamVideo($id);
-        
-        if (!$videoInfo) {
-            return $this->errorResponse('Video not found or cannot be streamed', 404);
+        try {
+            $videoInfo = $this->videoService->streamVideo($id);
+            
+            if (!$videoInfo) {
+                return $this->errorResponse('Video not found or cannot be streamed', 404);
+            }
+            
+            // Determine content type based on extension
+            $contentType = 'video/mp4'; // Default
+            if (strtolower($videoInfo['extension']) === 'mov') {
+                $contentType = 'video/quicktime';
+            }
+            
+            // Set headers for streaming
+            $headers = [
+                'Content-Type' => $contentType,
+                'Content-Disposition' => 'inline; filename="' . $videoInfo['name'] . '"',
+                'Accept-Ranges' => 'bytes',
+                'Content-Length' => $videoInfo['size']
+            ];
+            
+            // Return file response
+            return response()->file($videoInfo['path'], $headers);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error streaming video: ' . $e->getMessage(), 500);
         }
-        
-        // Return a streaming response
-        return response()->file($videoInfo['path'], [
-            'Content-Type' => 'video/mp4',
-            'Content-Disposition' => 'inline; filename="' . $videoInfo['name'] . '"'
-        ]);
     }
 
 
