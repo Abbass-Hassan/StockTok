@@ -24,5 +24,28 @@ class UserProfileController extends Controller
         $this->followService = $followService;
     }
     
-    // Methods will be added here
+    /**
+     * Get authenticated user's profile.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMyProfile()
+    {
+        $user = auth()->user();
+        
+        // Get detailed profile
+        $profile = $this->userService->getUserProfile($user->id);
+        
+        // Add follower and following counts
+        $followerCount = $this->followService->getFollowerCount($user->id);
+        $followingCount = $this->followService->getFollowingCount($user->id);
+        
+        $profile['follower_count'] = $followerCount;
+        $profile['following_count'] = $followingCount;
+        
+        return $this->successResponse(
+            ['profile' => $profile],
+            'Profile retrieved successfully'
+        );
+    }
 }
