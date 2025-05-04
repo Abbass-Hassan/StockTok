@@ -129,4 +129,30 @@ class InvestmentController extends Controller
             'performance' => $performance
         ], 'Investment details retrieved successfully');
     }
+
+
+    /**
+     * Get portfolio overview for the authenticated user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getPortfolioOverview()
+    {
+        $user = auth()->user();
+        
+        // Get portfolio metrics
+        $portfolio = $this->investmentService->getPortfolioMetrics($user->id);
+        
+        // Get investment categories (how investments are distributed)
+        $categories = $this->investmentService->getInvestmentCategories($user->id);
+        
+        // Get performance over time
+        $performance = $this->investmentService->getPortfolioPerformance($user->id);
+        
+        return $this->successResponse([
+            'portfolio' => $portfolio,
+            'categories' => $categories,
+            'performance' => $performance
+        ], 'Portfolio overview retrieved successfully');
+    }
 }
