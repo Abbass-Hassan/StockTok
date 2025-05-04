@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Regular\VideoDiscoveryController;
 use App\Http\Controllers\Api\Regular\InvestmentController;
 use App\Http\Controllers\Api\Regular\CommentController;
 use App\Http\Controllers\Api\Regular\FollowController;
+use App\Http\Controllers\Api\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
@@ -49,6 +50,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user/{userId}/following', [FollowController::class, 'getFollowing']);
         Route::get('/user/{followingId}/status', [FollowController::class, 'isFollowing']);
         Route::get('/user/{userId}/counts', [FollowController::class, 'getFollowCounts']);
+    });
+    
+    // User profile routes (accessible by both regular users and creators)
+    Route::prefix('profile')->group(function () {
+        Route::get('/me', [UserProfileController::class, 'getMyProfile']);
+        Route::put('/me', [UserProfileController::class, 'updateMyProfile']);
+        Route::get('/user/{userId}', [UserProfileController::class, 'getUserProfile']);
+        Route::get('/username/{username}', [UserProfileController::class, 'getUserByUsername']);
     });
     
     // Video comments route
