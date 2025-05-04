@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\Regular\VideoDiscoveryController;
 use App\Http\Controllers\Api\Regular\InvestmentController;
 use App\Http\Controllers\Api\Regular\CommentController;
+use App\Http\Controllers\Api\Regular\FollowController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
@@ -37,6 +38,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [CommentController::class, 'deleteComment']);
         Route::get('/{id}/replies', [CommentController::class, 'getCommentReplies']);
         Route::get('/user', [CommentController::class, 'getUserComments']);
+    });
+    
+    // Follow routes (accessible by both regular users and creators)
+    Route::prefix('follows')->group(function () {
+        Route::post('/', [FollowController::class, 'followUser']);
+        Route::delete('/{followingId}', [FollowController::class, 'unfollowUser']);
+        Route::get('/following', [FollowController::class, 'getMyFollowing']);
+        Route::get('/user/{userId}/followers', [FollowController::class, 'getFollowers']);
+        Route::get('/user/{userId}/following', [FollowController::class, 'getFollowing']);
+        Route::get('/user/{followingId}/status', [FollowController::class, 'isFollowing']);
+        Route::get('/user/{userId}/counts', [FollowController::class, 'getFollowCounts']);
     });
     
     // Video comments route
