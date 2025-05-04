@@ -139,4 +139,24 @@ class FollowController extends Controller
             'Following retrieved successfully'
         );
     }
+
+
+    /**
+     * Check if the authenticated user is following another user.
+     *
+     * @param int $followingId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function isFollowing($followingId)
+    {
+        $user = auth()->user();
+        
+        // Check if following
+        $result = $this->followService->isFollowing($user->id, $followingId);
+        
+        return $this->successResponse(
+            $result,
+            'Follow status retrieved successfully'
+        );
+    }
 }
