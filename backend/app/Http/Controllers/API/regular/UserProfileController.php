@@ -125,4 +125,42 @@ class UserProfileController extends Controller
             return $this->errorResponse('User not found', 404);
         }
     }
+
+
+    /**
+     * Get user by username.
+     *
+     * @param string $username
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserByUsername($username)
+    {
+        $authUser = auth()->user();
+        
+        try {
+            // Get user by username
+            $user = $this->userService->getUserByUsername($username);
+            
+            // Get profile
+            $profile = $this->userService->getUserProfile($user->id);
+            
+            // Add follower and following counts
+            $followerCount = $this->followService->getFollowerCount($user->id);
+            $followingCount = $this->followService->getFollowingCount($user->id);
+            
+            $profile['follower_count'] = $followerCount;
+            $profile['following_count'] = $followingCount;
+            
+            // Check if authenticated user is following this user
+            $isFollowing = $this->followService->isFollowing($authUser->id, $user->id);
+            $profile['is_following'] = $isFollowing['is_following'];
+            
+            return $this->successResponse(
+                ['profile' => $profile],
+                'User profile retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse('User not found', 404);
+        }
+    }
 }
