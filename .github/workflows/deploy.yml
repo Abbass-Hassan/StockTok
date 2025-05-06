@@ -8,15 +8,22 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_KEY }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set environment variables
         id: set-env
@@ -27,16 +34,20 @@ jobs:
             echo "ENV_TAG=staging" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build Docker image
-        working-directory: backend
-        run: |
-          docker build --build-arg ENV=${{ steps.set-env.outputs.ENV_TAG }} -t ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:${{ steps.set-env.outputs.ENV_TAG }} .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:${{ steps.set-env.outputs.ENV_TAG }} ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:latest-${{ steps.set-env.outputs.ENV_TAG }}
+          # Convert repository name to lowercase for GHCR
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "REPO_LOWER=${REPO_LOWER}" >> $GITHUB_OUTPUT
 
-      - name: Push Docker images
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:${{ steps.set-env.outputs.ENV_TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:latest-${{ steps.set-env.outputs.ENV_TAG }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ghcr.io/${{ steps.set-env.outputs.REPO_LOWER }}/stocktok_laravel:${{ steps.set-env.outputs.ENV_TAG }}
+            ghcr.io/${{ steps.set-env.outputs.REPO_LOWER }}/stocktok_laravel:latest-${{ steps.set-env.outputs.ENV_TAG }}
+          build-args: |
+            ENV=${{ steps.set-env.outputs.ENV_TAG }}
 
   deploy-production:
     needs: build-and-push
@@ -57,17 +68,21 @@ jobs:
             cd ~/stocktok
 
             # Create or update the .env file
-            echo "IMAGE_TAG=production" > .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD || 'Abbas297}}" >> .env
+            echo "GITHUB_REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" > .env
+            echo "IMAGE_TAG=production" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             echo "DB_PORT=3306" >> .env
 
             # Download the latest docker-compose file
             curl -o docker-compose.yml https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.yml
 
+            # Login to GitHub Container Registry
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
             # Remove old containers and images
             sudo docker-compose down
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:production || true
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:latest-production || true
+            sudo docker rmi ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/stocktok_laravel:production || true
+            sudo docker rmi ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/stocktok_laravel:latest-production || true
 
             # Pull and start new containers
             sudo docker-compose pull
@@ -92,17 +107,21 @@ jobs:
             cd ~/stocktok
 
             # Create or update the .env file
-            echo "IMAGE_TAG=staging" > .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD || 'Abbas297}}" >> .env
+            echo "GITHUB_REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" > .env
+            echo "IMAGE_TAG=staging" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             echo "DB_PORT=3307" >> .env  # Using different port for staging
 
             # Download the latest docker-compose file
             curl -o docker-compose.yml https://raw.githubusercontent.com/${{ github.repository }}/staging/docker-compose.yml
 
+            # Login to GitHub Container Registry
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
             # Remove old containers and images
             sudo docker-compose down
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:staging || true
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/stocktok_laravel:latest-staging || true
+            sudo docker rmi ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/stocktok_laravel:staging || true
+            sudo docker rmi ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/stocktok_laravel:latest-staging || true
 
             # Pull and start new containers
             sudo docker-compose pull
