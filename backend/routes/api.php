@@ -71,6 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/videos/{id}', [VideoManagementController::class, 'getVideoDetails']);
         Route::put('/videos/{id}', [VideoManagementController::class, 'updateVideo']);
         Route::delete('/videos/{id}', [VideoManagementController::class, 'deleteVideo']);
+        Route::get('/videos/{id}/stream', [VideoManagementController::class, 'streamVideo']);
+
 
         // Earnings routes
         Route::get('/earnings/dashboard', [EarningsController::class, 'getDashboard']);
