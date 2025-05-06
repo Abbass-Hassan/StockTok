@@ -86,13 +86,23 @@ jobs:
               echo "Installing Docker..."
               sudo apt-get update
               sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-              sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+              echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
               sudo apt-get update
               sudo apt-get install -y docker-ce docker-ce-cli containerd.io
               sudo systemctl enable docker
               sudo systemctl start docker
+              
+              # Add current user to docker group to avoid permission issues
+              echo "Adding user to docker group..."
               sudo usermod -aG docker $USER
+              
+              # Create docker group if it doesn't exist
+              sudo groupadd -f docker
+              
+              # Set proper permissions for Docker socket
+              sudo chown root:docker /var/run/docker.sock
+              sudo chmod 666 /var/run/docker.sock
             fi
 
             # Install Docker Compose if not installed
@@ -100,7 +110,7 @@ jobs:
               echo "Installing Docker Compose..."
               sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
-              sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+              sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
             fi
 
             # Create application directory
@@ -123,13 +133,19 @@ jobs:
 
             # Login to GitHub Container Registry
             echo "Logging in to GitHub Container Registry..."
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
 
-            # Pull and start containers
+            # Set Docker socket permissions again right before running Docker commands
+            sudo chmod 666 /var/run/docker.sock
+
+            # Stop and remove existing containers
+            echo "Stopping any existing containers..."
+            sudo docker-compose down || true
+
+            # Pull and start containers with sudo
             echo "Pulling and starting containers..."
-            docker-compose down || true
-            docker-compose pull
-            docker-compose up -d
+            sudo docker-compose pull
+            sudo docker-compose up -d
 
             # Show container status
-            docker-compose ps
+            sudo docker-compose ps
