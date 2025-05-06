@@ -155,6 +155,10 @@ jobs:
             echo "Running database migrations..."
             sudo docker exec stocktok_app_${{ steps.set-env.outputs.ENV_TAG }} php artisan migrate --force
 
+            # Run only the UserTypeSeeder
+            echo "Running UserTypeSeeder..."
+            sudo docker exec stocktok_app_${{ steps.set-env.outputs.ENV_TAG }} php artisan db:seed --class=UserTypeSeeder --force
+
             # Clear Laravel cache
             echo "Clearing Laravel cache..."
             sudo docker exec stocktok_app_${{ steps.set-env.outputs.ENV_TAG }} php artisan optimize:clear
