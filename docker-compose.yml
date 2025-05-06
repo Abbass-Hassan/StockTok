@@ -2,7 +2,7 @@ version: "3"
 
 services:
   app:
-    image: abbas17891/stocktok_laravel:${IMAGE_TAG:-latest}
+    image: ghcr.io/${GITHUB_REPO_LOWER}/stocktok_laravel:${IMAGE_TAG:-latest}
     container_name: stocktok_app_${IMAGE_TAG:-latest}
     ports:
       - "8000:8000"
@@ -12,7 +12,7 @@ services:
       - DB_PORT=3306
       - DB_DATABASE=stocktok_${IMAGE_TAG:-latest}
       - DB_USERNAME=root
-      - DB_PASSWORD=${DB_PASSWORD:-Abbas297$}
+      - DB_PASSWORD=${DB_PASSWORD:-secretpassword}
       - APP_ENV=${IMAGE_TAG:-production}
     restart: always
     command: >
@@ -35,7 +35,7 @@ services:
     ports:
       - "${DB_PORT:-3306}:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-Abbas297$}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-secretpassword}
       - MYSQL_DATABASE=stocktok_${IMAGE_TAG:-latest}
     restart: always
 
