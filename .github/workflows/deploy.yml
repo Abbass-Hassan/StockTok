@@ -48,6 +48,7 @@ jobs:
             ghcr.io/${{ steps.set-env.outputs.REPO_LOWER }}/stocktok_laravel:latest-${{ steps.set-env.outputs.ENV_TAG }}
           build-args: |
             ENV=${{ steps.set-env.outputs.ENV_TAG }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
 
   deploy-production:
     needs: build-and-push
