@@ -147,5 +147,22 @@ jobs:
             sudo docker-compose pull
             sudo docker-compose up -d
 
+            # Wait for containers to start properly
+            echo "Waiting for containers to initialize..."
+            sleep 10
+
+            # Run migrations
+            echo "Running database migrations..."
+            sudo docker exec stocktok_app_${{ steps.set-env.outputs.ENV_TAG }} php artisan migrate --force
+
+            # Clear Laravel cache
+            echo "Clearing Laravel cache..."
+            sudo docker exec stocktok_app_${{ steps.set-env.outputs.ENV_TAG }} php artisan optimize:clear
+
             # Show container status
+            echo "Container status:"
             sudo docker-compose ps
+
+            # Check for Laravel errors
+            echo "Checking for Laravel errors:"
+            sudo docker exec stocktok_app_${{ steps.set-env.outputs.ENV_TAG }} tail -n 20 /app/storage/logs/laravel.log || true
