@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Creator;
+namespace App\Http\Controllers\Api\creator;
 
 use App\Http\Controllers\Controller;
 use App\Services\VideoService;
