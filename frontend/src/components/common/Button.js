@@ -9,7 +9,7 @@ import {
 const CustomButton = ({title, onPress, loading = false, style, textStyle}) => {
   return (
     <TouchableOpacity
-      style={[styles.button, style]}
+      style={[styles.button, loading && styles.buttonDisabled, style]}
       onPress={onPress}
       disabled={loading}
       activeOpacity={0.85}>
@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+  },
+  buttonDisabled: {
+    backgroundColor: '#4DA599',
   },
   buttonText: {
     color: '#FFFFFF',
