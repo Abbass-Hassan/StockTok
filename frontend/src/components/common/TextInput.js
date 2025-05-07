@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {TextInput, StyleSheet, View} from 'react-native';
 
 const CustomTextInput = ({
@@ -11,9 +11,16 @@ const CustomTextInput = ({
   autoCapitalize,
   error,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View style={[styles.inputContainer, style]}>
-      <View style={styles.inputWrapper}>
+      <View
+        style={[
+          styles.inputWrapper,
+          isFocused && styles.inputFocused,
+          error && styles.inputError,
+        ]}>
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -23,6 +30,8 @@ const CustomTextInput = ({
           secureTextEntry={secureTextEntry}
           keyboardType={keyboardType || 'default'}
           autoCapitalize={autoCapitalize || 'none'}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
       </View>
     </View>
@@ -48,6 +57,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#333333',
+  },
+  inputFocused: {
+    borderColor: '#00796B',
+    borderWidth: 1,
+  },
+  inputError: {
+    borderColor: '#FF5252',
   },
 });
 
