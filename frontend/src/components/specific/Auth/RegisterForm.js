@@ -12,9 +12,37 @@ const RegisterForm = ({
   setConfirmPassword,
   loading,
   handleRegister,
+  emailError,
+  passwordError,
+  confirmPasswordError,
 }) => {
   return (
-    <View style={styles.container}>{/* Form elements will go here */}</View>
+    <View style={styles.container}>
+      <CustomTextInput
+        placeholder="Enter Your Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        error={emailError}
+      />
+
+      <CustomTextInput
+        placeholder="Enter Your Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={true}
+        error={passwordError}
+      />
+
+      <CustomTextInput
+        placeholder="Confirm Your Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry={true}
+        error={confirmPasswordError}
+      />
+    </View>
   );
 };
 
