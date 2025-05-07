@@ -33,6 +33,14 @@ const Login = ({navigation}) => {
     }
   };
 
+  const handleForgotPassword = () => {
+    navigation.navigate('ForgotPassword');
+  };
+
+  const handleSignUp = () => {
+    navigation.navigate('SignUp');
+  };
+
   return null; // Placeholder return
 };
 
