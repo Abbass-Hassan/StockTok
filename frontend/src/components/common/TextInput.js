@@ -51,6 +51,8 @@ const CustomTextInput = ({
           </TouchableOpacity>
         )}
       </View>
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
 };
@@ -88,6 +90,12 @@ const styles = StyleSheet.create({
   eyeText: {
     color: '#00796B',
     fontSize: 16,
+  },
+  errorText: {
+    color: '#FF5252',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
   },
 });
 
