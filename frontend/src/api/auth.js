@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Update with your local server URL
-const API_URL = 'http://localhost:8000/api';
+const API_URL = 'http://127.0.0.1:8000/api';
 
 export const login = async (email, password) => {
   try {

@@ -2,7 +2,7 @@ import axios from 'axios';
 import {getToken} from '../utils/tokenStorage';
 
 // Use the same API_URL as in auth.js
-const API_URL = 'http://localhost:8000/api';
+const API_URL = 'http://127.0.0.1:8000/api';
 
 // Function to upload a video
 export const uploadVideo = async (
