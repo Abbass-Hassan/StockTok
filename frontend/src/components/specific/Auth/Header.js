@@ -11,6 +11,8 @@ const Header = ({title, subtitle}) => {
           resizeMode="contain"
         />
       </View>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.subtitle}>{subtitle}</Text>
     </View>
   );
 };
@@ -27,6 +29,17 @@ const styles = StyleSheet.create({
   logo: {
     width: 110,
     height: 110,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#757575',
+    textAlign: 'center',
   },
 });
 
