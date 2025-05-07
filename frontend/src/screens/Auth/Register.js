@@ -78,6 +78,14 @@ const Register = ({navigation}) => {
     }
   };
 
+  const handleLogin = () => {
+    navigation.navigate('Login');
+  };
+
+  const handleForgotPassword = () => {
+    navigation.navigate('ForgotPassword');
+  };
+
   return null; // Placeholder return
 };
 
