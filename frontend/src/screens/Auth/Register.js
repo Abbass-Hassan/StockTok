@@ -3,6 +3,13 @@ import {Alert} from 'react-native';
 import * as authApi from '../../api/auth';
 import {storeToken, storeUserData} from '../../utils/tokenStorage';
 
+// Import components
+import AuthLayout from '../../components/specific/Auth/AuthLayout';
+import Header from '../../components/specific/Auth/Header';
+import RegisterForm from '../../components/specific/Auth/RegisterForm';
+import SocialLogin from '../../components/specific/Auth/SocialLogin';
+import LoginPrompt from '../../components/specific/Auth/LoginPrompt';
+
 const Register = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -86,7 +93,28 @@ const Register = ({navigation}) => {
     navigation.navigate('ForgotPassword');
   };
 
-  return null; // Placeholder return
+  return (
+    <AuthLayout
+      header={<Header title="Create Account" subtitle="Join StockTok today" />}
+      form={
+        <RegisterForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          confirmPassword={confirmPassword}
+          setConfirmPassword={setConfirmPassword}
+          loading={loading}
+          handleRegister={handleRegister}
+          emailError={emailError}
+          passwordError={passwordError}
+          confirmPasswordError={confirmPasswordError}
+        />
+      }
+      socialSection={<SocialLogin isSignUp={true} />}
+      bottomPrompt={<LoginPrompt onPress={handleLogin} />}
+    />
+  );
 };
 
 export default Register;
