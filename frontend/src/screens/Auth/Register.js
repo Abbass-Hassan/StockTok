@@ -106,6 +106,7 @@ const Register = ({navigation}) => {
           setConfirmPassword={setConfirmPassword}
           loading={loading}
           handleRegister={handleRegister}
+          handleForgotPassword={handleForgotPassword}
           emailError={emailError}
           passwordError={passwordError}
           confirmPasswordError={confirmPasswordError}
