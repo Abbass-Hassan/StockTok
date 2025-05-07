@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Regular;
+namespace App\Http\Controllers\Api\regular;
 
 use App\Http\Controllers\Controller;
 use App\Services\FollowService;

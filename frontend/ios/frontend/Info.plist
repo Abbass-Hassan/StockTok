@@ -26,11 +26,18 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
 		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>13.37.224.245</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
@@ -49,10 +56,10 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
-<string>StockTok needs access to your photo library to select videos for upload</string>
-<key>NSCameraUsageDescription</key>
-<string>StockTok needs access to your camera to record videos for upload</string>
-<key>NSMicrophoneUsageDescription</key>
-<string>StockTok needs access to your microphone to record videos with sound</string>
+	<string>StockTok needs access to your photo library to select videos for upload</string>
+	<key>NSCameraUsageDescription</key>
+	<string>StockTok needs access to your camera to record videos for upload</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>StockTok needs access to your microphone to record videos with sound</string>
 </dict>
 </plist>
