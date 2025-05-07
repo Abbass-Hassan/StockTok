@@ -13,7 +13,22 @@ const LoginForm = ({
   handleForgotPassword,
 }) => {
   return (
-    <View style={styles.container}>{/* Form elements will go here */}</View>
+    <View style={styles.container}>
+      <CustomTextInput
+        placeholder="Enter Your Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+
+      <CustomTextInput
+        placeholder="Enter Your Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={true}
+      />
+    </View>
   );
 };
 
