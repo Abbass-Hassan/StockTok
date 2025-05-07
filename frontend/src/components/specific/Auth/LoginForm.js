@@ -34,6 +34,8 @@ const LoginForm = ({
         style={styles.forgotPasswordContainer}>
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
+
+      <CustomButton title="Login" onPress={handleLogin} loading={loading} />
     </View>
   );
 };
