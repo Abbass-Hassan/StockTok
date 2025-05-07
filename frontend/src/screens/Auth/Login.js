@@ -45,7 +45,7 @@ const Login = ({navigation}) => {
   };
 
   const handleSignUp = () => {
-    navigation.navigate('SignUp');
+    navigation.navigate('Register');
   };
 
   return (
