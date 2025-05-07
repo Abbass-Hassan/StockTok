@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {TextInput, StyleSheet, View} from 'react-native';
+import {
+  TextInput,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 
 const CustomTextInput = ({
   placeholder,
@@ -12,6 +18,7 @@ const CustomTextInput = ({
   error,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
     <View style={[styles.inputContainer, style]}>
@@ -27,12 +34,22 @@ const CustomTextInput = ({
           placeholderTextColor="#BBBBBB"
           value={value}
           onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
+          secureTextEntry={secureTextEntry && !isPasswordVisible}
           keyboardType={keyboardType || 'default'}
           autoCapitalize={autoCapitalize || 'none'}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
+
+        {secureTextEntry && (
+          <TouchableOpacity
+            style={styles.eyeButton}
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+            <Text style={styles.eyeText}>
+              {isPasswordVisible ? 'Hide' : 'Show'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -64,6 +81,13 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderColor: '#FF5252',
+  },
+  eyeButton: {
+    paddingLeft: 8,
+  },
+  eyeText: {
+    color: '#00796B',
+    fontSize: 16,
   },
 });
 
