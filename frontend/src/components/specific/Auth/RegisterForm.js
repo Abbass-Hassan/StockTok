@@ -42,6 +42,13 @@ const RegisterForm = ({
         secureTextEntry={true}
         error={confirmPasswordError}
       />
+
+      <CustomButton
+        title="SignUp"
+        onPress={handleRegister}
+        loading={loading}
+        style={styles.button}
+      />
     </View>
   );
 };
@@ -50,6 +57,9 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     marginBottom: 20,
+  },
+  button: {
+    marginTop: 10,
   },
 });
 
