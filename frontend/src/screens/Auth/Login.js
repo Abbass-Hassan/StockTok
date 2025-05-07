@@ -3,6 +3,13 @@ import {Alert} from 'react-native';
 import * as authApi from '../../api/auth';
 import {storeToken, storeUserData} from '../../utils/tokenStorage';
 
+// Import components
+import AuthLayout from '../../components/specific/Auth/AuthLayout';
+import Header from '../../components/specific/Auth/Header';
+import LoginForm from '../../components/specific/Auth/LoginForm';
+import SocialLogin from '../../components/specific/Auth/SocialLogin';
+import SignUpPrompt from '../../components/specific/Auth/SignUpPrompt';
+
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,7 +48,24 @@ const Login = ({navigation}) => {
     navigation.navigate('SignUp');
   };
 
-  return null; // Placeholder return
+  return (
+    <AuthLayout
+      header={<Header title="Welcome back!" subtitle="Login to continue" />}
+      form={
+        <LoginForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          loading={loading}
+          handleLogin={handleLogin}
+          handleForgotPassword={handleForgotPassword}
+        />
+      }
+      socialSection={<SocialLogin />}
+      bottomPrompt={<SignUpPrompt onPress={handleSignUp} />}
+    />
+  );
 };
 
 export default Login;
