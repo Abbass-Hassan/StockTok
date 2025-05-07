@@ -1,7 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text, Image, StyleSheet} from 'react-native';
 
 const SocialLogin = ({isSignUp = false}) => {
+  // Button text based on whether it's sign up or login
+  const googleText = isSignUp ? 'Sign up with Google' : 'Continue with Google';
+
   return (
     <View style={styles.container}>
       <View style={styles.dividerContainer}>
@@ -9,6 +12,14 @@ const SocialLogin = ({isSignUp = false}) => {
         <Text style={styles.dividerText}>or</Text>
         <View style={styles.divider} />
       </View>
+
+      <TouchableOpacity style={styles.socialButton}>
+        <Image
+          source={require('../../../assets/icons/Google.png')}
+          style={styles.socialIcon}
+        />
+        <Text style={styles.socialButtonText}>{googleText}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -32,6 +43,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     color: '#757575',
     fontSize: 14,
+  },
+  socialButton: {
+    flexDirection: 'row',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 10,
+    paddingHorizontal: 16,
+  },
+  socialIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 12,
+  },
+  socialButtonText: {
+    fontSize: 16,
+    color: '#333333',
   },
 });
 
