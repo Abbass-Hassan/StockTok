@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import CustomTextInput from '../../common/TextInput';
 import CustomButton from '../../common/Button';
 
@@ -12,6 +12,7 @@ const RegisterForm = ({
   setConfirmPassword,
   loading,
   handleRegister,
+  handleForgotPassword,
   emailError,
   passwordError,
   confirmPasswordError,
@@ -49,6 +50,12 @@ const RegisterForm = ({
         loading={loading}
         style={styles.button}
       />
+
+      <TouchableOpacity
+        onPress={handleForgotPassword}
+        style={styles.forgotPasswordContainer}>
+        <Text style={styles.forgotPassword}>Forgot password?</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -60,6 +67,14 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  forgotPasswordContainer: {
+    alignSelf: 'flex-end',
+    marginTop: 10,
+  },
+  forgotPassword: {
+    color: '#00796B',
+    fontSize: 16,
   },
 });
 
