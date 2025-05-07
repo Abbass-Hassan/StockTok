@@ -10,10 +10,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-navigation/native": "^7.1.8",
     "@react-navigation/stack": "^7.3.1",
     "axios": "^1.9.0",
+    "expo-linear-gradient": "^14.1.4",
     "react": "19.0.0",
     "react-native": "0.79.1",
     "react-native-file-access": "^3.1.1",
@@ -23,6 +25,7 @@
     "react-native-reanimated": "^3.17.5",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "^4.10.0",
+    "react-native-svg": "^15.11.2",
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.13.0"
   },
@@ -44,6 +47,7 @@
     "eslint": "^8.19.0",
     "jest": "^29.6.3",
     "prettier": "2.8.8",
+    "react-native-svg-transformer": "^1.5.1",
     "react-test-renderer": "19.0.0",
     "typescript": "^5.0.4"
   },

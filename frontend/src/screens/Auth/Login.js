@@ -1,14 +1,19 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
-import CustomTextInput from '../../components/common/TextInput';
-import CustomButton from '../../components/common/Button';
+import {Alert} from 'react-native';
 import * as authApi from '../../api/auth';
-import {storeToken, storeUserData} from '../../utils/tokenStorage'; // Add this import
+import {storeToken, storeUserData} from '../../utils/tokenStorage';
+
+// Import components
+import AuthLayout from '../../components/specific/Auth/AuthLayout';
+import Header from '../../components/specific/Auth/Header';
+import LoginForm from '../../components/specific/Auth/LoginForm';
+import SocialLogin from '../../components/specific/Auth/SocialLogin';
+import SignUpPrompt from '../../components/specific/Auth/SignUpPrompt';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -17,15 +22,13 @@ const Login = ({navigation}) => {
     }
 
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const response = await authApi.login(email, password);
       console.log('Login successful:', response);
 
-      // Store token and user data
       await storeToken(response.data.token);
       await storeUserData(response.data.user);
 
-      // Navigate to Home and reset navigation stack
       navigation.reset({
         index: 0,
         routes: [{name: 'Home'}],
@@ -33,50 +36,36 @@ const Login = ({navigation}) => {
     } catch (error) {
       Alert.alert('Error', 'Login failed');
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
+  const handleForgotPassword = () => {
+    navigation.navigate('ForgotPassword');
+  };
+
+  const handleSignUp = () => {
+    navigation.navigate('SignUp');
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>StockTok</Text>
-
-      <CustomTextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
-
-      <CustomTextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry={true}
-      />
-
-      <CustomButton
-        title="Login"
-        onPress={handleLogin}
-        loading={loading} // Update your Button component to accept this prop
-      />
-    </View>
+    <AuthLayout
+      header={<Header title="Welcome back!" subtitle="Login to continue" />}
+      form={
+        <LoginForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          loading={loading}
+          handleLogin={handleLogin}
+          handleForgotPassword={handleForgotPassword}
+        />
+      }
+      socialSection={<SocialLogin />}
+      bottomPrompt={<SignUpPrompt onPress={handleSignUp} />}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    backgroundColor: '#F8F9FA',
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#4B7BEC',
-    textAlign: 'center',
-    marginBottom: 40,
-  },
-});
 
 export default Login;
