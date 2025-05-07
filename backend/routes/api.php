@@ -1,14 +1,14 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\Creator\VideoManagementController;
-use App\Http\Controllers\Api\Creator\EarningsController;
-use App\Http\Controllers\Api\Creator\CreatorProfileController;
+use App\Http\Controllers\Api\creator\VideoManagementController;
+use App\Http\Controllers\Api\creator\EarningsController;
+use App\Http\Controllers\Api\creator\CreatorProfileController;
 use App\Http\Controllers\Api\WalletController;
-use App\Http\Controllers\Api\Regular\VideoDiscoveryController;
-use App\Http\Controllers\Api\Regular\InvestmentController;
-use App\Http\Controllers\Api\Regular\CommentController;
-use App\Http\Controllers\Api\Regular\FollowController;
+use App\Http\Controllers\Api\regular\VideoDiscoveryController;
+use App\Http\Controllers\Api\regular\InvestmentController;
+use App\Http\Controllers\Api\regular\CommentController;
+use App\Http\Controllers\Api\regular\FollowController;
 use App\Http\Controllers\Api\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
