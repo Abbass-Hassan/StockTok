@@ -15,7 +15,12 @@ const AuthLayout = ({header, form, socialSection, bottomPrompt}) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidContainer}>
-        <View>{/* Content will be here */}</View>
+        <View style={styles.innerContainer}>
+          {header}
+          {form}
+          {socialSection}
+          {bottomPrompt}
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -28,6 +33,11 @@ const styles = StyleSheet.create({
   },
   keyboardAvoidContainer: {
     flex: 1,
+  },
+  innerContainer: {
+    flex: 1,
+    paddingHorizontal: 24,
+    justifyContent: 'center',
   },
 });
 
