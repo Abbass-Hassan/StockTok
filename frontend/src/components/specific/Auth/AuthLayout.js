@@ -1,10 +1,34 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+} from 'react-native';
 
 const AuthLayout = ({header, form, socialSection, bottomPrompt}) => {
-  return <View>{/* Placeholder for content */}</View>;
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidContainer}>
+        <View>{/* Content will be here */}</View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  keyboardAvoidContainer: {
+    flex: 1,
+  },
+});
 
 export default AuthLayout;
