@@ -1,69 +1,94 @@
-import React, {useState} from 'react';
+import React, {useState, forwardRef} from 'react';
 import {
   View,
   TextInput,
   Text,
   StyleSheet,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 
-const CustomTextInput = ({
-  placeholder,
-  value,
-  onChangeText,
-  keyboardType = 'default',
-  secureTextEntry = false,
-  autoCapitalize = 'none',
-  error = '',
-  onBlur = () => {},
-  testID = '',
-}) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+// Use forwardRef to allow parent components to access this input
+const CustomTextInput = forwardRef(
+  (
+    {
+      placeholder,
+      value,
+      onChangeText,
+      keyboardType = 'default',
+      secureTextEntry = false,
+      autoCapitalize = 'none',
+      error = '',
+      returnKeyType = 'next',
+      onSubmitEditing = () => {},
+      blurOnSubmit = true,
+      testID = '',
+    },
+    ref,
+  ) => {
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
-  // Only apply secureTextEntry if it's a password field and not explicitly showing password
-  const inputSecureTextEntry = secureTextEntry && !isPasswordVisible;
+    const inputSecureTextEntry = secureTextEntry && !isPasswordVisible;
+    const isPasswordField = secureTextEntry;
 
-  // Determine if this is a password field
-  const isPasswordField = secureTextEntry;
+    const togglePasswordVisibility = () => {
+      setIsPasswordVisible(!isPasswordVisible);
+    };
 
-  // Toggle password visibility
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
+    const handleFocus = () => {
+      setIsFocused(true);
+    };
 
-  return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.inputContainer,
-          error ? styles.inputContainerError : null,
-        ]}>
-        <TextInput
-          style={styles.input}
-          placeholder={placeholder}
-          value={value}
-          onChangeText={onChangeText}
-          keyboardType={keyboardType}
-          secureTextEntry={inputSecureTextEntry}
-          autoCapitalize={autoCapitalize}
-          onBlur={onBlur}
-          testID={testID}
-        />
-        {isPasswordField && (
-          <TouchableOpacity
-            onPress={togglePasswordVisibility}
-            style={styles.visibilityButton}
-            testID={`${testID}-visibility-toggle`}>
-            <Text style={styles.visibilityButtonText}>
-              {isPasswordVisible ? 'Hide' : 'Show'}
-            </Text>
-          </TouchableOpacity>
-        )}
+    const handleBlur = () => {
+      setIsFocused(false);
+    };
+
+    return (
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.inputContainer,
+            isFocused && styles.inputContainerFocused,
+            error ? styles.inputContainerError : null,
+          ]}>
+          <TextInput
+            ref={ref}
+            style={styles.input}
+            placeholder={placeholder}
+            value={value}
+            onChangeText={onChangeText}
+            keyboardType={keyboardType}
+            secureTextEntry={inputSecureTextEntry}
+            autoCapitalize={autoCapitalize}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            returnKeyType={returnKeyType}
+            onSubmitEditing={onSubmitEditing}
+            blurOnSubmit={blurOnSubmit}
+            testID={testID}
+            // Avoid auto-zoom on iOS for better UX
+            autoCorrect={false}
+            textContentType={secureTextEntry ? 'oneTimeCode' : 'none'} // Prevents iOS from suggesting passwords
+            autoComplete={secureTextEntry ? 'off' : 'email'}
+          />
+          {isPasswordField && (
+            <TouchableOpacity
+              onPress={togglePasswordVisibility}
+              style={styles.visibilityButton}
+              testID={`${testID}-visibility-toggle`}
+              activeOpacity={0.7}>
+              <Text style={styles.visibilityButtonText}>
+                {isPasswordVisible ? 'Hide' : 'Show'}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </View>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-    </View>
-  );
-};
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -71,13 +96,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   inputContainer: {
-    height: 50,
+    height: 56, // Slightly taller for better touch targets
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    backgroundColor: '#F7F7F7', // Light background for input fields
+  },
+  inputContainerFocused: {
+    borderColor: '#00796B',
+    borderWidth: 2,
+    backgroundColor: '#FFFFFF', // White background when focused
   },
   inputContainerError: {
     borderColor: '#FF3B30',
@@ -87,13 +118,16 @@ const styles = StyleSheet.create({
     height: '100%',
     fontSize: 16,
     color: '#333333',
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8, // Better padding for iOS
   },
   visibilityButton: {
     padding: 8,
+    marginLeft: 8,
   },
   visibilityButtonText: {
     color: '#00796B',
     fontSize: 14,
+    fontWeight: '500',
   },
   errorText: {
     color: '#FF3B30',
