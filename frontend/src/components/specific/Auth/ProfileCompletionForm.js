@@ -2,6 +2,7 @@ import React, {useRef} from 'react';
 import {View, StyleSheet} from 'react-native';
 import CustomTextInput from '../../common/CustomTextInput';
 import CustomButton from '../../common/CustomButton';
+import ImagePicker from '../../../utils/ImagePicker';
 
 const ProfileCompletionForm = ({
   username,
@@ -12,6 +13,8 @@ const ProfileCompletionForm = ({
   setPhoneNumber,
   bio,
   setBio,
+  profilePhoto,
+  handlePhotoSelect,
   handleSubmit,
   loading,
   usernameError,
@@ -25,6 +28,13 @@ const ProfileCompletionForm = ({
 
   return (
     <View style={styles.container}>
+      {/* Profile Photo */}
+      <ImagePicker
+        image={profilePhoto}
+        onPress={handlePhotoSelect}
+        title="Upload Profile Photo"
+      />
+
       {/* Username */}
       <CustomTextInput
         placeholder="Username"
