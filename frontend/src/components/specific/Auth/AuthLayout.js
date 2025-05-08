@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center', // This centers content when there's extra space
+    justifyContent: 'center',
   },
   innerContainer: {
     flex: 1,

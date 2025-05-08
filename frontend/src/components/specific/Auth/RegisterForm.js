@@ -1,12 +1,5 @@
-import React, {useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import React, {useRef} from 'react';
+import {View, StyleSheet, TouchableOpacity, Text, Keyboard} from 'react-native';
 import CustomTextInput from '../../common/TextInput';
 import CustomButton from '../../common/Button';
 
@@ -24,84 +17,80 @@ const RegisterForm = ({
   passwordError,
   confirmPasswordError,
 }) => {
-  // Track if each field has been touched by the user to only show errors after interaction
-  const [touched, setTouched] = useState({
-    email: false,
-    password: false,
-    confirmPassword: false,
-  });
+  // Create refs for each input to allow proper focus navigation
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const confirmPasswordInputRef = useRef(null);
 
-  // Handle field blur events to mark fields as touched
-  const handleBlur = field => {
-    setTouched(prev => ({
-      ...prev,
-      [field]: true,
-    }));
+  // Function to move focus to the next input
+  const focusNextInput = nextInputRef => {
+    if (nextInputRef && nextInputRef.current) {
+      nextInputRef.current.focus();
+    }
   };
 
-  // Only show errors for fields that have been touched
-  const getVisibleError = (field, error) => {
-    return touched[field] ? error : '';
+  // Function to handle submit when pressing return on the last field
+  const handleSubmitEditing = () => {
+    Keyboard.dismiss();
+    handleRegister();
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <CustomTextInput
-          placeholder="Enter Your Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={getVisibleError('email', emailError)}
-          onBlur={() => handleBlur('email')}
-          testID="email-input"
-        />
+    <View style={styles.container}>
+      <CustomTextInput
+        ref={emailInputRef}
+        placeholder="Enter Your Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        error={emailError}
+        returnKeyType="next"
+        onSubmitEditing={() => focusNextInput(passwordInputRef)}
+        blurOnSubmit={false}
+        testID="email-input"
+      />
 
-        <CustomTextInput
-          placeholder="Enter Your Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-          error={getVisibleError('password', passwordError)}
-          onBlur={() => handleBlur('password')}
-          testID="password-input"
-        />
+      <CustomTextInput
+        ref={passwordInputRef}
+        placeholder="Enter Your Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={true}
+        error={passwordError}
+        returnKeyType="next"
+        onSubmitEditing={() => focusNextInput(confirmPasswordInputRef)}
+        blurOnSubmit={false}
+        testID="password-input"
+      />
 
-        <CustomTextInput
-          placeholder="Confirm Your Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry={true}
-          error={getVisibleError('confirmPassword', confirmPasswordError)}
-          onBlur={() => handleBlur('confirmPassword')}
-          testID="confirm-password-input"
-        />
+      <CustomTextInput
+        ref={confirmPasswordInputRef}
+        placeholder="Confirm Your Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry={true}
+        error={confirmPasswordError}
+        returnKeyType="done"
+        onSubmitEditing={handleSubmitEditing}
+        testID="confirm-password-input"
+      />
 
-        <CustomButton
-          title="SignUp"
-          onPress={() => {
-            // Mark all fields as touched when submitting
-            setTouched({
-              email: true,
-              password: true,
-              confirmPassword: true,
-            });
-            handleRegister();
-          }}
-          loading={loading}
-          style={styles.button}
-          testID="signup-button"
-        />
+      <CustomButton
+        title="SignUp"
+        onPress={handleRegister}
+        loading={loading}
+        style={styles.button}
+        testID="signup-button"
+      />
 
-        <TouchableOpacity
-          onPress={handleForgotPassword}
-          style={styles.forgotPasswordContainer}
-          testID="forgot-password-btn">
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableWithoutFeedback>
+      <TouchableOpacity
+        onPress={handleForgotPassword}
+        style={styles.forgotPasswordContainer}
+        testID="forgot-password-btn">
+        <Text style={styles.forgotPassword}>Forgot password?</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -111,11 +100,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    marginTop: 10,
+    marginTop: 16,
   },
   forgotPasswordContainer: {
     alignSelf: 'flex-end',
-    marginTop: 10,
+    marginTop: 12,
+    paddingVertical: 4,
   },
   forgotPassword: {
     color: '#00796B',
