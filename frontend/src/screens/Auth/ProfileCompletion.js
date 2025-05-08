@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Alert, Platform} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {Alert, Platform, BackHandler} from 'react-native';
 import * as authApi from '../../api/auth';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {getToken} from '../../utils/tokenStorage';
+import {getToken, clearToken, clearUserData} from '../../utils/tokenStorage';
 
 // Import components
 import AuthLayout from '../../components/specific/Auth/AuthLayout';
@@ -24,6 +24,37 @@ const ProfileCompletion = ({navigation, route}) => {
   const [usernameError, setUsernameError] = useState('');
   const [fullNameError, setFullNameError] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
+
+  // Prevent going back to login after registration
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        // If the user is trying to go back to login, show a confirmation dialog
+        Alert.alert(
+          'Exit App',
+          'Are you sure you want to exit? Your profile is not complete.',
+          [
+            {text: 'Cancel', style: 'cancel', onPress: () => {}},
+            {
+              text: 'Exit',
+              style: 'destructive',
+              onPress: () => {
+                // Clear user data and token since profile wasn't completed
+                clearToken();
+                clearUserData();
+                BackHandler.exitApp();
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+        return true;
+      },
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   // Handle photo selection
   const handlePhotoSelect = async () => {
@@ -84,6 +115,30 @@ const ProfileCompletion = ({navigation, route}) => {
     return isValid;
   };
 
+  const handleSessionExpired = () => {
+    // Clear user data and token
+    clearToken();
+    clearUserData();
+
+    // Alert the user
+    Alert.alert(
+      'Session Expired',
+      'Your session has expired. Please log in again.',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'Login'}],
+            });
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   const handleSubmit = async () => {
     if (!validateForm()) {
       return;
@@ -96,14 +151,7 @@ const ProfileCompletion = ({navigation, route}) => {
       const token = await getToken();
 
       if (!token) {
-        Alert.alert(
-          'Error',
-          'Authentication token not found. Please log in again.',
-        );
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'Login'}],
-        });
+        handleSessionExpired();
         return;
       }
 
@@ -121,13 +169,27 @@ const ProfileCompletion = ({navigation, route}) => {
       const response = await authApi.completeProfile(token, profileData);
       console.log('Profile completed successfully:', response);
 
-      // Navigate to home screen
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Home'}],
-      });
+      // Show success message
+      Alert.alert('Success', 'Your profile has been completed successfully!', [
+        {
+          text: 'Continue',
+          onPress: () => {
+            // Navigate to home screen
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'Home'}],
+            });
+          },
+        },
+      ]);
     } catch (error) {
       console.error('Profile completion error details:', error);
+
+      // Handle session expired error (401)
+      if (error.response?.status === 401) {
+        handleSessionExpired();
+        return;
+      }
 
       // Handle server validation errors
       if (error.response?.data?.errors) {
