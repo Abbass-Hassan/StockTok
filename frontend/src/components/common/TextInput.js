@@ -23,6 +23,9 @@ const CustomTextInput = forwardRef(
       onSubmitEditing = () => {},
       blurOnSubmit = true,
       testID = '',
+      multiline = false,
+      numberOfLines = 1,
+      style,
     },
     ref,
   ) => {
@@ -49,12 +52,14 @@ const CustomTextInput = forwardRef(
         <View
           style={[
             styles.inputContainer,
+            multiline && {height: Math.max(56, numberOfLines * 24)},
             isFocused && styles.inputContainerFocused,
             error ? styles.inputContainerError : null,
+            style,
           ]}>
           <TextInput
             ref={ref}
-            style={styles.input}
+            style={[styles.input, multiline && styles.multilineInput]}
             placeholder={placeholder}
             value={value}
             onChangeText={onChangeText}
@@ -67,6 +72,8 @@ const CustomTextInput = forwardRef(
             onSubmitEditing={onSubmitEditing}
             blurOnSubmit={blurOnSubmit}
             testID={testID}
+            multiline={multiline}
+            numberOfLines={numberOfLines}
             // Avoid auto-zoom on iOS for better UX
             autoCorrect={false}
             textContentType={secureTextEntry ? 'oneTimeCode' : 'none'} // Prevents iOS from suggesting passwords
@@ -119,6 +126,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333333',
     paddingVertical: Platform.OS === 'ios' ? 12 : 8, // Better padding for iOS
+  },
+  multilineInput: {
+    textAlignVertical: 'top',
+    paddingTop: Platform.OS === 'ios' ? 12 : 8,
   },
   visibilityButton: {
     padding: 8,
