@@ -1,4 +1,4 @@
-// auth.js - Updated to use correct field name - password_confirmation
+// auth.js - API integration with improved error handling
 
 import axios from 'axios';
 
@@ -10,21 +10,44 @@ const api = axios.create({
   },
 });
 
+/**
+ * Register a new user
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @param {string} confirmPassword - Password confirmation
+ * @returns {Promise} - API response
+ */
 export const register = async (email, password, confirmPassword) => {
   try {
+    // Make API request with field names that match the backend
     const response = await api.post('/register', {
       email: email,
       password: password,
-      password_confirmation: confirmPassword,
+      password_confirmation: confirmPassword, // Using snake_case for API compatibility
     });
+
+    // Log the full response for debugging
+    console.log(
+      'Register API full response:',
+      JSON.stringify(response.data, null, 2),
+    );
 
     return response;
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error(
+      'Registration API error:',
+      error.response?.data || error.message,
+    );
     throw error;
   }
 };
 
+/**
+ * Login a user
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @returns {Promise} - API response
+ */
 export const login = async (email, password) => {
   try {
     const response = await api.post('/login', {
@@ -32,11 +55,92 @@ export const login = async (email, password) => {
       password,
     });
 
+    // Log the full response for debugging
+    console.log(
+      'Login API full response:',
+      JSON.stringify(response.data, null, 2),
+    );
+
     return response;
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login API error:', error.response?.data || error.message);
     throw error;
   }
 };
 
-// Other auth methods as needed
+/**
+ * Check authenticated user profile
+ * @param {string} token - Auth token
+ * @returns {Promise} - API response
+ */
+export const getProfile = async token => {
+  try {
+    const response = await api.get('/profile', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Profile API error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * Logout a user
+ * @param {string} token - Auth token
+ * @returns {Promise} - API response
+ */
+export const logout = async token => {
+  try {
+    const response = await api.post(
+      '/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    console.error('Logout API error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * Request password reset
+ * @param {string} email - User email
+ * @returns {Promise} - API response
+ */
+export const forgotPassword = async email => {
+  try {
+    const response = await api.post('/forgot-password', {
+      email,
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      'Forgot password API error:',
+      error.response?.data || error.message,
+    );
+    throw error;
+  }
+};
+
+// Add error interceptor to log all API errors
+api.interceptors.response.use(
+  response => response,
+  error => {
+    // Log all API errors for debugging
+    console.error('API Error:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
+    return Promise.reject(error);
+  },
+);

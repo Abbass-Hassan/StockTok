@@ -63,30 +63,11 @@ const Register = ({navigation}) => {
 
   const handleRegister = async () => {
     if (!validateForm()) {
-      // Show validation errors in a similar format to the API
-      const errors = [];
-      if (confirmPasswordError) errors.push(confirmPasswordError);
-      if (passwordError) errors.push(passwordError);
-      if (emailError) errors.push(emailError);
-
-      if (errors.length > 0) {
-        const primaryError = errors[0];
-        const otherCount = errors.length - 1;
-        const errorMessage =
-          otherCount > 0
-            ? `${primaryError}\n(and ${otherCount} more error${
-                otherCount > 1 ? 's' : ''
-              })`
-            : primaryError;
-
-        Alert.alert('Error', errorMessage);
-      }
       return;
     }
 
     try {
       setLoading(true);
-      // Use the updated auth.js that properly passes password_confirmation
       const response = await authApi.register(
         email.trim(),
         password,
@@ -94,24 +75,65 @@ const Register = ({navigation}) => {
       );
       console.log('Registration successful:', response);
 
-      // Store the token and user data
-      if (response.data && response.data.data) {
-        await storeToken(response.data.data.token);
-        await storeUserData(response.data.data.user);
+      // Check response structure and extract token and user data
+      let token = null;
+      let userData = null;
+
+      // Handle different possible response structures
+      if (response?.data?.token) {
+        // Structure: response.data.token
+        token = response.data.token;
+      } else if (response?.data?.data?.token) {
+        // Structure: response.data.data.token
+        token = response.data.data.token;
+      } else if (response?.token) {
+        // Structure: response.token
+        token = response.token;
       }
 
+      // Extract user data
+      if (response?.data?.user) {
+        // Structure: response.data.user
+        userData = response.data.user;
+      } else if (response?.data?.data?.user) {
+        // Structure: response.data.data.user
+        userData = response.data.data.user;
+      } else if (response?.user) {
+        // Structure: response.user
+        userData = response.user;
+      } else if (response?.data) {
+        // Fallback: try using the entire data object as user data
+        userData = response.data;
+      }
+
+      // Only attempt to store if values are not undefined/null
+      if (token) {
+        await storeToken(token);
+      } else {
+        console.warn('No token found in response, skipping token storage');
+      }
+
+      if (userData) {
+        await storeUserData(userData);
+      } else {
+        console.warn(
+          'No user data found in response, skipping user data storage',
+        );
+      }
+
+      // Navigate even if token/userData storage fails, as the API request was successful
       navigation.reset({
         index: 0,
         routes: [{name: 'Home'}],
       });
     } catch (error) {
-      console.error('Registration error details:', error.response?.data);
+      console.error('Registration error details:', error);
 
       // Handle server validation errors
       if (error.response?.data?.errors) {
         const serverErrors = error.response.data.errors;
 
-        // Check for password_confirmation error
+        // Set field errors based on server response
         if (serverErrors.password_confirmation) {
           setConfirmPasswordError(serverErrors.password_confirmation[0]);
         }
@@ -123,30 +145,13 @@ const Register = ({navigation}) => {
         if (serverErrors.email) {
           setEmailError(serverErrors.email[0]);
         }
-
-        // Count errors to display in alert
-        const errorMessages = [];
-        if (confirmPasswordError)
-          errorMessages.push(serverErrors.password_confirmation[0]);
-        if (passwordError) errorMessages.push(serverErrors.password[0]);
-        if (emailError) errorMessages.push(serverErrors.email[0]);
-
-        if (errorMessages.length > 0) {
-          const primaryError = errorMessages[0];
-          const otherCount = errorMessages.length - 1;
-          const errorMessage =
-            otherCount > 0
-              ? `${primaryError}\n(and ${otherCount} more error${
-                  otherCount > 1 ? 's' : ''
-                })`
-              : primaryError;
-
-          Alert.alert('Error', errorMessage);
-        }
-      } else {
-        // Generic error
-        Alert.alert('Error', error.message || 'Registration failed');
       }
+
+      // Show error alert
+      Alert.alert(
+        'Error',
+        error.response?.data?.message || error.message || 'Registration failed',
+      );
     } finally {
       setLoading(false);
     }
