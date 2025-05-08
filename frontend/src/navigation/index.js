@@ -2,6 +2,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../screens/Auth/Login';
+import Register from '../screens/Auth/Register';
 import HomeScreen from '../screens/Feed';
 import UploadVideo from '../screens/Creator/UploadVideo';
 import MyVideos from '../screens/Creator/MyVideos';
@@ -12,24 +13,26 @@ const Stack = createStackNavigator();
 const Navigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{headerShown: false}}
-        />
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+
         <Stack.Screen
           name="Home"
           component={HomeScreen}
           options={{
+            headerShown: true,
             title: 'StockTok',
-            headerBackVisible: false, // Prevents going back to login
+            headerBackVisible: false,
           }}
         />
         <Stack.Screen
           name="UploadVideo"
           component={UploadVideo}
           options={{
+            headerShown: true,
             title: 'Upload Video',
           }}
         />
@@ -37,6 +40,7 @@ const Navigation = () => {
           name="MyVideos"
           component={MyVideos}
           options={{
+            headerShown: true,
             title: 'My Videos',
           }}
         />
@@ -44,6 +48,7 @@ const Navigation = () => {
           name="VideoPlayer"
           component={VideoPlayer}
           options={{
+            headerShown: true,
             title: 'Video',
             headerBackTitle: 'Back',
           }}
