@@ -156,6 +156,7 @@ export const completeProfile = async (token, profileData) => {
     if (profileData.name) formData.append('name', profileData.name);
     if (profileData.phone) formData.append('phone', profileData.phone);
     if (profileData.bio) formData.append('bio', profileData.bio);
+    if (profileData.gender) formData.append('gender', profileData.gender);
 
     // Map user_type to user_type_id
     if (profileData.user_type) {
