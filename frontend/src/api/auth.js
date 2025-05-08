@@ -164,6 +164,7 @@ export const completeProfile = async (token, profileData) => {
       formData.append('user_type_id', userTypeId);
     }
 
+    // Use the correct API endpoint
     const response = await api.post('/complete-profile', formData, {
       headers: {
         Authorization: `Bearer ${token}`,
