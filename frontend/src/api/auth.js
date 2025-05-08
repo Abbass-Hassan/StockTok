@@ -130,6 +130,62 @@ export const forgotPassword = async email => {
   }
 };
 
+/**
+ * Complete user profile
+ * @param {string} token - Auth token
+ * @param {object} profileData - User profile data
+ * @returns {Promise} - API response
+ */
+export const completeProfile = async (token, profileData) => {
+  try {
+    // Create form data for file upload
+    const formData = new FormData();
+
+    // Add profile photo if available
+    if (profileData.profile_photo) {
+      const photo = profileData.profile_photo;
+      formData.append('profile_photo', {
+        uri: photo.uri,
+        type: photo.type || 'image/jpeg',
+        name: photo.fileName || 'profile_photo.jpg',
+      });
+    }
+
+    // Add other profile fields
+    if (profileData.username) formData.append('username', profileData.username);
+    if (profileData.name) formData.append('name', profileData.name);
+    if (profileData.phone) formData.append('phone', profileData.phone);
+    if (profileData.bio) formData.append('bio', profileData.bio);
+
+    // Map user_type to user_type_id
+    if (profileData.user_type) {
+      const userTypeId = profileData.user_type === 'Creator' ? 2 : 1;
+      formData.append('user_type_id', userTypeId);
+    }
+
+    const response = await api.post('/complete-profile', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    // Log the full response for debugging
+    console.log(
+      'Complete Profile API full response:',
+      JSON.stringify(response.data, null, 2),
+    );
+
+    return response;
+  } catch (error) {
+    console.error(
+      'Complete Profile API error:',
+      error.response?.data || error.message,
+    );
+    throw error;
+  }
+};
+
 // Add error interceptor to log all API errors
 api.interceptors.response.use(
   response => response,
