@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {
-  TextInput,
-  StyleSheet,
   View,
+  TextInput,
   Text,
+  StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 
@@ -11,88 +11,92 @@ const CustomTextInput = ({
   placeholder,
   value,
   onChangeText,
+  keyboardType = 'default',
   secureTextEntry = false,
-  style,
-  keyboardType,
-  autoCapitalize,
-  error,
+  autoCapitalize = 'none',
+  error = '',
+  onBlur = () => {},
+  testID = '',
 }) => {
-  const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  // Only apply secureTextEntry if it's a password field and not explicitly showing password
+  const inputSecureTextEntry = secureTextEntry && !isPasswordVisible;
+
+  // Determine if this is a password field
+  const isPasswordField = secureTextEntry;
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
   return (
-    <View style={[styles.inputContainer, style]}>
+    <View style={styles.container}>
       <View
         style={[
-          styles.inputWrapper,
-          isFocused && styles.inputFocused,
-          error && styles.inputError,
+          styles.inputContainer,
+          error ? styles.inputContainerError : null,
         ]}>
         <TextInput
           style={styles.input}
           placeholder={placeholder}
-          placeholderTextColor="#BBBBBB"
           value={value}
           onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry && !isPasswordVisible}
-          keyboardType={keyboardType || 'default'}
-          autoCapitalize={autoCapitalize || 'none'}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          keyboardType={keyboardType}
+          secureTextEntry={inputSecureTextEntry}
+          autoCapitalize={autoCapitalize}
+          onBlur={onBlur}
+          testID={testID}
         />
-
-        {secureTextEntry && (
+        {isPasswordField && (
           <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-            <Text style={styles.eyeText}>
+            onPress={togglePasswordVisibility}
+            style={styles.visibilityButton}
+            testID={`${testID}-visibility-toggle`}>
+            <Text style={styles.visibilityButtonText}>
               {isPasswordVisible ? 'Hide' : 'Show'}
             </Text>
           </TouchableOpacity>
         )}
       </View>
-
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 16,
+  container: {
     width: '100%',
+    marginBottom: 16,
   },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  inputContainer: {
+    height: 50,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    height: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
+  },
+  inputContainerError: {
+    borderColor: '#FF3B30',
   },
   input: {
     flex: 1,
+    height: '100%',
     fontSize: 16,
     color: '#333333',
   },
-  inputFocused: {
-    borderColor: '#00796B',
-    borderWidth: 1,
+  visibilityButton: {
+    padding: 8,
   },
-  inputError: {
-    borderColor: '#FF5252',
-  },
-  eyeButton: {
-    paddingLeft: 8,
-  },
-  eyeText: {
+  visibilityButtonText: {
     color: '#00796B',
-    fontSize: 16,
+    fontSize: 14,
   },
   errorText: {
-    color: '#FF5252',
+    color: '#FF3B30',
     fontSize: 12,
     marginTop: 4,
     marginLeft: 4,
