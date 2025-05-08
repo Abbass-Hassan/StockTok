@@ -20,7 +20,7 @@ const Header = ({title, subtitle}) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 22,
   },
   logoContainer: {
     alignItems: 'center',
