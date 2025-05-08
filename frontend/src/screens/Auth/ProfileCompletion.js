@@ -161,6 +161,7 @@ const ProfileCompletion = ({navigation, route}) => {
         name: fullName.trim(),
         phone: phoneNumber.trim(),
         bio: bio.trim(),
+        gender: gender, // Include gender field
         user_type: userType,
         profile_photo: profilePhoto,
       };
