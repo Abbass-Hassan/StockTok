@@ -15,6 +15,8 @@ const ProfileCompletionForm = ({
   setBio,
   gender,
   setGender,
+  userType,
+  setUserType,
   profilePhoto,
   handlePhotoSelect,
   handleSubmit,
@@ -110,6 +112,38 @@ const ProfileCompletionForm = ({
         onChangeText={setBio}
         returnKeyType="done"
       />
+
+      {/* User Type Selection */}
+      <View style={styles.radioGroup}>
+        <Text style={styles.radioGroupLabel}>User Type</Text>
+        <View style={styles.radioOptions}>
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => setUserType('Creator')}>
+            <View
+              style={[
+                styles.radioButton,
+                userType === 'Creator' && styles.radioButtonSelected,
+              ]}>
+              {userType === 'Creator' && <View style={styles.radioInner} />}
+            </View>
+            <Text style={styles.radioText}>Creator</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.radioOption}
+            onPress={() => setUserType('Investor')}>
+            <View
+              style={[
+                styles.radioButton,
+                userType === 'Investor' && styles.radioButtonSelected,
+              ]}>
+              {userType === 'Investor' && <View style={styles.radioInner} />}
+            </View>
+            <Text style={styles.radioText}>Investor</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Submit Button */}
       <CustomButton
