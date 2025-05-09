@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
+import ProfileCompletion from '../screens/Auth/ProfileCompletion';
 import HomeScreen from '../screens/Feed';
 import UploadVideo from '../screens/Creator/UploadVideo';
 import MyVideos from '../screens/Creator/MyVideos';
@@ -18,7 +19,7 @@ const Navigation = () => {
         screenOptions={{headerShown: false}}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
-
+        <Stack.Screen name="ProfileCompletion" component={ProfileCompletion} />
         <Stack.Screen
           name="Home"
           component={HomeScreen}

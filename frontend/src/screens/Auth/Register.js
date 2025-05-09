@@ -121,11 +121,8 @@ const Register = ({navigation}) => {
         );
       }
 
-      // Navigate even if token/userData storage fails, as the API request was successful
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Home'}],
-      });
+      // Navigate to ProfileCompletion after successful registration
+      navigation.navigate('ProfileCompletion', {userData});
     } catch (error) {
       console.error('Registration error details:', error);
 
