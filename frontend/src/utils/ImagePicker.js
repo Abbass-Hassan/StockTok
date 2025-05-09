@@ -23,11 +23,8 @@ const ImagePicker = ({
             {placeholder ? (
               placeholder
             ) : (
-              <Image
-                source={require('../assets/icons/camera.png')}
-                style={styles.cameraIcon}
-                resizeMode="contain"
-              />
+              // Using a simple camera icon character instead of an image
+              <View style={styles.cameraIconPlaceholder}></View>
             )}
           </View>
         )}
@@ -61,10 +58,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#E0E0E0',
   },
-  cameraIcon: {
-    width: 40,
-    height: 40,
-    tintColor: '#757575',
+  cameraIconPlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cameraIconText: {
+    fontSize: 40,
+    color: '#757575',
   },
   uploadText: {
     fontSize: 16,

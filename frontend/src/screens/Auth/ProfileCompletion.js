@@ -1,12 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import {Alert, Platform, BackHandler} from 'react-native';
+import {
+  Alert,
+  Platform,
+  BackHandler,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import * as authApi from '../../api/auth';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {getToken, clearToken, clearUserData} from '../../utils/tokenStorage';
 
 // Import components
-import AuthLayout from '../../components/specific/Auth/AuthLayout';
-import Header from '../../components/specific/Auth/Header';
 import ProfileCompletionForm from '../../components/specific/Auth/ProfileCompletionForm';
 
 const ProfileCompletion = ({navigation, route}) => {
@@ -24,6 +29,13 @@ const ProfileCompletion = ({navigation, route}) => {
   const [usernameError, setUsernameError] = useState('');
   const [fullNameError, setFullNameError] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
+
+  // Set navigation options to hide header
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
 
   // Prevent going back to login after registration
   useEffect(() => {
@@ -106,8 +118,10 @@ const ProfileCompletion = ({navigation, route}) => {
       isValid = false;
     }
 
-    // Phone number validation (optional)
-    if (phoneNumber.trim() && !/^\d{10,15}$/.test(phoneNumber.trim())) {
+    // Phone number validation
+    // Update the regex pattern to match your requirements
+    const phonePattern = /^\d{8,15}$/; // Accepts 8-15 digits
+    if (phoneNumber.trim() && !phonePattern.test(phoneNumber.trim())) {
       setPhoneNumberError('Please enter a valid phone number');
       isValid = false;
     }
@@ -161,7 +175,7 @@ const ProfileCompletion = ({navigation, route}) => {
         name: fullName.trim(),
         phone: phoneNumber.trim(),
         bio: bio.trim(),
-        gender: gender, // Include gender field
+        gender: gender,
         user_type: userType,
         profile_photo: profilePhoto,
       };
@@ -170,19 +184,11 @@ const ProfileCompletion = ({navigation, route}) => {
       const response = await authApi.completeProfile(token, profileData);
       console.log('Profile completed successfully:', response);
 
-      // Show success message
-      Alert.alert('Success', 'Your profile has been completed successfully!', [
-        {
-          text: 'Continue',
-          onPress: () => {
-            // Navigate to home screen
-            navigation.reset({
-              index: 0,
-              routes: [{name: 'Home'}],
-            });
-          },
-        },
-      ]);
+      // Navigate to home screen
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Home'}],
+      });
     } catch (error) {
       console.error('Profile completion error details:', error);
 
@@ -222,11 +228,8 @@ const ProfileCompletion = ({navigation, route}) => {
   };
 
   return (
-    <AuthLayout
-      header={
-        <Header title="Complete Profile" subtitle="Tell us more about you" />
-      }
-      form={
+    <SafeAreaView style={styles.container}>
+      <View style={styles.formContainer}>
         <ProfileCompletionForm
           username={username}
           setUsername={setUsername}
@@ -234,7 +237,7 @@ const ProfileCompletion = ({navigation, route}) => {
           setFullName={setFullName}
           phoneNumber={phoneNumber}
           setPhoneNumber={setPhoneNumber}
-          bio={bio}
+          bio={bio} // FIXED: Changed from bio={setBio} to bio={bio}
           setBio={setBio}
           gender={gender}
           setGender={setGender}
@@ -248,9 +251,21 @@ const ProfileCompletion = ({navigation, route}) => {
           fullNameError={fullNameError}
           phoneNumberError={phoneNumberError}
         />
-      }
-    />
+      </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  formContainer: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+  },
+});
 
 export default ProfileCompletion;

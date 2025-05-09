@@ -6,8 +6,8 @@ import {
   Text,
   ScrollView,
 } from 'react-native';
-import CustomTextInput from '../../common/CustomTextInput';
-import CustomButton from '../../common/CustomButton';
+import TextInput from '../../../components/common/TextInput';
+import Button from '../../../components/common/Button';
 import ImagePicker from '../../../utils/ImagePicker';
 
 const ProfileCompletionForm = ({
@@ -42,58 +42,51 @@ const ProfileCompletionForm = ({
       showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
         {/* Profile Photo */}
-        <ImagePicker
-          image={profilePhoto}
-          onPress={handlePhotoSelect}
-          title="Upload Profile Photo"
-          size={120}
-          borderColor="#00796B"
-        />
+        <View style={styles.photoContainer}>
+          <ImagePicker
+            image={profilePhoto}
+            onPress={handlePhotoSelect}
+            title="Upload Profile Photo"
+            size={120}
+            borderColor="#00796B"
+          />
+        </View>
 
         {/* Username */}
-        <View style={styles.formField}>
-          <Text style={styles.fieldLabel}>Username</Text>
-          <CustomTextInput
-            placeholder="Choose a unique username"
-            value={username}
-            onChangeText={setUsername}
-            error={usernameError}
-            returnKeyType="next"
-            onSubmitEditing={() => fullNameRef.current?.focus()}
-          />
-        </View>
+        <TextInput
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          error={usernameError}
+          returnKeyType="next"
+          onSubmitEditing={() => fullNameRef.current?.focus()}
+        />
 
         {/* Full Name */}
-        <View style={styles.formField}>
-          <Text style={styles.fieldLabel}>Full Name</Text>
-          <CustomTextInput
-            ref={fullNameRef}
-            placeholder="Enter your full name"
-            value={fullName}
-            onChangeText={setFullName}
-            error={fullNameError}
-            returnKeyType="next"
-            onSubmitEditing={() => phoneNumberRef.current?.focus()}
-          />
-        </View>
+        <TextInput
+          ref={fullNameRef}
+          placeholder="Full Name"
+          value={fullName}
+          onChangeText={setFullName}
+          error={fullNameError}
+          returnKeyType="next"
+          onSubmitEditing={() => phoneNumberRef.current?.focus()}
+        />
 
         {/* Phone Number */}
-        <View style={styles.formField}>
-          <Text style={styles.fieldLabel}>Phone Number</Text>
-          <CustomTextInput
-            ref={phoneNumberRef}
-            placeholder="Enter your phone number"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            error={phoneNumberError}
-            keyboardType="phone-pad"
-            returnKeyType="next"
-            onSubmitEditing={() => bioRef.current?.focus()}
-          />
-        </View>
+        <TextInput
+          ref={phoneNumberRef}
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          error={phoneNumberError}
+          keyboardType="phone-pad"
+          returnKeyType="next"
+          onSubmitEditing={() => bioRef.current?.focus()}
+        />
 
         {/* Gender Selection */}
-        <View style={styles.radioGroup}>
+        <View style={styles.fieldSection}>
           <Text style={styles.fieldLabel}>Gender</Text>
           <View style={styles.radioOptions}>
             <TouchableOpacity
@@ -125,22 +118,18 @@ const ProfileCompletionForm = ({
         </View>
 
         {/* Bio */}
-        <View style={styles.formField}>
-          <Text style={styles.fieldLabel}>Bio</Text>
-          <CustomTextInput
-            ref={bioRef}
-            placeholder="Tell us about yourself"
-            value={bio}
-            onChangeText={setBio}
-            returnKeyType="done"
-            multiline={true}
-            numberOfLines={3}
-            style={styles.bioInput}
-          />
-        </View>
+        <TextInput
+          ref={bioRef}
+          placeholder="Bio"
+          value={bio}
+          onChangeText={setBio}
+          returnKeyType="done"
+          multiline={true}
+          numberOfLines={3}
+        />
 
         {/* User Type Selection */}
-        <View style={styles.radioGroup}>
+        <View style={styles.fieldSection}>
           <Text style={styles.fieldLabel}>User Type</Text>
           <View style={styles.radioOptions}>
             <TouchableOpacity
@@ -172,7 +161,7 @@ const ProfileCompletionForm = ({
         </View>
 
         {/* Submit Button */}
-        <CustomButton
+        <Button
           title="Submit"
           onPress={handleSubmit}
           loading={loading}
@@ -191,7 +180,11 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 20,
   },
-  formField: {
+  photoContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  fieldSection: {
     marginBottom: 16,
   },
   fieldLabel: {
@@ -199,13 +192,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#333',
     marginBottom: 8,
-  },
-  bioInput: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  radioGroup: {
-    marginBottom: 16,
   },
   radioOptions: {
     flexDirection: 'row',
