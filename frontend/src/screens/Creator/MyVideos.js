@@ -50,4 +50,8 @@ const MyVideos = ({navigation}) => {
   
     return unsubscribe;
   }, [navigation]);
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadVideos();
+  };
   
