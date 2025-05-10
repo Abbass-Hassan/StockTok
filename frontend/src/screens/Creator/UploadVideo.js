@@ -189,3 +189,22 @@ const UploadVideo = ({navigation}) => {
   />
   <Text style={styles.charCount}>{caption.length}/1000</Text>
 </View>
+<View style={styles.inputContainer}>
+  <Text style={styles.label}>Initial Investment</Text>
+  <TextInput
+    style={styles.input}
+    placeholder="Enter investment amount"
+    placeholderTextColor="#999999"
+    value={initialInvestment}
+    onChangeText={setInitialInvestment}
+    keyboardType="numeric"
+    editable={!loading}
+  />
+</View>
+
+<View style={styles.infoCard}>
+  <Text style={styles.infoText}>
+    💡 Initial investment helps boost your video's visibility and potential returns
+  </Text>
+</View>
+
