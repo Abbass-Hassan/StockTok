@@ -66,3 +66,60 @@ const UploadVideo = ({navigation}) => {
     Alert.alert('Development', 'Mock video selected for testing');
   };
   import {uploadVideo} from '../../api/videoApi';
+  const handleUpload = async () => {
+    if (!videoFile) {
+      Alert.alert('Error', 'Please select a video first');
+      return;
+    }
+  
+    if (!caption.trim()) {
+      Alert.alert('Error', 'Please enter a caption');
+      return;
+    }
+  
+    try {
+      setLoading(true);
+  
+      const videoData = {
+        caption,
+        initialInvestment: parseFloat(initialInvestment) || 0,
+      };
+  
+      console.log('Preparing to upload video:', videoData);
+      console.log('Video file info:', videoFile);
+  
+      if (videoFile.uri.includes('mock-video-path')) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        Alert.alert('Success', 'Video uploaded successfully! (Development Mode)', [
+          {
+            text: 'OK',
+            onPress: () => {
+              setVideoFile(null);
+              setCaption('');
+              setInitialInvestment('0');
+              navigation.navigate('MyVideos');
+            },
+          },
+        ]);
+      } else {
+        const result = await uploadVideo(videoData, videoFile);
+        Alert.alert('Success', 'Video uploaded successfully!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              setVideoFile(null);
+              setCaption('');
+              setInitialInvestment('0');
+              navigation.navigate('MyVideos');
+            },
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      Alert.alert('Upload Failed', error.message || 'An error occurred during upload');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
