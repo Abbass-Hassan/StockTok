@@ -54,4 +54,10 @@ const MyVideos = ({navigation}) => {
     setRefreshing(true);
     loadVideos();
   };
+  const renderVideoItem = ({item}) => (
+    <VideoCard
+      video={item}
+      onPress={() => navigation.navigate('VideoPlayer', {video: item})}
+    />
+  );
   
