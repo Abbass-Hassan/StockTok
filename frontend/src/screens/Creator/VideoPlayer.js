@@ -116,3 +116,19 @@ const VideoPlayer = ({route, navigation}) => {
   const toggleControls = () => {
     setShowControls(!showControls);
   };
+  const formatValue = value => {
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(1)}K`;
+    }
+    return `$${value.toFixed(2)}`;
+  };
+
+  const formatCount = count => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
+  };
