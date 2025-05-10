@@ -53,3 +53,17 @@ const UploadVideo = ({navigation}) => {
     });
   };
   
+  const mockSelectVideo = () => {
+    const mockVideoFile = {
+      uri: 'file:///mock-video-path.mp4',
+      type: 'video/mp4',
+      fileName: 'sample-video.mp4',
+      fileSize: 1024 * 1024 * 10, // 10MB
+      duration: 30, // 30 seconds
+    };
+  
+    setVideoFile(mockVideoFile);
+    Alert.alert('Development', 'Mock video selected for testing');
+  };
+  git commit -m "Add mock video picker fallback for development"
+  
