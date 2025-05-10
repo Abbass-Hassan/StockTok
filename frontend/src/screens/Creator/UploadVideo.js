@@ -146,4 +146,16 @@ const UploadVideo = ({navigation}) => {
       </View>
     );
   };
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Text style={styles.backButtonText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Upload Video</Text>
+        </View>
   
