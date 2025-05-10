@@ -122,4 +122,28 @@ const UploadVideo = ({navigation}) => {
       setLoading(false);
     }
   };
+  const renderVideoPreview = () => {
+    if (!videoFile) return null;
+  
+    return (
+      <View style={styles.videoPreview}>
+        <Text style={styles.videoEmoji}>🎥</Text>
+        <View style={styles.videoInfo}>
+          <Text style={styles.videoName}>
+            {videoFile.fileName || 'Selected Video'}
+          </Text>
+          <Text style={styles.videoDetails}>
+            {((videoFile.fileSize || 0) / (1024 * 1024)).toFixed(2)} MB
+            {videoFile.duration
+              ? ` • ${Math.floor(videoFile.duration / 60)}:${(
+                  videoFile.duration % 60
+                )
+                  .toString()
+                  .padStart(2, '0')}`
+              : ''}
+          </Text>
+        </View>
+      </View>
+    );
+  };
   
