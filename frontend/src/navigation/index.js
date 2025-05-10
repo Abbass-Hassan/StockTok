@@ -42,3 +42,10 @@ const Navigation = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="VideoPlayer"
+          component={VideoPlayer}
+          options={{
+            headerShown: false,
+          }}
+        />
