@@ -226,3 +226,40 @@ ignoreSilentSwitch="ignore"
                 </View>
               </View>
             )}
+            <Text style={styles.videoTitle}>{video.caption}</Text>
+
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Text style={styles.statIcon}>👁</Text>
+                <Text style={styles.statValue}>
+                  {formatCount(video.view_count || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Views</Text>
+              </View>
+  
+              <View style={styles.statItem}>
+                <Text style={styles.statIcon}>📈</Text>
+                <Text style={styles.statValue}>
+                  {formatValue(video.current_value || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Value</Text>
+              </View>
+  
+              <View style={styles.statItem}>
+                <Text style={styles.statIcon}>❤️</Text>
+                <Text style={styles.statValue}>
+                  {formatCount(video.like_investment_count || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Likes</Text>
+              </View>
+            </View>
+  
+            <View style={styles.infoCard}>
+              <Text style={styles.infoIcon}>ℹ️</Text>
+              <Text style={styles.infoTextWrapper}>
+                <Text style={styles.infoText}>
+                  Initial Investment: {formatValue(video.initial_investment || 0)}
+                </Text>
+              </Text>
+            </View>
+  
