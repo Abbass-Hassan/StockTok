@@ -33,25 +33,21 @@ const Navigation = () => {
           name="UploadVideo"
           component={UploadVideo}
           options={{
-            headerShown: true,
-            title: 'Upload Video',
+            headerShown: false, // Changed to false
           }}
         />
         <Stack.Screen
           name="MyVideos"
           component={MyVideos}
           options={{
-            headerShown: true,
-            title: 'My Videos',
+            headerShown: false, // Changed to false
           }}
         />
         <Stack.Screen
           name="VideoPlayer"
           component={VideoPlayer}
           options={{
-            headerShown: true,
-            title: 'Video',
-            headerBackTitle: 'Back',
+            headerShown: false, // Changed to false
           }}
         />
       </Stack.Navigator>
