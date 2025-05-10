@@ -65,5 +65,4 @@ const UploadVideo = ({navigation}) => {
     setVideoFile(mockVideoFile);
     Alert.alert('Development', 'Mock video selected for testing');
   };
-  git commit -m "Add mock video picker fallback for development"
-  
+  import {uploadVideo} from '../../api/videoApi';
