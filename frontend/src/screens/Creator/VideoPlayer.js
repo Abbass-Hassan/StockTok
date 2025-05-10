@@ -40,3 +40,19 @@ const VideoPlayer = ({route, navigation}) => {
   console.log('Video to play:', video);
   const videoUrl = getVideoStreamUrl(video.id);
   console.log('Streaming URL:', videoUrl);
+  const onLoadStart = () => {
+    console.log('Video load started');
+    setLoading(true);
+    setError(null);
+  };
+
+  const onLoad = data => {
+    console.log('Video loaded successfully:', data);
+    setDuration(data.duration);
+    setLoading(false);
+  };
+
+  const onProgress = data => {
+    setCurrentTime(data.currentTime);
+  };
+
