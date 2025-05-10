@@ -60,4 +60,12 @@ const MyVideos = ({navigation}) => {
       onPress={() => navigation.navigate('VideoPlayer', {video: item})}
     />
   );
+  const renderEmptyState = () => (
+    <EmptyState
+      title="No Videos Yet"
+      description="Start sharing your content and track your investment growth"
+      actionText="Upload Your First Video"
+      onAction={() => navigation.navigate('UploadVideo')}
+    />
+  );
   
