@@ -82,4 +82,21 @@ const styles = StyleSheet.create({
     statText: { ... },
     valueText: { ... },
   });
+  const styles = StyleSheet.create({
+    card: { ... },
+    thumbnailContainer: { ... },
+    thumbnail: { ... },
+    durationBadge: { ... },
+    durationText: { ... },
+    playOverlay: { ... },
+    playButton: { ... },
+    playIcon: { ... },
+    infoContainer: { ... },
+    caption: { ... },
+    statsRow: { ... },
+    statItem: { ... },
+    statLabel: { ... },
+    statText: { ... },
+    valueText: { ... },
+  });
   
