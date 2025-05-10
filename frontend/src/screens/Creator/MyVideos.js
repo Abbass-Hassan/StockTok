@@ -43,4 +43,11 @@ const MyVideos = ({navigation}) => {
   useEffect(() => {
     loadVideos();
   }, []);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadVideos();
+    });
+  
+    return unsubscribe;
+  }, [navigation]);
   
