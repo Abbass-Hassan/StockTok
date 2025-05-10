@@ -56,3 +56,50 @@ const VideoPlayer = ({route, navigation}) => {
     setCurrentTime(data.currentTime);
   };
 
+  const onError = errorEvent => {
+    console.error('Video player error:', JSON.stringify(errorEvent));
+    let errorMessage;
+    if (errorEvent.error?.localizedDescription) {
+      errorMessage = errorEvent.error.localizedDescription;
+    } else if (errorEvent.error?.code) {
+      errorMessage = `Error code: ${errorEvent.error.code}`;
+    } else {
+      errorMessage = 'Unknown error occurred';
+    }
+
+    setError(`Error playing video: ${errorMessage}`);
+    setLoading(false);
+
+    if (retryCount < 2) {
+      console.log(`Retrying playback (attempt ${retryCount + 1})...`);
+      setRetryCount(retryCount + 1);
+      setLoading(true);
+
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.seek(0);
+          setPaused(false);
+        }
+      }, 1000);
+    } else {
+      Alert.alert(
+        'Playback Error',
+        'There was a problem playing this video. Would you like to try again?',
+        [
+          {text: 'Cancel', onPress: () => navigation.goBack()},
+          {
+            text: 'Retry',
+            onPress: () => {
+              setRetryCount(0);
+              setLoading(true);
+              setError(null);
+              setPaused(true);
+              setTimeout(() => {
+                setPaused(false);
+              }, 500);
+            },
+          },
+        ],
+      );
+    }
+  };
