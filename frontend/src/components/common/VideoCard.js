@@ -27,3 +27,25 @@ const VideoCard = ({video, onPress, showStats = true, style}) => {
     </View>
   </View>
 </View>;
+<View style={styles.infoContainer}>
+  <Text style={styles.caption} numberOfLines={2}>
+    {video.caption}
+  </Text>
+
+  {showStats && (
+    <View style={styles.statsRow}>
+      <View style={styles.statItem}>
+        <Text style={styles.statLabel}>Views:</Text>
+        <Text style={styles.statText}>
+          {formatCount(video.view_count || 0)}
+        </Text>
+      </View>
+      <View style={styles.statItem}>
+        <Text style={styles.statLabel}>Value:</Text>
+        <Text style={[styles.statText, styles.valueText]}>
+          ${formatValue(video.current_value || 0)}
+        </Text>
+      </View>
+    </View>
+  )}
+</View>;
