@@ -68,4 +68,18 @@ const MyVideos = ({navigation}) => {
       onAction={() => navigation.navigate('UploadVideo')}
     />
   );
-  
+  <View style={styles.header}>
+  <View style={styles.headerContent}>
+    <TouchableOpacity
+      onPress={() => navigation.goBack()}
+      style={styles.backButton}>
+      <Text style={styles.backButtonText}>‹</Text>
+    </TouchableOpacity>
+    <View style={styles.titleContainer}>
+      <Text style={styles.title}>My Videos</Text>
+      <Text style={styles.subtitle}>
+        {videos.length} {videos.length === 1 ? 'video' : 'videos'}
+      </Text>
+    </View>
+  </View>
+</View>
