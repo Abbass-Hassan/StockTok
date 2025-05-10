@@ -49,3 +49,19 @@ const VideoCard = ({video, onPress, showStats = true, style}) => {
     </View>
   )}
 </View>;
+const formatDuration = seconds => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+const formatCount = count => {
+  if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+  if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+  return count.toString();
+};
+
+const formatValue = value => {
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+  return value.toFixed(2);
+};
