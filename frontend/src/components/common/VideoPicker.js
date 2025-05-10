@@ -1,5 +1,6 @@
 import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
+
 const FloatingActionButton = ({
   onPress,
   text = '+',
@@ -26,6 +27,7 @@ const FloatingActionButton = ({
     </TouchableOpacity>
   );
 };
+
 const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
@@ -44,3 +46,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default FloatingActionButton;
