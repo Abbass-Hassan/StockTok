@@ -65,3 +65,21 @@ const formatValue = value => {
   if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
   return value.toFixed(2);
 };
+const styles = StyleSheet.create({
+    card: { ... },
+    thumbnailContainer: { ... },
+    thumbnail: { ... },
+    durationBadge: { ... },
+    durationText: { ... },
+    playOverlay: { ... },
+    playButton: { ... },
+    playIcon: { ... },
+    infoContainer: { ... },
+    caption: { ... },
+    statsRow: { ... },
+    statItem: { ... },
+    statLabel: { ... },
+    statText: { ... },
+    valueText: { ... },
+  });
+  
