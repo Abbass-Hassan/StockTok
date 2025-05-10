@@ -106,3 +106,7 @@ const MyVideos = ({navigation}) => {
     showsVerticalScrollIndicator={false}
   />
 )}
+<FloatingActionButton
+  onPress={() => navigation.navigate('UploadVideo')}
+  text="+"
+/>
