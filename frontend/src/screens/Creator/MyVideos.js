@@ -40,4 +40,7 @@ const MyVideos = ({navigation}) => {
       setRefreshing(false);
     }
   };
+  useEffect(() => {
+    loadVideos();
+  }, []);
   
