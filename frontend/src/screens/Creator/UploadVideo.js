@@ -158,4 +158,20 @@ const UploadVideo = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.title}>Upload Video</Text>
         </View>
-  
+        <View style={styles.content}>
+  <TouchableOpacity
+    style={styles.uploadBox}
+    onPress={Platform.OS === 'ios' ? pickVideo : mockSelectVideo}
+    disabled={loading}
+    activeOpacity={0.7}>
+    {videoFile ? (
+      renderVideoPreview()
+    ) : (
+      <View style={styles.uploadPlaceholder}>
+        <Text style={styles.uploadEmoji}>📤</Text>
+        <Text style={styles.uploadText}>
+          Tap to select a video from gallery
+        </Text>
+      </View>
+    )}
+  </TouchableOpacity>
