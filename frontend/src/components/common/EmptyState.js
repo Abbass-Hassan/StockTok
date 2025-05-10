@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+
 const EmptyState = ({
   title = 'No Videos Yet',
   description = "You haven't uploaded any videos yet",
@@ -21,6 +22,7 @@ const EmptyState = ({
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -67,3 +69,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+export default EmptyState;
