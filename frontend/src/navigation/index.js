@@ -28,3 +28,10 @@ const Navigation = () => {
             headerBackVisible: false,
           }}
         />
+        <Stack.Screen
+          name="UploadVideo"
+          component={UploadVideo}
+          options={{
+            headerShown: false,
+          }}
+        />
