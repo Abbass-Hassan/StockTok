@@ -83,3 +83,26 @@ const MyVideos = ({navigation}) => {
     </View>
   </View>
 </View>
+{loading && !refreshing ? (
+  <View style={styles.loadingContainer}>
+    <ActivityIndicator size="large" color="#00796B" />
+    <Text style={styles.loadingText}>Loading your videos...</Text>
+  </View>
+) : (
+  <FlatList
+    data={videos}
+    renderItem={renderVideoItem}
+    keyExtractor={item => item.id?.toString() || Math.random().toString()}
+    contentContainerStyle={styles.listContainer}
+    ListEmptyComponent={renderEmptyState}
+    refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        colors={['#00796B']}
+        tintColor="#00796B"
+      />
+    }
+    showsVerticalScrollIndicator={false}
+  />
+)}
