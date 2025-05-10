@@ -175,3 +175,17 @@ const UploadVideo = ({navigation}) => {
       </View>
     )}
   </TouchableOpacity>
+  <View style={styles.inputContainer}>
+  <Text style={styles.label}>Caption</Text>
+  <TextInput
+    style={[styles.input, styles.multilineInput]}
+    placeholder="Write a caption for your video..."
+    placeholderTextColor="#999999"
+    value={caption}
+    onChangeText={setCaption}
+    multiline
+    maxLength={1000}
+    editable={!loading}
+  />
+  <Text style={styles.charCount}>{caption.length}/1000</Text>
+</View>
