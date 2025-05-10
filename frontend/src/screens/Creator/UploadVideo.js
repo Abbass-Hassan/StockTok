@@ -207,4 +207,14 @@ const UploadVideo = ({navigation}) => {
     💡 Initial investment helps boost your video's visibility and potential returns
   </Text>
 </View>
+<TouchableOpacity
+  style={[styles.button, loading && styles.buttonDisabled]}
+  onPress={handleUpload}
+  disabled={loading || !videoFile || !caption.trim()}>
+  {loading ? (
+    <ActivityIndicator color="#FFFFFF" />
+  ) : (
+    <Text style={styles.buttonText}>Upload Video</Text>
+  )}
+</TouchableOpacity>
 
