@@ -103,3 +103,16 @@ const VideoPlayer = ({route, navigation}) => {
       );
     }
   };
+  const formatTime = time => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const togglePlayPause = () => {
+    setPaused(!paused);
+  };
+
+  const toggleControls = () => {
+    setShowControls(!showControls);
+  };
