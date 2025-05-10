@@ -201,3 +201,28 @@ ignoreSilentSwitch="ignore"
                 </TouchableOpacity>
               </View>
             )}
+            {!loading && !error && showControls && (
+              <View style={styles.controlsOverlay}>
+                <TouchableOpacity
+                  style={styles.playPauseButton}
+                  onPress={togglePlayPause}>
+                  <Text style={styles.playPauseText}>
+                    {paused ? '▶️' : '⏸'}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      {width: `${(currentTime / duration) * 100}%`},
+                    ]}
+                  />
+                </View>
+
+                <View style={styles.timeContainer}>
+                  <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+                  <Text style={styles.timeText}>{formatTime(duration)}</Text>
+                </View>
+              </View>
+            )}
