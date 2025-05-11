@@ -61,3 +61,15 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
+  menuButton: {
+    backgroundColor: '#4B7BEC',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  menuButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
