@@ -131,3 +131,24 @@ export const getCreatorStats = async () => {
     );
   }
 };
+export const getDashboard = async () => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/creator/earnings/dashboard`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get dashboard error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch dashboard',
+    );
+  }
+};
