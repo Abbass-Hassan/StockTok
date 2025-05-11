@@ -116,3 +116,5 @@ const VideoPlayer = ({route, navigation}) => {
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
   };
+  const togglePlayPause = () => setPaused(!paused);
+  const toggleControls = () => setShowControls(!showControls);
