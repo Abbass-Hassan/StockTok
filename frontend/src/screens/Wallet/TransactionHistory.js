@@ -11,3 +11,4 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import {getTransactionHistory} from '../../api/walletApi';
