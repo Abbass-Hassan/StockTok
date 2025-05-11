@@ -227,4 +227,32 @@ const TransactionHistory = ({navigation}) => {
         fontSize: 16,
         fontWeight: '600',
       },
+      listContainer: {
+        padding: 16,
+      },
+      transactionItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        padding: 16,
+        borderRadius: 12,
+        marginBottom: 12,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+      },
+      transactionLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+      transactionIcon: {
+        fontSize: 24,
+        marginRight: 12,
+      },
+      transactionDetails: {
+        justifyContent: 'center',
+      },
       
