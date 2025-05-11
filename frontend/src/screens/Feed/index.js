@@ -57,3 +57,7 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 40,
   },
+  menuContainer: {
+    width: '100%',
+    marginTop: 20,
+  },
