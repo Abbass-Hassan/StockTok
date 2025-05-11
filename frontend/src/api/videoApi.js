@@ -110,3 +110,24 @@ export const getVideoEarnings = async videoId => {
     );
   }
 };
+export const getCreatorStats = async () => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/creator/stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get creator stats error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch creator stats',
+    );
+  }
+};
