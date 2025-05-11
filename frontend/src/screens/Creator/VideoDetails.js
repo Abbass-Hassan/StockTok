@@ -91,3 +91,18 @@ const VideoDetails = ({route, navigation}) => {
               </View>
             </View>
           </View>
+          <View style={styles.earningsCard}>
+            <Text style={styles.sectionTitle}>Earnings</Text>
+            <View style={styles.earningsRow}>
+              <Text style={styles.earningsLabel}>Total Earnings:</Text>
+              <Text style={styles.earningsValue}>
+                ${earnings?.earnings?.total_earnings?.toFixed(2) || '0.00'}
+              </Text>
+            </View>
+            <View style={styles.earningsRow}>
+              <Text style={styles.earningsLabel}>Creator Share:</Text>
+              <Text style={styles.earningsValue}>
+                ${earnings?.earnings?.creator_earnings?.toFixed(2) || '0.00'}
+              </Text>
+            </View>
+          </View>
