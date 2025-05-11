@@ -114,3 +114,20 @@ const WalletOverview = ({navigation}) => {
   </View>
   <Text style={styles.historyArrow}>›</Text>
 </TouchableOpacity>
+<View style={styles.infoCard}>
+  <Text style={styles.infoTitle}>Wallet Information</Text>
+  <View style={styles.infoRow}>
+    <Text style={styles.infoLabel}>Status:</Text>
+    <Text style={[styles.infoValue, styles.activeStatus]}>
+      Active
+    </Text>
+  </View>
+  <View style={styles.infoRow}>
+    <Text style={styles.infoLabel}>Last Updated:</Text>
+    <Text style={styles.infoValue}>
+      {wallet?.last_updated
+        ? new Date(wallet.last_updated).toLocaleDateString()
+        : 'N/A'}
+    </Text>
+  </View>
+</View>
