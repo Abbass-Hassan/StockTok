@@ -133,3 +133,20 @@ const Dashboard = ({navigation}) => {
               tintColor="#00796B"
             />
           }>
+          <View style={styles.earningsCard}>
+            <Text style={styles.sectionTitle}>Earnings Overview</Text>
+            <View style={styles.earningsRow}>
+              <View style={styles.earningsItem}>
+                <Text style={styles.earningsLabel}>Current Balance</Text>
+                <Text style={styles.earningsValue}>
+                  {formatCurrency(earnings?.wallet?.balance || 0)}
+                </Text>
+              </View>
+              <View style={styles.earningsItem}>
+                <Text style={styles.earningsLabel}>Total Earnings</Text>
+                <Text style={styles.earningsValue}>
+                  {formatCurrency(earnings?.summary?.total_earnings || 0)}
+                </Text>
+              </View>
+            </View>
+          </View>
