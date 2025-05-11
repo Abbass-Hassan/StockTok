@@ -10,70 +10,81 @@ import {
   Platform,
 } from 'react-native';
 import {getVideoDetails, getVideoEarnings} from '../../api/videoApi';
+
 const VideoDetails = ({route, navigation}) => {
-    const {video} = route.params;
-    const [loading, setLoading] = useState(true);
-    const [videoStats, setVideoStats] = useState(null);
-    const [earnings, setEarnings] = useState(null);
-    const [error, setError] = useState(null);
-    useEffect(() => {
-        loadVideoData();
-      }, []);
-      const loadVideoData = async () => {
-        try {
-          const [statsResponse, earningsResponse] = await Promise.all([
-            getVideoDetails(video.id),
-            getVideoEarnings(video.id),
-          ]);
-    
-          setVideoStats(statsResponse.data);
-          setEarnings(earningsResponse.data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-      if (loading) {
-        return (
-          <SafeAreaView style={styles.safeArea}>
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#00796B" />
-              <Text style={styles.loadingText}>Loading stats...</Text>
-            </View>
-          </SafeAreaView>
-        );
-      }
-      if (error) {
-        return (
-          <SafeAreaView style={styles.safeArea}>
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>Error: {error}</Text>
-              <TouchableOpacity style={styles.retryButton} onPress={loadVideoData}>
-                <Text style={styles.retryButtonText}>Retry</Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-        );
-      }
-      return (
-        <SafeAreaView style={styles.safeArea}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={styles.backButton}>
-                <Text style={styles.backText}>‹</Text>
-              </TouchableOpacity>
-              <Text style={styles.headerTitle}>Video Statistics</Text>
-            </View>
-            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-            <View style={styles.videoInfoCard}>
+  const {video} = route.params;
+  const [loading, setLoading] = useState(true);
+  const [videoStats, setVideoStats] = useState(null);
+  const [earnings, setEarnings] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadVideoData();
+  }, []);
+
+  const loadVideoData = async () => {
+    try {
+      const [statsResponse, earningsResponse] = await Promise.all([
+        getVideoDetails(video.id),
+        getVideoEarnings(video.id),
+      ]);
+
+      setVideoStats(statsResponse.data);
+      setEarnings(earningsResponse.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#00796B" />
+          <Text style={styles.loadingText}>Loading stats...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={loadVideoData}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Text style={styles.backText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Video Statistics</Text>
+        </View>
+
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {/* Video Info */}
+          <View style={styles.videoInfoCard}>
             <Text style={styles.videoTitle}>{video.caption}</Text>
             <Text style={styles.uploadDate}>
               Uploaded on {new Date(video.created_at).toLocaleDateString()}
             </Text>
           </View>
+
+          {/* Performance Metrics */}
           <View style={styles.metricsCard}>
             <Text style={styles.sectionTitle}>Performance Metrics</Text>
             <View style={styles.metricsGrid}>
@@ -91,6 +102,8 @@ const VideoDetails = ({route, navigation}) => {
               </View>
             </View>
           </View>
+
+          {/* Earnings Info */}
           <View style={styles.earningsCard}>
             <Text style={styles.sectionTitle}>Earnings</Text>
             <View style={styles.earningsRow}>
@@ -106,6 +119,8 @@ const VideoDetails = ({route, navigation}) => {
               </Text>
             </View>
           </View>
+
+          {/* Profitability Metrics */}
           <View style={styles.profitabilityCard}>
             <Text style={styles.sectionTitle}>Profitability</Text>
             <View style={styles.profitRow}>
@@ -133,6 +148,8 @@ const VideoDetails = ({route, navigation}) => {
               </Text>
             </View>
           </View>
+
+          {/* Top Investors */}
           {earnings?.investments?.data?.length > 0 && (
             <View style={styles.investorsCard}>
               <Text style={styles.sectionTitle}>Top Investors</Text>
@@ -150,6 +167,13 @@ const VideoDetails = ({route, navigation}) => {
                 ))}
             </View>
           )}
+        </ScrollView>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -359,3 +383,6 @@ const VideoDetails = ({route, navigation}) => {
     fontWeight: '600',
     color: '#00796B',
   },
+});
+
+export default VideoDetails;
