@@ -34,4 +34,14 @@ const VideoDetails = ({route, navigation}) => {
           setLoading(false);
         }
       };
+      if (loading) {
+        return (
+          <SafeAreaView style={styles.safeArea}>
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#00796B" />
+              <Text style={styles.loadingText}>Loading stats...</Text>
+            </View>
+          </SafeAreaView>
+        );
+      }
     
