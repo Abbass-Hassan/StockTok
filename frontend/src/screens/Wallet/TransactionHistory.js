@@ -104,4 +104,15 @@ const TransactionHistory = ({navigation}) => {
           </View>
         );
       };
+      if (loading) {
+        return (
+          <SafeAreaView style={styles.safeArea}>
+            <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#00796B" />
+              <Text style={styles.loadingText}>Loading transactions...</Text>
+            </View>
+          </SafeAreaView>
+        );
+      }
     
