@@ -9,7 +9,9 @@ import UploadVideo from '../screens/Creator/UploadVideo';
 import MyVideos from '../screens/Creator/MyVideos';
 import VideoPlayer from '../screens/Creator/VideoPlayer';
 import VideoDetails from '../screens/Creator/VideoDetails';
+
 const Stack = createStackNavigator();
+
 const Navigation = () => {
   return (
     <NavigationContainer>
@@ -55,8 +57,10 @@ const Navigation = () => {
           options={{
             headerShown: false,
           }}
-        />{' '}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
+export default Navigation;
