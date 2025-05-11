@@ -37,4 +37,20 @@ const TransactionHistory = ({navigation}) => {
         setRefreshing(true);
         loadTransactions();
       };
+      const getTransactionIcon = type => {
+        switch (type) {
+          case 'deposit':
+            return '⬇️';
+          case 'withdrawal':
+            return '⬆️';
+          case 'investment':
+          case 'like_investment':
+            return '💼';
+          case 'creator_earning':
+          case 'investment_return':
+            return '💰';
+          default:
+            return '📄';
+        }
+      };
     
