@@ -86,3 +86,17 @@ const WithdrawFunds = ({navigation}) => {
     </Text>
   )}
 </View>
+<View style={styles.form}>
+  <Text style={styles.label}>Amount to Withdraw</Text>
+  <View style={styles.inputContainer}>
+    <Text style={styles.currencySymbol}>$</Text>
+    <TextInput
+      style={styles.input}
+      value={amount}
+      onChangeText={setAmount}
+      placeholder="0.00"
+      keyboardType="decimal-pad"
+      maxLength={10}
+    />
+  </View>
+  <Text style={styles.helperText}>Minimum withdrawal: $10.00</Text>
