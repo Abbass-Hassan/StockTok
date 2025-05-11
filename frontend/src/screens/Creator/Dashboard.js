@@ -122,3 +122,14 @@ const Dashboard = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Creator Dashboard</Text>
         </View>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={['#00796B']}
+              tintColor="#00796B"
+            />
+          }>
