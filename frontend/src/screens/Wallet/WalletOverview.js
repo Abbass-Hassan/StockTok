@@ -89,3 +89,18 @@ const WalletOverview = ({navigation}) => {
       ${wallet?.balance?.toFixed(2) || '0.00'}
     </Text>
   </View>
+  <View style={styles.actionsContainer}>
+    <TouchableOpacity
+      style={styles.actionButton}
+      onPress={() => navigation.navigate('DepositFunds')}>
+      <Text style={styles.actionIcon}>➕</Text>
+      <Text style={styles.actionText}>Deposit</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      style={styles.actionButton}
+      onPress={() => navigation.navigate('WithdrawFunds')}>
+      <Text style={styles.actionIcon}>💸</Text>
+      <Text style={styles.actionText}>Withdraw</Text>
+    </TouchableOpacity>
+  </View>
