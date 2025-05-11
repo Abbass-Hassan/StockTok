@@ -222,3 +222,28 @@ const VideoPlayer = ({route, navigation}) => {
           style={styles.infoContainer}
           showsVerticalScrollIndicator={false}>
           <Text style={styles.videoTitle}>{video.caption}</Text>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statIcon}>👁</Text>
+              <Text style={styles.statValue}>
+                {formatCount(video.view_count || 0)}
+              </Text>
+              <Text style={styles.statLabel}>Views</Text>
+            </View>
+
+            <View style={styles.statItem}>
+              <Text style={styles.statIcon}>📈</Text>
+              <Text style={styles.statValue}>
+                {formatValue(video.current_value || 0)}
+              </Text>
+              <Text style={styles.statLabel}>Value</Text>
+            </View>
+
+            <View style={styles.statItem}>
+              <Text style={styles.statIcon}>❤️</Text>
+              <Text style={styles.statValue}>
+                {formatCount(video.like_investment_count || 0)}
+              </Text>
+              <Text style={styles.statLabel}>Likes</Text>
+            </View>
+          </View>
