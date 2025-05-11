@@ -147,3 +147,27 @@ const VideoPlayer = ({route, navigation}) => {
       <Text style={styles.headerTitle}>Video Player</Text>
     </View>
 
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={toggleControls}
+      style={styles.videoWrapper}>
+      <View style={styles.videoContainer}>
+        <Video
+          ref={videoRef}
+          source={{
+            uri: videoUrl,
+            headers: token ? {Authorization: `Bearer ${token}`} : {},
+          }}
+          style={styles.video}
+          resizeMode="contain"
+          onLoadStart={onLoadStart}
+          onLoad={onLoad}
+          onProgress={onProgress}
+          onError={onError}
+          paused={paused}
+          repeat={true}
+          controls={false}
+          playInBackground={false}
+          playWhenInactive={false}
+          ignoreSilentSwitch="ignore"
+        />
