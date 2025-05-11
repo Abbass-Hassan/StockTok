@@ -83,3 +83,9 @@ const WalletOverview = ({navigation}) => {
       tintColor="#4B7BEC"
     />
   }>
+  <View style={styles.balanceCard}>
+    <Text style={styles.balanceLabel}>Current Balance</Text>
+    <Text style={styles.balanceValue}>
+      ${wallet?.balance?.toFixed(2) || '0.00'}
+    </Text>
+  </View>
