@@ -68,3 +68,9 @@ const VideoDetails = ({route, navigation}) => {
               <Text style={styles.headerTitle}>Video Statistics</Text>
             </View>
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+            <View style={styles.videoInfoCard}>
+            <Text style={styles.videoTitle}>{video.caption}</Text>
+            <Text style={styles.uploadDate}>
+              Uploaded on {new Date(video.created_at).toLocaleDateString()}
+            </Text>
+          </View>
