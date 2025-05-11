@@ -46,3 +46,13 @@ const Navigation = () => {
           component={MyVideos}
           options={{headerShown: false}}
         />
+        <Stack.Screen
+          name="VideoPlayer"
+          component={VideoPlayer}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="VideoDetails"
+          component={VideoDetails}
+          options={{headerShown: false}}
+        />
