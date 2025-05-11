@@ -41,4 +41,8 @@ const Dashboard = ({navigation}) => {
           setRefreshing(false);
         }
       };
+      const handleRefresh = () => {
+        setRefreshing(true);
+        loadDashboardData();
+      };
     
