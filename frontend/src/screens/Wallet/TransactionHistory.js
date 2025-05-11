@@ -155,3 +155,8 @@ const TransactionHistory = ({navigation}) => {
         }
         showsVerticalScrollIndicator={false}
       />
+      {transactions.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No transactions yet</Text>
+        </View>
+      ) : ( ... )}
