@@ -104,3 +104,19 @@ const DepositFunds = ({navigation}) => {
             <Text style={styles.depositButtonText}>Deposit</Text>
           )}
         </TouchableOpacity>
+        <View style={styles.infoCard}>
+          <Text style={styles.infoTitle}>Deposit Information</Text>
+          <Text style={styles.infoText}>
+            • Deposits are processed instantly
+          </Text>
+          <Text style={styles.infoText}>
+            • A 5% processing fee applies
+          </Text>
+          <Text style={styles.infoText}>
+            • Funds will be available immediately
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
+  </View>
+</SafeAreaView>
