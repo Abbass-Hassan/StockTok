@@ -6,12 +6,14 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+
 const HomeScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Welcome to StockTok</Text>
         <Text style={styles.subtitle}>You are logged in successfully!</Text>
+
         <View style={styles.menuContainer}>
           <TouchableOpacity
             style={styles.menuButton}
@@ -35,6 +37,7 @@ const HomeScreen = ({navigation}) => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -73,3 +76,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+});
+
+export default HomeScreen;
