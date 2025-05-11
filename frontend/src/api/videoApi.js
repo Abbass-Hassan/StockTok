@@ -25,3 +25,5 @@ export const uploadVideo = async (
         name: thumbnailFile.fileName || 'thumbnail.jpg',
       });
     }
+    formData.append('caption', videoData.caption);
+    formData.append('initial_investment', videoData.initialInvestment || 0);
