@@ -67,4 +67,4 @@ const VideoDetails = ({route, navigation}) => {
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Video Statistics</Text>
             </View>
-    
+            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
