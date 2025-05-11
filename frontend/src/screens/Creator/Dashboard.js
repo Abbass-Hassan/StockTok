@@ -14,3 +14,4 @@ import {
 } from 'react-native';
 import {getCreatorStats, getDashboard} from '../../api/videoApi';
 import {LineChart} from 'react-native-chart-kit';
+const {width} = Dimensions.get('window');
