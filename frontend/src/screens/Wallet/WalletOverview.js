@@ -104,3 +104,13 @@ const WalletOverview = ({navigation}) => {
       <Text style={styles.actionText}>Withdraw</Text>
     </TouchableOpacity>
   </View>
+  <TouchableOpacity
+  style={styles.historyButton}
+  onPress={() => navigation.navigate('TransactionHistory')}>
+  <Text style={styles.historyIcon}>📜</Text>
+  <View style={styles.historyTextContainer}>
+    <Text style={styles.historyText}>Transaction History</Text>
+    <Text style={styles.historySubtext}>View all transactions</Text>
+  </View>
+  <Text style={styles.historyArrow}>›</Text>
+</TouchableOpacity>
