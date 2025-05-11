@@ -33,4 +33,28 @@ const DepositFunds = ({navigation}) => {
           setLoadingBalance(false);
         }
       };
+      const handleDeposit = async () => {
+        if (!amount || parseFloat(amount) < 10) {
+          Alert.alert('Error', 'Minimum deposit amount is $10');
+          return;
+        }
+    
+        setLoading(true);
+        try {
+          const response = await depositFunds(parseFloat(amount));
+          setCurrentBalance(response.data.wallet.balance);
+          Alert.alert(
+            'Success',
+            `Deposited $${response.data.net_deposit.toFixed(
+              2,
+            )} successfully!\nFee: $${response.data.fee.toFixed(2)}`,
+            [{text: 'OK'}],
+          );
+          setAmount('');
+        } catch (error) {
+          Alert.alert('Error', error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
     
