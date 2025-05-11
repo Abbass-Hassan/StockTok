@@ -36,3 +36,13 @@ const Navigation = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="UploadVideo"
+          component={UploadVideo}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="MyVideos"
+          component={MyVideos}
+          options={{headerShown: false}}
+        />
