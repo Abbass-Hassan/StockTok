@@ -13,3 +13,8 @@ export const uploadVideo = async (
     }
 
     const formData = new FormData();
+    formData.append('video_file', {
+      uri: videoFile.uri,
+      type: videoFile.type,
+      name: videoFile.fileName || 'video.mp4',
+    });
