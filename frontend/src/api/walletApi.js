@@ -1,6 +1,9 @@
 import axios from 'axios';
 import {getToken} from '../utils/tokenStorage';
+
 const API_URL = 'http://13.37.224.245:8000/api';
+
+// Get wallet details
 export const getWalletDetails = async () => {
   try {
     const token = await getToken();
@@ -22,6 +25,8 @@ export const getWalletDetails = async () => {
     );
   }
 };
+
+// Deposit funds
 export const depositFunds = async amount => {
   try {
     const token = await getToken();
@@ -45,6 +50,8 @@ export const depositFunds = async amount => {
     throw new Error(error.response?.data?.message || 'Failed to deposit funds');
   }
 };
+
+// Withdraw funds
 export const withdrawFunds = async amount => {
   try {
     const token = await getToken();
@@ -70,6 +77,8 @@ export const withdrawFunds = async amount => {
     );
   }
 };
+
+// Get transaction history
 export const getTransactionHistory = async (perPage = 15) => {
   try {
     const token = await getToken();
