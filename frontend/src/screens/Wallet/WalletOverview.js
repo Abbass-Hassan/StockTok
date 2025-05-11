@@ -72,4 +72,14 @@ const WalletOverview = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>My Wallet</Text>
         </View>
-    
+        <ScrollView
+  style={styles.content}
+  showsVerticalScrollIndicator={false}
+  refreshControl={
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
+      colors={['#4B7BEC']}
+      tintColor="#4B7BEC"
+    />
+  }>
