@@ -69,3 +69,17 @@ const Dashboard = ({navigation}) => {
       datasets: [{data, strokeWidth: 2}],
     };
   };
+  const chartConfig = {
+    backgroundColor: '#ffffff',
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo: '#ffffff',
+    decimalPlaces: 0,
+    color: (opacity = 1) => `rgba(0, 121, 107, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    style: {borderRadius: 16},
+    propsForDots: {
+      r: '4',
+      strokeWidth: '2',
+      stroke: '#00796B',
+    },
+  };
