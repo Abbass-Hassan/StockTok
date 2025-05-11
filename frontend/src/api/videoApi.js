@@ -60,3 +60,6 @@ export const getMyVideos = async () => {
     throw new Error(error.response?.data?.message || 'Failed to fetch videos');
   }
 };
+export const getVideoStreamUrl = videoId => {
+  return `${API_URL}/creator/videos/${videoId}/stream`;
+};
