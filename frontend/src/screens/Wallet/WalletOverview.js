@@ -253,3 +253,36 @@ historyArrow: {
   fontSize: 24,
   color: '#666666',
 },
+infoCard: {
+  backgroundColor: '#FFFFFF',
+  padding: 16,
+  borderRadius: 12,
+  shadowColor: '#000',
+  shadowOffset: {width: 0, height: 2},
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 3,
+},
+infoTitle: {
+  fontSize: 18,
+  fontWeight: '600',
+  color: '#00796B',
+  marginBottom: 16,
+},
+infoRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 12,
+},
+infoLabel: {
+  fontSize: 14,
+  color: '#666666',
+},
+infoValue: {
+  fontSize: 14,
+  fontWeight: '500',
+  color: '#212121',
+},
+activeStatus: {
+  color: '#00796B',
+},
