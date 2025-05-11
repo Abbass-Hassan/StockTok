@@ -42,3 +42,23 @@ export const uploadVideo = async (
     throw new Error(error.response?.data?.message || 'Video upload failed');
   }
 };
+export const getMyVideos = async () => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/creator/videos`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log('API response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Get videos error:', error.response?.data || error);
+    throw new Error(error.response?.data?.message || 'Failed to fetch videos');
+  }
+};
