@@ -79,3 +79,28 @@ const DepositFunds = ({navigation}) => {
           </Text>
         )}
       </View>
+      <View style={styles.form}>
+        <Text style={styles.label}>Amount to Deposit</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.currencySymbol}>$</Text>
+          <TextInput
+            style={styles.input}
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="0.00"
+            keyboardType="decimal-pad"
+            maxLength={10}
+          />
+        </View>
+        <Text style={styles.helperText}>Minimum deposit: $10.00</Text>
+
+        <TouchableOpacity
+          style={[styles.depositButton, loading && styles.disabledButton]}
+          onPress={handleDeposit}
+          disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.depositButtonText}>Deposit</Text>
+          )}
+        </TouchableOpacity>
