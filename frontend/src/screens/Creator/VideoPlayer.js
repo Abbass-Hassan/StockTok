@@ -17,6 +17,7 @@ import {getVideoStreamUrl} from '../../api/videoApi';
 import {getToken} from '../../utils/tokenStorage';
 
 const {width} = Dimensions.get('window');
+
 const VideoPlayer = ({route, navigation}) => {
   const {video} = route.params;
   const videoRef = useRef(null);
@@ -28,6 +29,8 @@ const VideoPlayer = ({route, navigation}) => {
   const [token, setToken] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [showControls, setShowControls] = useState(true);
+
+  // Get auth token when component mounts
   useEffect(() => {
     const fetchToken = async () => {
       const authToken = await getToken();
@@ -35,27 +38,37 @@ const VideoPlayer = ({route, navigation}) => {
     };
     fetchToken();
   }, []);
+
   console.log('Video to play:', video);
 
+  // Generate streaming URL for the video
   const videoUrl = getVideoStreamUrl(video.id);
   console.log('Streaming URL:', videoUrl);
+
+  // Handle load start
   const onLoadStart = () => {
     console.log('Video load started');
     setLoading(true);
     setError(null);
   };
 
+  // Handle loading
   const onLoad = data => {
     console.log('Video loaded successfully:', data);
     setDuration(data.duration);
     setLoading(false);
   };
 
+  // Handle progress updates
   const onProgress = data => {
     setCurrentTime(data.currentTime);
   };
+
+  // Handle errors
   const onError = errorEvent => {
     console.error('Video player error:', JSON.stringify(errorEvent));
+
+    // More detailed error message
     let errorMessage;
     if (errorEvent.error?.localizedDescription) {
       errorMessage = errorEvent.error.localizedDescription;
@@ -68,10 +81,13 @@ const VideoPlayer = ({route, navigation}) => {
     setError(`Error playing video: ${errorMessage}`);
     setLoading(false);
 
+    // Auto-retry up to 2 times
     if (retryCount < 2) {
       console.log(`Retrying playback (attempt ${retryCount + 1})...`);
       setRetryCount(retryCount + 1);
       setLoading(true);
+
+      // Short delay before retry
       setTimeout(() => {
         if (videoRef.current) {
           videoRef.current.seek(0);
@@ -79,6 +95,7 @@ const VideoPlayer = ({route, navigation}) => {
         }
       }, 1000);
     } else {
+      // Show alert after multiple failures
       Alert.alert(
         'Playback Error',
         'There was a problem playing this video. Would you like to try again?',
@@ -90,6 +107,8 @@ const VideoPlayer = ({route, navigation}) => {
               setRetryCount(0);
               setLoading(true);
               setError(null);
+
+              // Force remount of video component
               setPaused(true);
               setTimeout(() => {
                 setPaused(false);
@@ -100,24 +119,43 @@ const VideoPlayer = ({route, navigation}) => {
       );
     }
   };
+
+  // Format time in minutes:seconds
   const formatTime = time => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
+  // Toggle play/pause
+  const togglePlayPause = () => {
+    setPaused(!paused);
+  };
+
+  // Toggle controls visibility
+  const toggleControls = () => {
+    setShowControls(!showControls);
+  };
+
+  // Format value with proper units
   const formatValue = value => {
-    if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`;
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(1)}K`;
+    }
     return `$${value.toFixed(2)}`;
   };
 
+  // Format large numbers
   const formatCount = count => {
-    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
-    if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
     return count.toString();
   };
-  const togglePlayPause = () => setPaused(!paused);
-  const toggleControls = () => setShowControls(!showControls);
+
   if (!videoUrl) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -135,93 +173,106 @@ const VideoPlayer = ({route, navigation}) => {
         </View>
       </SafeAreaView>
     );
-  }<SafeAreaView style={styles.safeArea}>
-  <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-  <View style={styles.container}>
-    <View style={styles.header}>
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={styles.backButton}>
-        <Text style={styles.backText}>‹</Text>
-      </TouchableOpacity>
-      <Text style={styles.headerTitle}>Video Player</Text>
-    </View>
+  }
 
-    <TouchableOpacity
-      activeOpacity={1}
-      onPress={toggleControls}
-      style={styles.videoWrapper}>
-      <View style={styles.videoContainer}>
-        <Video
-          ref={videoRef}
-          source={{
-            uri: videoUrl,
-            headers: token ? {Authorization: `Bearer ${token}`} : {},
-          }}
-          style={styles.video}
-          resizeMode="contain"
-          onLoadStart={onLoadStart}
-          onLoad={onLoad}
-          onProgress={onProgress}
-          onError={onError}
-          paused={paused}
-          repeat={true}
-          controls={false}
-          playInBackground={false}
-          playWhenInactive={false}
-          ignoreSilentSwitch="ignore"
-        />
-        {loading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#FFFFFF" />
-            <Text style={styles.loadingText}>Loading video...</Text>
-          </View>
-        )}
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Text style={styles.backText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Video Player</Text>
+        </View>
 
-        {error && (
-          <View style={styles.errorOverlay}>
-            <Text style={styles.errorIcon}>⚠️</Text>
-            <Text style={styles.errorText}>{error}</Text>
-            <TouchableOpacity
-              style={styles.retryButton}
-              onPress={() => {
-                setRetryCount(0);
-                setLoading(true);
-                setError(null);
-                setPaused(false);
-              }}>
-              <Text style={styles.retryButtonText}>Retry</Text>
-            </TouchableOpacity>
+        {/* Video Container */}
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={toggleControls}
+          style={styles.videoWrapper}>
+          <View style={styles.videoContainer}>
+            <Video
+              ref={videoRef}
+              source={{
+                uri: videoUrl,
+                headers: token ? {Authorization: `Bearer ${token}`} : {},
+              }}
+              style={styles.video}
+              resizeMode="contain"
+              onLoadStart={onLoadStart}
+              onLoad={onLoad}
+              onProgress={onProgress}
+              onError={onError}
+              paused={paused}
+              repeat={true}
+              controls={false}
+              playInBackground={false}
+              playWhenInactive={false}
+              ignoreSilentSwitch="ignore"
+            />
+
+            {loading && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+                <Text style={styles.loadingText}>Loading video...</Text>
+              </View>
+            )}
+
+            {error && (
+              <View style={styles.errorOverlay}>
+                <Text style={styles.errorIcon}>⚠️</Text>
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity
+                  style={styles.retryButton}
+                  onPress={() => {
+                    setRetryCount(0);
+                    setLoading(true);
+                    setError(null);
+                    setPaused(false);
+                  }}>
+                  <Text style={styles.retryButtonText}>Retry</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {!loading && !error && showControls && (
+              <View style={styles.controlsOverlay}>
+                <TouchableOpacity
+                  style={styles.playPauseButton}
+                  onPress={togglePlayPause}>
+                  <Text style={styles.playPauseText}>
+                    {paused ? '▶️' : '⏸'}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      {width: `${(currentTime / duration) * 100}%`},
+                    ]}
+                  />
+                </View>
+
+                <View style={styles.timeContainer}>
+                  <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+                  <Text style={styles.timeText}>{formatTime(duration)}</Text>
+                </View>
+              </View>
+            )}
           </View>
-        )}
-        {!loading && !error && showControls && (
-          <View style={styles.controlsOverlay}>
-            <TouchableOpacity
-              style={styles.playPauseButton}
-              onPress={togglePlayPause}>
-              <Text style={styles.playPauseText}>
-                {paused ? '▶️' : '⏸'}
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  {width: `${(currentTime / duration) * 100}%`},
-                ]}
-              />
-            </View>
-            <View style={styles.timeContainer}>
-              <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-              <Text style={styles.timeText}>{formatTime(duration)}</Text>
-            </View>
-          </View>
-        )}
+        </TouchableOpacity>
+
         {/* Video Info */}
         <ScrollView
           style={styles.infoContainer}
           showsVerticalScrollIndicator={false}>
           <Text style={styles.videoTitle}>{video.caption}</Text>
+
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statIcon}>👁</Text>
@@ -247,6 +298,8 @@ const VideoPlayer = ({route, navigation}) => {
               <Text style={styles.statLabel}>Likes</Text>
             </View>
           </View>
+
+          {/* Additional Info Card */}
           <View style={styles.infoCard}>
             <Text style={styles.infoIcon}>ℹ️</Text>
             <Text style={styles.infoTextWrapper}>
@@ -255,6 +308,8 @@ const VideoPlayer = ({route, navigation}) => {
               </Text>
             </Text>
           </View>
+
+          {/* View Stats Button */}
           <TouchableOpacity
             style={styles.statsButton}
             onPress={() => navigation.navigate('VideoDetails', {video: video})}>
@@ -264,7 +319,9 @@ const VideoPlayer = ({route, navigation}) => {
       </View>
     </SafeAreaView>
   );
-  const styles = StyleSheet.create({
+};
+
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -305,7 +362,7 @@ const VideoPlayer = ({route, navigation}) => {
   },
   videoContainer: {
     width: width,
-    height: width * 0.56,
+    height: width * 0.56, // 16:9 aspect ratio
     position: 'relative',
   },
   video: {
@@ -318,12 +375,38 @@ const VideoPlayer = ({route, navigation}) => {
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
+  loadingText: {
+    color: '#FFFFFF',
+    marginTop: 12,
+    fontSize: 16,
+  },
   errorOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
     padding: 20,
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: '#00796B',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
   controlsOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -336,6 +419,9 @@ const VideoPlayer = ({route, navigation}) => {
     height: 80,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  playPauseText: {
+    fontSize: 40,
   },
   progressBar: {
     position: 'absolute',
@@ -350,6 +436,18 @@ const VideoPlayer = ({route, navigation}) => {
     height: '100%',
     backgroundColor: '#00796B',
     borderRadius: 2,
+  },
+  timeContainer: {
+    position: 'absolute',
+    bottom: 10,
+    left: 20,
+    right: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  timeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
   },
   infoContainer: {
     flex: 1,
@@ -375,6 +473,39 @@ const VideoPlayer = ({route, navigation}) => {
   statItem: {
     alignItems: 'center',
   },
+  statIcon: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#212121',
+  },
+  statLabel: {
+    fontSize: 14,
+    color: '#666666',
+    marginTop: 4,
+  },
+  infoCard: {
+    flexDirection: 'row',
+    backgroundColor: '#E8F5F3',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  infoIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  infoTextWrapper: {
+    flex: 1,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#00796B',
+    fontWeight: '500',
+  },
   statsButton: {
     backgroundColor: '#00796B',
     padding: 16,
@@ -382,3 +513,42 @@ const VideoPlayer = ({route, navigation}) => {
     marginTop: 20,
     alignItems: 'center',
   },
+  statsButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    backgroundColor: '#F5F5F5',
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#212121',
+    marginBottom: 8,
+  },
+  errorDescription: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  errorButton: {
+    backgroundColor: '#00796B',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  errorButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
+
+export default VideoPlayer;
