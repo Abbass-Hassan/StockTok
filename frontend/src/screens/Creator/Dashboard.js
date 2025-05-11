@@ -14,44 +14,58 @@ import {
 } from 'react-native';
 import {getCreatorStats, getDashboard} from '../../api/videoApi';
 import {LineChart} from 'react-native-chart-kit';
+
 const {width} = Dimensions.get('window');
+
 const Dashboard = ({navigation}) => {
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
-    const [stats, setStats] = useState(null);
-    const [earnings, setEarnings] = useState(null);
-    const [error, setError] = useState(null);
-    useEffect(() => {
-        loadDashboardData();
-      }, []);
-      const loadDashboardData = async () => {
-        try {
-          setError(null);
-          const [statsResponse, earningsResponse] = await Promise.all([
-            getCreatorStats(),
-            getDashboard(),
-          ]);
-    
-          setStats(statsResponse.data);
-          setEarnings(earningsResponse.data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-          setRefreshing(false);
-        }
-      };
-      const handleRefresh = () => {
-        setRefreshing(true);
-        loadDashboardData();
-      };
-      const formatCurrency = value => `$${(value || 0).toFixed(2)}`;
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [earnings, setEarnings] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setError(null);
+      const [statsResponse, earningsResponse] = await Promise.all([
+        getCreatorStats(),
+        getDashboard(),
+      ]);
+
+      setStats(statsResponse.data);
+      setEarnings(earningsResponse.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadDashboardData();
+  };
+
+  const formatCurrency = value => {
+    return `$${(value || 0).toFixed(2)}`;
+  };
 
   const formatNumber = num => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(1)}M`;
+    }
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1)}K`;
+    }
     return num.toString();
   };
+
+  // Prepare chart data
   const prepareMonthlyChartData = () => {
     if (!earnings?.monthly_trend || earnings.monthly_trend.length === 0)
       return null;
@@ -66,9 +80,15 @@ const Dashboard = ({navigation}) => {
 
     return {
       labels,
-      datasets: [{data, strokeWidth: 2}],
+      datasets: [
+        {
+          data,
+          strokeWidth: 2,
+        },
+      ],
     };
   };
+
   const chartConfig = {
     backgroundColor: '#ffffff',
     backgroundGradientFrom: '#ffffff',
@@ -76,13 +96,16 @@ const Dashboard = ({navigation}) => {
     decimalPlaces: 0,
     color: (opacity = 1) => `rgba(0, 121, 107, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    style: {borderRadius: 16},
+    style: {
+      borderRadius: 16,
+    },
     propsForDots: {
       r: '4',
       strokeWidth: '2',
       stroke: '#00796B',
     },
   };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -94,6 +117,7 @@ const Dashboard = ({navigation}) => {
       </SafeAreaView>
     );
   }
+
   if (error) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -109,11 +133,14 @@ const Dashboard = ({navigation}) => {
       </SafeAreaView>
     );
   }
+
   const monthlyChartData = prepareMonthlyChartData();
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <View style={styles.container}>
+        {/* Header with back button */}
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -122,6 +149,7 @@ const Dashboard = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Creator Dashboard</Text>
         </View>
+
         <ScrollView
           style={styles.content}
           showsVerticalScrollIndicator={false}
@@ -133,6 +161,7 @@ const Dashboard = ({navigation}) => {
               tintColor="#00796B"
             />
           }>
+          {/* Earnings Overview Card */}
           <View style={styles.earningsCard}>
             <Text style={styles.sectionTitle}>Earnings Overview</Text>
             <View style={styles.earningsRow}>
@@ -150,6 +179,8 @@ const Dashboard = ({navigation}) => {
               </View>
             </View>
           </View>
+
+          {/* Quick Stats Card */}
           <View style={styles.statsCard}>
             <Text style={styles.sectionTitle}>Performance Metrics</Text>
             <View style={styles.statsGrid}>
@@ -179,6 +210,8 @@ const Dashboard = ({navigation}) => {
               </View>
             </View>
           </View>
+
+          {/* Engagement Stats Card */}
           <View style={styles.engagementCard}>
             <Text style={styles.sectionTitle}>Engagement</Text>
             <View style={styles.engagementRow}>
@@ -196,6 +229,8 @@ const Dashboard = ({navigation}) => {
               </View>
             </View>
           </View>
+
+          {/* Monthly Earnings Chart */}
           {monthlyChartData && monthlyChartData.labels.length > 0 && (
             <View style={styles.chartCard}>
               <Text style={styles.sectionTitle}>Monthly Earnings Trend</Text>
@@ -215,6 +250,8 @@ const Dashboard = ({navigation}) => {
               />
             </View>
           )}
+
+          {/* Monthly Earnings List - fallback if no chart data */}
           {(!monthlyChartData || monthlyChartData.labels.length === 0) &&
             earnings?.monthly_trend &&
             earnings.monthly_trend.length > 0 && (
@@ -234,6 +271,8 @@ const Dashboard = ({navigation}) => {
                 ))}
               </View>
             )}
+
+          {/* Quick Actions */}
           <View style={styles.actionsCard}>
             <Text style={styles.sectionTitle}>Quick Actions</Text>
             <View style={styles.actionsGrid}>
@@ -251,10 +290,13 @@ const Dashboard = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
-          </ScrollView>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
+};
+
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -262,37 +304,6 @@ const Dashboard = ({navigation}) => {
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-  },
-  header: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'android' ? 16 : 12,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    marginRight: 16,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backText: {
-    fontSize: 32,
-    color: '#00796B',
-    marginTop: -4,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#00796B',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
   },
   loadingContainer: {
     flex: 1,
@@ -325,6 +336,37 @@ const Dashboard = ({navigation}) => {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    marginRight: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#00796B',
+  },
+  content: {
+    flex: 1,
+    padding: 16,
   },
   earningsCard: {
     backgroundColor: '#FFFFFF',
@@ -496,3 +538,6 @@ const Dashboard = ({navigation}) => {
     color: '#00796B',
     textAlign: 'center',
   },
+});
+
+export default Dashboard;
