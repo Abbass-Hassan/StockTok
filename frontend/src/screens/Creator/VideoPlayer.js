@@ -255,3 +255,12 @@ const VideoPlayer = ({route, navigation}) => {
               </Text>
             </Text>
           </View>
+          <TouchableOpacity
+            style={styles.statsButton}
+            onPress={() => navigation.navigate('VideoDetails', {video: video})}>
+            <Text style={styles.statsButtonText}>View Detailed Stats</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
+  );
