@@ -10,3 +10,4 @@ import MyVideos from '../screens/Creator/MyVideos';
 import VideoPlayer from '../screens/Creator/VideoPlayer';
 import VideoDetails from '../screens/Creator/VideoDetails';
 import Dashboard from '../screens/Creator/Dashboard';
+const Stack = createStackNavigator();
