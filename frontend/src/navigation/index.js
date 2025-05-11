@@ -10,6 +10,10 @@ import MyVideos from '../screens/Creator/MyVideos';
 import VideoPlayer from '../screens/Creator/VideoPlayer';
 import VideoDetails from '../screens/Creator/VideoDetails';
 import Dashboard from '../screens/Creator/Dashboard';
+import WalletOverview from '../screens/Wallet/WalletOverview';
+import DepositFunds from '../screens/Wallet/DepositFunds';
+import WithdrawFunds from '../screens/Wallet/WithdrawFunds';
+import TransactionHistory from '../screens/Wallet/TransactionHistory';
 
 const Stack = createStackNavigator();
 
@@ -62,6 +66,34 @@ const Navigation = () => {
         <Stack.Screen
           name="VideoDetails"
           component={VideoDetails}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="WalletOverview"
+          component={WalletOverview}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="DepositFunds"
+          component={DepositFunds}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="WithdrawFunds"
+          component={WithdrawFunds}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="TransactionHistory"
+          component={TransactionHistory}
           options={{
             headerShown: false,
           }}

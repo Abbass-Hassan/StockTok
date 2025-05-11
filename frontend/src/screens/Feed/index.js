@@ -23,6 +23,12 @@ const HomeScreen = ({navigation}) => {
 
           <TouchableOpacity
             style={styles.menuButton}
+            onPress={() => navigation.navigate('WalletOverview')}>
+            <Text style={styles.menuButtonText}>My Wallet</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuButton}
             onPress={() => navigation.navigate('UploadVideo')}>
             <Text style={styles.menuButtonText}>Upload Video</Text>
           </TouchableOpacity>
