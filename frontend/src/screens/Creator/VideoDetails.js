@@ -301,3 +301,34 @@ const VideoDetails = ({route, navigation}) => {
     fontWeight: '600',
     color: '#00796B',
   },
+  profitabilityCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  profitRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  profitLabel: {
+    fontSize: 16,
+    color: '#666666',
+  },
+  profitValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#212121',
+  },
+  positiveROI: {
+    color: '#4CAF50',
+  },
+  negativeROI: {
+    color: '#F44336',
+  },
