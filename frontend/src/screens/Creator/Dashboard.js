@@ -392,3 +392,33 @@ const Dashboard = ({navigation}) => {
     color: '#666666',
     marginTop: 4,
   },
+  engagementCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  engagementRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  engagementItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  engagementLabel: {
+    fontSize: 14,
+    color: '#666666',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  engagementValue: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#00796B',
+  },
