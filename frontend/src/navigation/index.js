@@ -11,3 +11,9 @@ import VideoPlayer from '../screens/Creator/VideoPlayer';
 import VideoDetails from '../screens/Creator/VideoDetails';
 import Dashboard from '../screens/Creator/Dashboard';
 const Stack = createStackNavigator();
+const Navigation = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{headerShown: false}}>
