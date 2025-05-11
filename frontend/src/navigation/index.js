@@ -29,3 +29,10 @@ const Navigation = () => {
             headerBackVisible: false,
           }}
         />
+        <Stack.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{
+            headerShown: false,
+          }}
+        />
