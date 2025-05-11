@@ -21,4 +21,7 @@ const Dashboard = ({navigation}) => {
     const [stats, setStats] = useState(null);
     const [earnings, setEarnings] = useState(null);
     const [error, setError] = useState(null);
-  
+    useEffect(() => {
+        loadDashboardData();
+      }, []);
+    
