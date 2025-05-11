@@ -100,3 +100,25 @@ const WithdrawFunds = ({navigation}) => {
     />
   </View>
   <Text style={styles.helperText}>Minimum withdrawal: $10.00</Text>
+  <TouchableOpacity
+    style={[styles.withdrawButton, loading && styles.disabledButton]}
+    onPress={handleWithdraw}
+    disabled={loading}>
+    {loading ? (
+      <ActivityIndicator color="#FFFFFF" />
+    ) : (
+      <Text style={styles.withdrawButtonText}>Withdraw</Text>
+    )}
+  </TouchableOpacity>
+
+  <View style={styles.infoCard}>
+    <Text style={styles.infoTitle}>Withdrawal Information</Text>
+    <Text style={styles.infoText}>
+      • Withdrawals are processed within 1-3 business days
+    </Text>
+    <Text style={styles.infoText}>• A 5% processing fee applies</Text>
+    <Text style={styles.infoText}>
+      • Funds will be sent to your registered bank account
+    </Text>
+  </View>
+</View>
