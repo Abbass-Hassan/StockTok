@@ -52,3 +52,20 @@ const Dashboard = ({navigation}) => {
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toString();
   };
+  const prepareMonthlyChartData = () => {
+    if (!earnings?.monthly_trend || earnings.monthly_trend.length === 0)
+      return null;
+
+    const labels = earnings.monthly_trend.map(
+      item =>
+        item.month?.substring(0, 3) || item.period?.substring(0, 3) || 'N/A',
+    );
+    const data = earnings.monthly_trend.map(
+      item => item.earnings || item.amount || 0,
+    );
+
+    return {
+      labels,
+      datasets: [{data, strokeWidth: 2}],
+    };
+  };
