@@ -196,3 +196,22 @@ const Dashboard = ({navigation}) => {
               </View>
             </View>
           </View>
+          {monthlyChartData && monthlyChartData.labels.length > 0 && (
+            <View style={styles.chartCard}>
+              <Text style={styles.sectionTitle}>Monthly Earnings Trend</Text>
+              <LineChart
+                data={monthlyChartData}
+                width={width - 32}
+                height={200}
+                chartConfig={chartConfig}
+                bezier
+                style={styles.chart}
+                withInnerLines={false}
+                withOuterLines={true}
+                withVerticalLines={false}
+                withHorizontalLines={true}
+                yAxisLabel="$"
+                segments={4}
+              />
+            </View>
+          )}
