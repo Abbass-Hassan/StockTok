@@ -35,3 +35,7 @@ const VideoPlayer = ({route, navigation}) => {
     };
     fetchToken();
   }, []);
+  console.log('Video to play:', video);
+
+  const videoUrl = getVideoStreamUrl(video.id);
+  console.log('Streaming URL:', videoUrl);
