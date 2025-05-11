@@ -16,4 +16,7 @@ const VideoDetails = ({route, navigation}) => {
     const [videoStats, setVideoStats] = useState(null);
     const [earnings, setEarnings] = useState(null);
     const [error, setError] = useState(null);
-  
+    useEffect(() => {
+        loadVideoData();
+      }, []);
+    
