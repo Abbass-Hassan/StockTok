@@ -12,3 +12,9 @@ import {
   RefreshControl,
 } from 'react-native';
 import {getTransactionHistory} from '../../api/walletApi';
+const TransactionHistory = ({navigation}) => {
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState(null);
+  
