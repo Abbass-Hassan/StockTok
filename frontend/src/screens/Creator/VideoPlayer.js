@@ -217,3 +217,8 @@ const VideoPlayer = ({route, navigation}) => {
             </View>
           </View>
         )}
+        {/* Video Info */}
+        <ScrollView
+          style={styles.infoContainer}
+          showsVerticalScrollIndicator={false}>
+          <Text style={styles.videoTitle}>{video.caption}</Text>
