@@ -86,3 +86,27 @@ export const getVideoDetails = async videoId => {
     );
   }
 };
+export const getVideoEarnings = async videoId => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(
+      `${API_URL}/creator/earnings/videos/${videoId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Get video earnings error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch video earnings',
+    );
+  }
+};
