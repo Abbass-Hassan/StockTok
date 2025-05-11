@@ -251,3 +251,7 @@ const Dashboard = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
+          </ScrollView>
+      </View>
+    </SafeAreaView>
+  );
