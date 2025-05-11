@@ -49,3 +49,10 @@ const Navigation = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="VideoDetails"
+          component={VideoDetails}
+          options={{
+            headerShown: false,
+          }}
+        />
