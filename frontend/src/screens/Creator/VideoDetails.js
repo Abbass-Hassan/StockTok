@@ -74,3 +74,20 @@ const VideoDetails = ({route, navigation}) => {
               Uploaded on {new Date(video.created_at).toLocaleDateString()}
             </Text>
           </View>
+          <View style={styles.metricsCard}>
+            <Text style={styles.sectionTitle}>Performance Metrics</Text>
+            <View style={styles.metricsGrid}>
+              <View style={styles.metricItem}>
+                <Text style={styles.metricValue}>
+                  {videoStats?.video?.view_count || 0}
+                </Text>
+                <Text style={styles.metricLabel}>Views</Text>
+              </View>
+              <View style={styles.metricItem}>
+                <Text style={styles.metricValue}>
+                  {videoStats?.video?.like_investment_count || 0}
+                </Text>
+                <Text style={styles.metricLabel}>Investments</Text>
+              </View>
+            </View>
+          </View>
