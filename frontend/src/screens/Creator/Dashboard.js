@@ -422,3 +422,18 @@ const Dashboard = ({navigation}) => {
     fontWeight: '600',
     color: '#00796B',
   },
+  chartCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  chart: {
+    marginVertical: 8,
+    borderRadius: 16,
+  },
