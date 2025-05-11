@@ -22,3 +22,26 @@ export const getWalletDetails = async () => {
     );
   }
 };
+export const depositFunds = async amount => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.post(
+      `${API_URL}/wallet/deposit`,
+      {amount},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Deposit error:', error.response?.data || error);
+    throw new Error(error.response?.data?.message || 'Failed to deposit funds');
+  }
+};
