@@ -55,4 +55,8 @@ const Navigation = () => {
           options={{
             headerShown: false,
           }}
-        />
+        />{' '}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
