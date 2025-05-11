@@ -45,3 +45,28 @@ export const depositFunds = async amount => {
     throw new Error(error.response?.data?.message || 'Failed to deposit funds');
   }
 };
+export const withdrawFunds = async amount => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.post(
+      `${API_URL}/wallet/withdraw`,
+      {amount},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Withdraw error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to withdraw funds',
+    );
+  }
+};
