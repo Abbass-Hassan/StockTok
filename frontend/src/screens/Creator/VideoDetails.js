@@ -150,3 +150,11 @@ const VideoDetails = ({route, navigation}) => {
                 ))}
             </View>
           )}
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
