@@ -326,3 +326,38 @@ const Dashboard = ({navigation}) => {
     fontSize: 16,
     fontWeight: '600',
   },
+  earningsCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#00796B',
+    marginBottom: 16,
+  },
+  earningsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  earningsItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  earningsLabel: {
+    fontSize: 14,
+    color: '#666666',
+    marginBottom: 4,
+  },
+  earningsValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#00796B',
+  },
