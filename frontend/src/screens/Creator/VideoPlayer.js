@@ -28,3 +28,10 @@ const VideoPlayer = ({route, navigation}) => {
   const [token, setToken] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
   const [showControls, setShowControls] = useState(true);
+  useEffect(() => {
+    const fetchToken = async () => {
+      const authToken = await getToken();
+      setToken(authToken);
+    };
+    fetchToken();
+  }, []);
