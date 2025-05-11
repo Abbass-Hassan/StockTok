@@ -247,3 +247,11 @@ const VideoPlayer = ({route, navigation}) => {
               <Text style={styles.statLabel}>Likes</Text>
             </View>
           </View>
+          <View style={styles.infoCard}>
+            <Text style={styles.infoIcon}>ℹ️</Text>
+            <Text style={styles.infoTextWrapper}>
+              <Text style={styles.infoText}>
+                Initial Investment: {formatValue(video.initial_investment || 0)}
+              </Text>
+            </Text>
+          </View>
