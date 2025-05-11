@@ -106,3 +106,30 @@ const VideoDetails = ({route, navigation}) => {
               </Text>
             </View>
           </View>
+          <View style={styles.profitabilityCard}>
+            <Text style={styles.sectionTitle}>Profitability</Text>
+            <View style={styles.profitRow}>
+              <Text style={styles.profitLabel}>Initial Investment:</Text>
+              <Text style={styles.profitValue}>
+                ${videoStats?.video?.initial_investment?.toFixed(2) || '0.00'}
+              </Text>
+            </View>
+            <View style={styles.profitRow}>
+              <Text style={styles.profitLabel}>Current Value:</Text>
+              <Text style={styles.profitValue}>
+                ${videoStats?.video?.current_value?.toFixed(2) || '0.00'}
+              </Text>
+            </View>
+            <View style={styles.profitRow}>
+              <Text style={styles.profitLabel}>ROI:</Text>
+              <Text
+                style={[
+                  styles.profitValue,
+                  videoStats?.profitability?.roi > 0
+                    ? styles.positiveROI
+                    : styles.negativeROI,
+                ]}>
+                {videoStats?.profitability?.roi?.toFixed(2) || '0.00'}%
+              </Text>
+            </View>
+          </View>
