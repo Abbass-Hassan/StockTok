@@ -53,4 +53,22 @@ const TransactionHistory = ({navigation}) => {
             return '📄';
         }
       };
+      const getTransactionTypeDisplay = type => {
+        switch (type) {
+          case 'deposit':
+            return 'Deposit';
+          case 'withdrawal':
+            return 'Withdrawal';
+          case 'like_investment':
+            return 'Investment';
+          case 'investment_return':
+            return 'Return';
+          case 'creator_earning':
+            return 'Earning';
+          default:
+            return type
+              ? type.charAt(0).toUpperCase() + type.slice(1)
+              : 'Transaction';
+        }
+      };
     
