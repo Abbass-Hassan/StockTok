@@ -44,4 +44,16 @@ const VideoDetails = ({route, navigation}) => {
           </SafeAreaView>
         );
       }
+      if (error) {
+        return (
+          <SafeAreaView style={styles.safeArea}>
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>Error: {error}</Text>
+              <TouchableOpacity style={styles.retryButton} onPress={loadVideoData}>
+                <Text style={styles.retryButtonText}>Retry</Text>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        );
+      }
     
