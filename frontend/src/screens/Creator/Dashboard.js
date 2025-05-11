@@ -150,3 +150,32 @@ const Dashboard = ({navigation}) => {
               </View>
             </View>
           </View>
+          <View style={styles.statsCard}>
+            <Text style={styles.sectionTitle}>Performance Metrics</Text>
+            <View style={styles.statsGrid}>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>
+                  {formatNumber(stats?.total_videos || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Videos</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>
+                  {formatNumber(stats?.total_views || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Total Views</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>
+                  {formatNumber(stats?.follower_count || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Followers</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>
+                  {formatNumber(stats?.total_investments || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Investments</Text>
+              </View>
+            </View>
+          </View>
