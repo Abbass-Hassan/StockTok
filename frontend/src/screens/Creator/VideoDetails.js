@@ -56,4 +56,15 @@ const VideoDetails = ({route, navigation}) => {
           </SafeAreaView>
         );
       }
+      return (
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={styles.backButton}>
+                <Text style={styles.backText}>‹</Text>
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Video Statistics</Text>
+            </View>
     
