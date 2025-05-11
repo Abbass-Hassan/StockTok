@@ -10,7 +10,9 @@ import MyVideos from '../screens/Creator/MyVideos';
 import VideoPlayer from '../screens/Creator/VideoPlayer';
 import VideoDetails from '../screens/Creator/VideoDetails';
 import Dashboard from '../screens/Creator/Dashboard';
+
 const Stack = createStackNavigator();
+
 const Navigation = () => {
   return (
     <NavigationContainer>
@@ -39,20 +41,34 @@ const Navigation = () => {
         <Stack.Screen
           name="UploadVideo"
           component={UploadVideo}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+          }}
         />
         <Stack.Screen
           name="MyVideos"
           component={MyVideos}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+          }}
         />
         <Stack.Screen
           name="VideoPlayer"
           component={VideoPlayer}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+          }}
         />
         <Stack.Screen
           name="VideoDetails"
           component={VideoDetails}
-          options={{headerShown: false}}
+          options={{
+            headerShown: false,
+          }}
         />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default Navigation;
