@@ -65,3 +65,24 @@ export const getMyVideos = async () => {
 export const getVideoStreamUrl = videoId => {
   return `${API_URL}/creator/videos/${videoId}/stream`;
 };
+export const getVideoDetails = async videoId => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/creator/videos/${videoId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get video details error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch video details',
+    );
+  }
+};
