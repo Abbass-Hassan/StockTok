@@ -215,3 +215,22 @@ const Dashboard = ({navigation}) => {
               />
             </View>
           )}
+          {(!monthlyChartData || monthlyChartData.labels.length === 0) &&
+            earnings?.monthly_trend &&
+            earnings.monthly_trend.length > 0 && (
+              <View style={styles.monthlyTrendCard}>
+                <Text style={styles.sectionTitle}>Monthly Earnings</Text>
+                {earnings.monthly_trend.map((monthData, index) => (
+                  <View key={index} style={styles.monthRow}>
+                    <Text style={styles.monthLabel}>
+                      {monthData.month || monthData.period}
+                    </Text>
+                    <Text style={styles.monthValue}>
+                      {formatCurrency(
+                        monthData.earnings || monthData.amount || 0,
+                      )}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
