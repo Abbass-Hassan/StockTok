@@ -19,4 +19,19 @@ const VideoDetails = ({route, navigation}) => {
     useEffect(() => {
         loadVideoData();
       }, []);
+      const loadVideoData = async () => {
+        try {
+          const [statsResponse, earningsResponse] = await Promise.all([
+            getVideoDetails(video.id),
+            getVideoEarnings(video.id),
+          ]);
+    
+          setVideoStats(statsResponse.data);
+          setEarnings(earningsResponse.data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
     
