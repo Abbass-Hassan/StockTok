@@ -300,3 +300,15 @@ const VideoPlayer = ({route, navigation}) => {
     fontWeight: '600',
     color: '#00796B',
   },
+  videoWrapper: {
+    backgroundColor: '#000000',
+  },
+  videoContainer: {
+    width: width,
+    height: width * 0.56,
+    position: 'relative',
+  },
+  video: {
+    width: '100%',
+    height: '100%',
+  },
