@@ -332,3 +332,30 @@ const VideoDetails = ({route, navigation}) => {
   negativeROI: {
     color: '#F44336',
   },
+  investorsCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  investorRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  investorName: {
+    fontSize: 16,
+    color: '#212121',
+  },
+  investorAmount: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#00796B',
+  },
