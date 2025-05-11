@@ -276,3 +276,28 @@ const VideoDetails = ({route, navigation}) => {
     color: '#666666',
     marginTop: 4,
   },
+  earningsCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  earningsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  earningsLabel: {
+    fontSize: 16,
+    color: '#666666',
+  },
+  earningsValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#00796B',
+  },
