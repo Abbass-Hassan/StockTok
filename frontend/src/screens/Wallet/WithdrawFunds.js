@@ -18,4 +18,7 @@ const WithdrawFunds = ({navigation}) => {
     const [loading, setLoading] = useState(false);
     const [currentBalance, setCurrentBalance] = useState(null);
     const [loadingBalance, setLoadingBalance] = useState(true);
-  
+    useEffect(() => {
+        loadWalletBalance();
+      }, []);
+    
