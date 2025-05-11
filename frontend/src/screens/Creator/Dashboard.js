@@ -109,3 +109,4 @@ const Dashboard = ({navigation}) => {
       </SafeAreaView>
     );
   }
+  const monthlyChartData = prepareMonthlyChartData();
