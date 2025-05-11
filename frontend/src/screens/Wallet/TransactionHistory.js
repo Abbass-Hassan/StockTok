@@ -71,4 +71,37 @@ const TransactionHistory = ({navigation}) => {
               : 'Transaction';
         }
       };
+      const renderTransaction = ({item}) => {
+        const type = item?.transaction_type || 'unknown';
+        const amount = item?.amount || 0;
+        const createdAt = item?.created_at || new Date().toISOString();
+    
+        const amountDisplay = `$${Math.abs(amount).toFixed(2)}`;
+        const displayPrefix =
+          type === 'deposit' ||
+          type === 'creator_earning' ||
+          type === 'investment_return'
+            ? '+'
+            : '-';
+    
+        return (
+          <View style={styles.transactionItem}>
+            <View style={styles.transactionLeft}>
+              <Text style={styles.transactionIcon}>{getTransactionIcon(type)}</Text>
+              <View style={styles.transactionDetails}>
+                <Text style={styles.transactionType}>
+                  {getTransactionTypeDisplay(type)}
+                </Text>
+                <Text style={styles.transactionDate}>
+                  {new Date(createdAt).toLocaleDateString()}
+                </Text>
+              </View>
+            </View>
+            <Text style={styles.transactionAmount}>
+              {displayPrefix}
+              {amountDisplay}
+            </Text>
+          </View>
+        );
+      };
     
