@@ -171,3 +171,26 @@ const VideoPlayer = ({route, navigation}) => {
           playWhenInactive={false}
           ignoreSilentSwitch="ignore"
         />
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#FFFFFF" />
+            <Text style={styles.loadingText}>Loading video...</Text>
+          </View>
+        )}
+
+        {error && (
+          <View style={styles.errorOverlay}>
+            <Text style={styles.errorIcon}>⚠️</Text>
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity
+              style={styles.retryButton}
+              onPress={() => {
+                setRetryCount(0);
+                setLoading(true);
+                setError(null);
+                setPaused(false);
+              }}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        )}
