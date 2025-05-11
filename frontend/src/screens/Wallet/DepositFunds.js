@@ -68,4 +68,14 @@ const DepositFunds = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Deposit Funds</Text>
         </View>
-    
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <View style={styles.balanceContainer}>
+        <Text style={styles.balanceLabel}>Current Balance</Text>
+        {loadingBalance ? (
+          <ActivityIndicator size="small" color="#4B7BEC" />
+        ) : (
+          <Text style={styles.balanceValue}>
+            ${currentBalance !== null ? currentBalance.toFixed(2) : '0.00'}
+          </Text>
+        )}
+      </View>
