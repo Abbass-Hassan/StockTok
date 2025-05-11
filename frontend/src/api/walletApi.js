@@ -70,3 +70,27 @@ export const withdrawFunds = async amount => {
     );
   }
 };
+export const getTransactionHistory = async (perPage = 15) => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/wallet/transactions`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        per_page: perPage,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get transactions error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch transactions',
+    );
+  }
+};
