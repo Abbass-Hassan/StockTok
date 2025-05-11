@@ -26,3 +26,19 @@ export const uploadVideo = async (
         name: thumbnailFile.fileName || 'thumbnail.jpg',
       });
     }
+    formData.append('caption', videoData.caption);
+    formData.append('initial_investment', videoData.initialInvestment || 0);
+
+    const response = await axios.post(`${API_URL}/creator/videos`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Upload error:', error.response?.data || error);
+    throw new Error(error.response?.data?.message || 'Video upload failed');
+  }
+};
