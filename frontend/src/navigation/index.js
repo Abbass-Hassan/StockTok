@@ -18,3 +18,4 @@ const Navigation = () => {
         screenOptions={{headerShown: false}}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="ProfileCompletion" component={ProfileCompletion} />
