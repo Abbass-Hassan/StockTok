@@ -131,3 +131,42 @@ const WalletOverview = ({navigation}) => {
     </Text>
   </View>
 </View>
+safeArea: {
+  flex: 1,
+  backgroundColor: '#FFFFFF',
+},
+container: {
+  flex: 1,
+  backgroundColor: '#F5F5F5',
+},
+header: {
+  backgroundColor: '#FFFFFF',
+  paddingHorizontal: 16,
+  paddingTop: Platform.OS === 'android' ? 16 : 12,
+  paddingBottom: 16,
+  borderBottomWidth: 1,
+  borderBottomColor: '#E0E0E0',
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+backButton: {
+  marginRight: 16,
+  width: 40,
+  height: 40,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+backText: {
+  fontSize: 32,
+  color: '#00796B',
+  marginTop: -4,
+},
+headerTitle: {
+  fontSize: 20,
+  fontWeight: '600',
+  color: '#00796B',
+},
+content: {
+  flex: 1,
+  padding: 16,
+},
