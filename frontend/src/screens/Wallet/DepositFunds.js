@@ -18,4 +18,19 @@ const DepositFunds = ({navigation}) => {
     const [loading, setLoading] = useState(false);
     const [currentBalance, setCurrentBalance] = useState(null);
     const [loadingBalance, setLoadingBalance] = useState(true);
-  
+    useEffect(() => {
+        loadWalletBalance();
+      }, []);
+    
+      const loadWalletBalance = async () => {
+        try {
+          setLoadingBalance(true);
+          const response = await getWalletDetails();
+          setCurrentBalance(response.data.wallet.balance);
+        } catch (error) {
+          console.error('Error loading wallet balance:', error);
+        } finally {
+          setLoadingBalance(false);
+        }
+      };
+    
