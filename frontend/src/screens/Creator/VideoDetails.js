@@ -217,3 +217,7 @@ const VideoDetails = ({route, navigation}) => {
     fontWeight: '600',
     color: '#00796B',
   },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
