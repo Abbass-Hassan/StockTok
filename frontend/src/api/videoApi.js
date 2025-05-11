@@ -13,3 +13,16 @@ export const uploadVideo = async (
     }
 
     const formData = new FormData();
+    formData.append('video_file', {
+      uri: videoFile.uri,
+      type: videoFile.type,
+      name: videoFile.fileName || 'video.mp4',
+    });
+
+    if (thumbnailFile) {
+      formData.append('thumbnail', {
+        uri: thumbnailFile.uri,
+        type: thumbnailFile.type,
+        name: thumbnailFile.fileName || 'thumbnail.jpg',
+      });
+    }
