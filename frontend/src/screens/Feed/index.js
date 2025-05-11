@@ -46,3 +46,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#4B7BEC',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 40,
+  },
