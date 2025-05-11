@@ -12,3 +12,4 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import {withdrawFunds, getWalletDetails} from '../../api/walletApi';
