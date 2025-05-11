@@ -255,4 +255,19 @@ const TransactionHistory = ({navigation}) => {
       transactionDetails: {
         justifyContent: 'center',
       },
+      transactionType: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#212121',
+      },
+      transactionDate: {
+        fontSize: 14,
+        color: '#666666',
+        marginTop: 2,
+      },
+      transactionAmount: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#00796B',
+      },
       
