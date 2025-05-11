@@ -133,3 +133,20 @@ const VideoDetails = ({route, navigation}) => {
               </Text>
             </View>
           </View>
+          {earnings?.investments?.data?.length > 0 && (
+            <View style={styles.investorsCard}>
+              <Text style={styles.sectionTitle}>Top Investors</Text>
+              {earnings.investments.data
+                .slice(0, 5)
+                .map((investment, index) => (
+                  <View key={index} style={styles.investorRow}>
+                    <Text style={styles.investorName}>
+                      {investment.investor?.name || 'Anonymous'}
+                    </Text>
+                    <Text style={styles.investorAmount}>
+                      ${investment.amount.toFixed(2)}
+                    </Text>
+                  </View>
+                ))}
+            </View>
+          )}
