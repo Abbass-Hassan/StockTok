@@ -159,4 +159,21 @@ safeArea: {
     flex: 1,
     padding: 16,
   },
+  balanceContainer: {
+    backgroundColor: '#00796B',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  balanceLabel: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.8)',
+    marginBottom: 8,
+  },
+  balanceValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
   
