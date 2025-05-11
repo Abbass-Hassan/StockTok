@@ -20,4 +20,21 @@ const TransactionHistory = ({navigation}) => {
     useEffect(() => {
         loadTransactions();
       }, []);
+      const loadTransactions = async () => {
+        try {
+          setError(null);
+          const response = await getTransactionHistory(20);
+          setTransactions(response.data.transactions.data || []);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      };
+    
+      const handleRefresh = () => {
+        setRefreshing(true);
+        loadTransactions();
+      };
     
