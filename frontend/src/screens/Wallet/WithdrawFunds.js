@@ -76,4 +76,13 @@ const WithdrawFunds = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Withdraw Funds</Text>
         </View>
-    
+        <View style={styles.balanceContainer}>
+  <Text style={styles.balanceLabel}>Available Balance</Text>
+  {loadingBalance ? (
+    <ActivityIndicator size="small" color="#FFFFFF" />
+  ) : (
+    <Text style={styles.balanceValue}>
+      ${currentBalance !== null ? currentBalance.toFixed(2) : '0.00'}
+    </Text>
+  )}
+</View>
