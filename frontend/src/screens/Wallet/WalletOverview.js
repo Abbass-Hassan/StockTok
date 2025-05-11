@@ -20,4 +20,21 @@ const WalletOverview = ({navigation}) => {
     useEffect(() => {
         loadWalletData();
       }, []);
+      const loadWalletData = async () => {
+        try {
+          setError(null);
+          const response = await getWalletDetails();
+          setWallet(response.data.wallet);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      };
+    
+      const handleRefresh = () => {
+        setRefreshing(true);
+        loadWalletData();
+      };
     
