@@ -234,3 +234,20 @@ const Dashboard = ({navigation}) => {
                 ))}
               </View>
             )}
+          <View style={styles.actionsCard}>
+            <Text style={styles.sectionTitle}>Quick Actions</Text>
+            <View style={styles.actionsGrid}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => navigation.navigate('UploadVideo')}>
+                <Text style={styles.actionIcon}>📹</Text>
+                <Text style={styles.actionText}>Upload Video</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => navigation.navigate('MyVideos')}>
+                <Text style={styles.actionIcon}>🎬</Text>
+                <Text style={styles.actionText}>My Videos</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
