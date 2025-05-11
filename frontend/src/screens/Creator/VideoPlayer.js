@@ -118,3 +118,21 @@ const VideoPlayer = ({route, navigation}) => {
   };
   const togglePlayPause = () => setPaused(!paused);
   const toggleControls = () => setShowControls(!showControls);
+  if (!videoUrl) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorTitle}>Unable to Play Video</Text>
+          <Text style={styles.errorDescription}>
+            This video doesn't have a playable URL
+          </Text>
+          <TouchableOpacity
+            style={styles.errorButton}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.errorButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
