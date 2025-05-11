@@ -24,4 +24,21 @@ const Dashboard = ({navigation}) => {
     useEffect(() => {
         loadDashboardData();
       }, []);
+      const loadDashboardData = async () => {
+        try {
+          setError(null);
+          const [statsResponse, earningsResponse] = await Promise.all([
+            getCreatorStats(),
+            getDashboard(),
+          ]);
+    
+          setStats(statsResponse.data);
+          setEarnings(earningsResponse.data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      };
     
