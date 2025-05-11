@@ -179,3 +179,20 @@ const Dashboard = ({navigation}) => {
               </View>
             </View>
           </View>
+          <View style={styles.engagementCard}>
+            <Text style={styles.sectionTitle}>Engagement</Text>
+            <View style={styles.engagementRow}>
+              <View style={styles.engagementItem}>
+                <Text style={styles.engagementLabel}>Avg Views per Video</Text>
+                <Text style={styles.engagementValue}>
+                  {formatNumber(stats?.average_views_per_video || 0)}
+                </Text>
+              </View>
+              <View style={styles.engagementItem}>
+                <Text style={styles.engagementLabel}>Engagement Rate</Text>
+                <Text style={styles.engagementValue}>
+                  {stats?.engagement_rate || 0}%
+                </Text>
+              </View>
+            </View>
+          </View>
