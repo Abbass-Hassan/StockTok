@@ -242,3 +242,37 @@ const VideoDetails = ({route, navigation}) => {
     fontSize: 14,
     color: '#666666',
   },
+  metricsCard: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#00796B',
+    marginBottom: 16,
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  metricItem: {
+    alignItems: 'center',
+  },
+  metricValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#212121',
+  },
+  metricLabel: {
+    fontSize: 14,
+    color: '#666666',
+    marginTop: 4,
+  },
