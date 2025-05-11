@@ -37,4 +37,15 @@ const WalletOverview = ({navigation}) => {
         setRefreshing(true);
         loadWalletData();
       };
+      if (loading) {
+        return (
+          <SafeAreaView style={styles.safeArea}>
+            <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#4B7BEC" />
+              <Text style={styles.loadingText}>Loading wallet...</Text>
+            </View>
+          </SafeAreaView>
+        );
+      }
     
