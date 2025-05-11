@@ -11,3 +11,4 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
+import {getWalletDetails} from '../../api/walletApi';
