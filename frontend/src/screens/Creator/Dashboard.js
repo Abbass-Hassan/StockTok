@@ -15,3 +15,10 @@ import {
 import {getCreatorStats, getDashboard} from '../../api/videoApi';
 import {LineChart} from 'react-native-chart-kit';
 const {width} = Dimensions.get('window');
+const Dashboard = ({navigation}) => {
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [stats, setStats] = useState(null);
+    const [earnings, setEarnings] = useState(null);
+    const [error, setError] = useState(null);
+  
