@@ -138,3 +138,20 @@ const TransactionHistory = ({navigation}) => {
       </TouchableOpacity>
       <Text style={styles.headerTitle}>Transaction History</Text>
     </View>
+        <FlatList
+        data={transactions}
+        renderItem={renderTransaction}
+        keyExtractor={item =>
+          item?.id?.toString() || Math.random().toString()
+        }
+        contentContainerStyle={styles.listContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={['#00796B']}
+            tintColor="#00796B"
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      />
