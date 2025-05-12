@@ -72,4 +72,19 @@ useEffect(() => {
       fetchVideos(currentPage + 1);
     }
   };
+  const handleViewableItemsChanged = useRef(({viewableItems}) => {
+    if (viewableItems.length > 0) {
+      const newActiveIndex = viewableItems[0].index;
+      const activeVideoId = viewableItems[0].item.id;
+  
+      const updatedPlayingStates = {...playingStates};
+      Object.keys(updatedPlayingStates).forEach(videoId => {
+        updatedPlayingStates[videoId] = false;
+      });
+      updatedPlayingStates[activeVideoId] = true;
+  
+      setActiveVideoIndex(newActiveIndex);
+      setPlayingStates(updatedPlayingStates);
+    }
+  }).current;
   
