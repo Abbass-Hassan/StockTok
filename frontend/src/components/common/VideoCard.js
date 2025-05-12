@@ -50,6 +50,24 @@ const VideoCard = ({video, onPress}) => {
       </View>
     </TouchableOpacity>
   );
-};
+};const styles = StyleSheet.create({
+    container: {
+      width: CARD_WIDTH,
+      marginBottom: 16,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 8,
+      overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    thumbnail: {
+      width: '100%',
+      height: 200,
+      backgroundColor: '#E1E4E8',
+    },
+  
 
 export default VideoCard;
