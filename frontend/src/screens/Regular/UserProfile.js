@@ -136,4 +136,20 @@ const UserProfile = ({route, navigation}) => {
               </SafeAreaView>
             );
           }
+          return (
+            <SafeAreaView style={styles.container}>
+              <StatusBar barStyle="light-content" backgroundColor="#00796B" />
+              <View style={styles.header}>
+                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Text style={styles.backButtonText}>←</Text>
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Profile</Text>
+              </View>
+        
+              <View style={styles.profileSection}>
+                <Image
+                  source={{ uri: profile?.profile_photo_url || 'https://via.placeholder.com/100' }}
+                  style={styles.profileImage}
+                />
+                <Text style={styles.username}>@{profile?.username || 'Unknown'}</Text>
         
