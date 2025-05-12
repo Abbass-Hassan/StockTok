@@ -273,4 +273,29 @@ header: {
     fontSize: 12,
     color: '#666666',
   },
+  editButton: {
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    borderRadius: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    marginBottom: 16,
+  },
+  editButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#000000',
+  },
+  bio: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  tapToBio: {
+    fontSize: 14,
+    color: '#999999',
+    fontStyle: 'italic',
+    marginBottom: 8,
+  },
 
