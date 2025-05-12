@@ -31,3 +31,7 @@ const UserProfile = ({route, navigation}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [videoLoading, setVideoLoading] = useState(true);
+  useEffect(() => {
+    console.log('UserProfile useEffect triggered');
+    loadProfileData();
+  }, []);
