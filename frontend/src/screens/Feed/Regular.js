@@ -62,3 +62,9 @@ const Regular = ({navigation}) => {
         <Text style={styles.description}>
           You're logged in as a regular user (Investor).
         </Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
