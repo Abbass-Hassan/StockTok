@@ -32,3 +32,7 @@ const AVAILABLE_HEIGHT =
     const [playingStates, setPlayingStates] = useState({});
     const flatListRef = useRef(null);
 const videoRefs = useRef({});
+const fetchVideos = async (page = 1) => {
+    try {
+      setLoading(true);
+  
