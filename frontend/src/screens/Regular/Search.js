@@ -12,3 +12,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {searchUsers, debugTokenStorage} from '../../api/userProfileApi';
+const [searchQuery, setSearchQuery] = useState('');
+const [searchResults, setSearchResults] = useState([]);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState(null);
