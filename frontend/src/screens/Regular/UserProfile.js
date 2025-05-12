@@ -92,5 +92,18 @@ const UserProfile = ({route, navigation}) => {
               Alert.alert('Error', 'Failed to update follow status. Please try again.');
             }
           };
+          const renderVideoItem = ({item}) => {
+            if (!item) return null;
+        
+            return (
+              <TouchableOpacity style={styles.gridItem} onPress={() => navigation.navigate('VideoPlayer', {video: item})}>
+                <Image
+                  source={{ uri: item.thumbnail_url || 'https://via.placeholder.com/150' }}
+                  style={styles.thumbnailImage}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            );
+          };
         
   
