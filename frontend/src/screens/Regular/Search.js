@@ -122,4 +122,11 @@ const keyExtractor = (item, index) => {
   <ActivityIndicator style={styles.loader} size="large" color="#00796B" />
 ) : error ? (
     <Text style={styles.errorText}>{error}</Text>
+) : searchResults.length > 0 ? (
+    <FlatList
+      data={searchResults}
+      renderItem={renderUserItem}
+      keyExtractor={keyExtractor}
+      contentContainerStyle={styles.resultsList}
+    />
   
