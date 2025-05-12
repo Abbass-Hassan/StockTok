@@ -136,3 +136,4 @@ const EditCreatorProfile = ({route, navigation}) => {
             <Text style={styles.changePhotoText}>Change Profile Photo</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.formContainer}>
