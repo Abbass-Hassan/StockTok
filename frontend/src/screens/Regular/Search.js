@@ -146,4 +146,14 @@ const keyExtractor = (item, index) => {
       </Text>
     </View>
   )}
-  
+  container: {
+  flex: 1,
+  backgroundColor: '#FFFFFF',
+},
+header: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  paddingVertical: 12,
+  backgroundColor: '#00796B',
+},
