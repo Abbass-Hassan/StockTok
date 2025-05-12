@@ -148,3 +148,17 @@ const EditCreatorProfile = ({route, navigation}) => {
             />
             {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
           </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Username</Text>
+            <TextInput
+              style={[styles.input, errors.username && styles.inputError]}
+              value={username}
+              onChangeText={setUsername}
+              placeholder="username"
+              placeholderTextColor="#A0A0A0"
+              autoCapitalize="none"
+            />
+            {errors.username && (
+              <Text style={styles.errorText}>{errors.username}</Text>
+            )}
+          </View>
