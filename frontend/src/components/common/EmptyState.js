@@ -13,25 +13,38 @@ const EmptyState = ({title, description, actionText, onAction}) => {
       )}
     </View>
   );
-};const styles = StyleSheet.create({
-    container: {
-      padding: 40,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    title: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#00796B',
-      marginBottom: 8,
-      textAlign: 'center',
-    },
-    description: {
-      fontSize: 14,
-      color: '#666666',
-      textAlign: 'center',
-      marginBottom: 20,
-    },
-  
+};
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#00796B',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  actionButton: {
+    backgroundColor: '#00796B',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  actionButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+});
 
 export default EmptyState;
