@@ -178,3 +178,17 @@ const EditCreatorProfile = ({route, navigation}) => {
           </View>
           <View style={styles.privateInfoSection}>
             <Text style={styles.sectionTitle}>Private Information</Text>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Phone</Text>
+              <TextInput
+                style={[styles.input, errors.phone && styles.inputError]}
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="+1 (123) 456-7890"
+                placeholderTextColor="#A0A0A0"
+                keyboardType="phone-pad"
+              />
+              {errors.phone && (
+                <Text style={styles.errorText}>{errors.phone}</Text>
+              )}
+            </View>
