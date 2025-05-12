@@ -81,7 +81,7 @@ export const getMyVideos = async () => {
 // Function to get video streaming URL
 export const getVideoStreamUrl = videoId => {
   // This is the URL to your backend's video streaming endpoint for creators
-  return `${API_URL}/creator/videos/${videoId}/stream`;
+  return `${API_URL}/videos/${videoId}/play`;
 };
 
 // Function to get video details

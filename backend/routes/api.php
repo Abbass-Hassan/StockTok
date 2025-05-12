@@ -64,7 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/videos/{videoId}/comments', [CommentController::class, 'getVideoComments']);
 
     // *** MOVED OUTSIDE MIDDLEWARE: Video streaming route accessible to all authenticated users ***
-    Route::get('/creator/videos/{id}/stream', [VideoManagementController::class, 'streamVideo']);
+    Route::get('/videos/{id}/play', [VideoManagementController::class, 'streamVideo']);
 
     // Creator-specific routes
     Route::middleware('creator')->prefix('creator')->group(function () {
