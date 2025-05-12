@@ -144,3 +144,17 @@ const CreatorProfile = ({navigation}) => {
   onPress={() => navigation.navigate('EditCreatorProfile', {profile})}>
   <Text style={styles.editButtonText}>Edit Profile</Text>
 </TouchableOpacity>
+<View style={styles.videoGridContainer}>
+  {videos && videos.length > 0 ? (
+    <FlatList
+      data={videos}
+      renderItem={renderGridItem}
+      keyExtractor={item => item.id?.toString() || Math.random().toString()}
+      numColumns={numColumns}
+      scrollEnabled={false}
+      contentContainerStyle={styles.gridContainer}
+    />
+  ) : (
+    renderEmptyContent()
+  )}
+</View>
