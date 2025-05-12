@@ -48,3 +48,10 @@ export const searchUsers = async (query, perPage = 15) => {
       Accept: 'application/json',
     },
   });
+  if (response.data?.data?.profile) {
+    return { profile: response.data.data.profile };
+  } else if (response.data?.profile) {
+    return { profile: response.data.profile };
+  } else {
+    throw new Error('Invalid response structure');
+  }
