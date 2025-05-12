@@ -299,3 +299,24 @@ header: {
     marginBottom: 8,
   },
 
+videoGridContainer: {
+    flex: 1,
+  },
+  gridContainer: {
+    flex: 1,
+  },
+  gridItem: {
+    width: itemWidth,
+    height: itemWidth,
+  },
+  thumbnail: {
+    flex: 1,
+  },
+  thumbnailImage: {
+    width: '100%',
+    height: '100%',
+  },
+  thumbnailPlaceholder: {
+    flex: 1,
+    backgroundColor: '#E0E0E0',
+  },
