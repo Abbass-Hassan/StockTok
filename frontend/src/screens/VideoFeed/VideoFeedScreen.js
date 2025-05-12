@@ -214,4 +214,29 @@ useEffect(() => {
       </View>
     );
   }
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+      <FlatList
+        ref={flatListRef}
+        data={videos}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderLoader}
+        showsVerticalScrollIndicator={false}
+        snapToInterval={height - TAB_BAR_HEIGHT}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        pagingEnabled
+        onViewableItemsChanged={handleViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        initialNumToRender={3}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews={true}
+      />
+    </View>
+  );
   
