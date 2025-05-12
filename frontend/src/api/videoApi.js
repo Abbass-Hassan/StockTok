@@ -1,3 +1,5 @@
+// src/api/videoApi.js - Updated with getAllVideos function
+
 import axios from 'axios';
 import {getToken} from '../utils/tokenStorage';
 
@@ -78,9 +80,33 @@ export const getMyVideos = async () => {
   }
 };
 
+// Function to get all videos (for feed) with pagination
+export const getAllVideos = async (page = 1) => {
+  try {
+    // Get token from storage
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/videos/all?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get all videos error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch video feed',
+    );
+  }
+};
+
 // Function to get video streaming URL
 export const getVideoStreamUrl = videoId => {
-  // This is the URL to your backend's video streaming endpoint for creators
+  // Use the common endpoint that's accessible to all authenticated users
   return `${API_URL}/videos/${videoId}/play`;
 };
 
@@ -105,6 +131,31 @@ export const getVideoDetails = async videoId => {
     throw new Error(
       error.response?.data?.message || 'Failed to fetch video details',
     );
+  }
+};
+
+// Function to like a video
+export const likeVideo = async videoId => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.post(
+      `${API_URL}/videos/${videoId}/like`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Like video error:', error.response?.data || error);
+    throw new Error(error.response?.data?.message || 'Failed to like video');
   }
 };
 

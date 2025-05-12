@@ -71,6 +71,13 @@ const Regular = ({navigation}) => {
         </Text>
 
         <View style={styles.menuContainer}>
+          {/* Video Feed Button */}
+          <TouchableOpacity
+            style={styles.menuButton}
+            onPress={() => navigation.navigate('VideoFeed')}>
+            <Text style={styles.menuButtonText}>Discover Videos</Text>
+          </TouchableOpacity>
+
           {/* New Search Button */}
           <TouchableOpacity
             style={styles.menuButton}
