@@ -44,4 +44,7 @@ const fetchVideos = async (page = 1) => {
   
       const newVideos = response.data.data.videos.data;
       const isLastPage = !response.data.data.videos.next_page_url;
-  
+      const newPlayingStates = {};
+    newVideos.forEach(video => {
+      newPlayingStates[video.id] = false;
+    });
