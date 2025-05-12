@@ -55,4 +55,6 @@ const fetchVideos = async (page = 1) => {
         setVideos(prev => [...prev, ...newVideos]);
         setPlayingStates(prev => ({...prev, ...newPlayingStates}));
       }
-  
+      setHasMorePages(!isLastPage);
+    setCurrentPage(page);
+    setLoading(false);
