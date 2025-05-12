@@ -90,3 +90,14 @@ export const searchUsers = async (query, perPage = 15) => {
   });
   return processVideoResponse(creatorOwnResponse);
   return {videos: {data: []}};
+  function processVideoResponse(response) {
+    if (response.data?.videos?.data) {
+      return {videos: response.data.videos};
+    } else if (response.data?.data?.videos) {
+      return {videos: response.data.data.videos};
+    } else if (Array.isArray(response.data)) {
+      return {videos: {data: response.data}};
+    }
+    return {videos: {data: []}};
+  }
+  
