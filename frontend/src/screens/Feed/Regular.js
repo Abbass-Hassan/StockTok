@@ -62,3 +62,9 @@ const Regular = ({navigation}) => {
         </Text>
 
 
+        <View style={styles.menuContainer}>
+          <TouchableOpacity
+            style={styles.menuButton}
+            onPress={() => navigation.navigate('Search')}>
+            <Text style={styles.menuButtonText}>Search Creators</Text>
+          </TouchableOpacity>
