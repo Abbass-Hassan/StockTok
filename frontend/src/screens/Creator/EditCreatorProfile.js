@@ -98,4 +98,24 @@ const EditCreatorProfile = ({route, navigation}) => {
       return (
         <SafeAreaView style={styles.container}>
           <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-    
+          <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => navigation.goBack()}
+          disabled={loading}>
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.headerTitle}>Edit Profile</Text>
+
+        <TouchableOpacity
+          style={[styles.doneButton, loading && styles.disabledButton]}
+          onPress={handleSave}
+          disabled={loading}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={styles.doneButtonText}>Done</Text>
+          )}
+        </TouchableOpacity>
+      </View>
