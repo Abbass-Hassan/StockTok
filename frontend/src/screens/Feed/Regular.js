@@ -12,6 +12,7 @@ import {getUserData} from '../../utils/tokenStorage';
 
 const Regular = ({navigation}) => {
   const [userData, setUserData] = useState(null);
+
   useEffect(() => {
     loadUserData();
   }, []);
@@ -23,7 +24,9 @@ const Regular = ({navigation}) => {
     } catch (error) {
       console.error('Error loading user data:', error);
     }
-  };  const handleLogout = () => {
+  };
+
+  const handleLogout = () => {
     Alert.alert(
       'Logout',
       'Are you sure you want to logout?',
@@ -34,6 +37,7 @@ const Regular = ({navigation}) => {
           style: 'destructive',
           onPress: () => {
             try {
+              // Simply navigate to login screen
               navigation.reset({
                 index: 0,
                 routes: [{name: 'Login'}],
@@ -47,32 +51,39 @@ const Regular = ({navigation}) => {
       ],
       {cancelable: true},
     );
-  };  return (
+  };
+
+  return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>StockTok for Investors</Text>
       </View>
+
       <View style={styles.content}>
         <Text style={styles.welcomeText}>
           Welcome, {userData?.name || userData?.username || 'Investor'}!
         </Text>
+
         <Text style={styles.description}>
           You're logged in as a regular user (Investor).
         </Text>
 
-
         <View style={styles.menuContainer}>
+          {/* New Search Button */}
           <TouchableOpacity
             style={styles.menuButton}
             onPress={() => navigation.navigate('Search')}>
             <Text style={styles.menuButtonText}>Search Creators</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.menuButton}
             onPress={() => navigation.navigate('WalletOverview')}>
             <Text style={styles.menuButtonText}>My Wallet</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
@@ -80,24 +91,77 @@ const Regular = ({navigation}) => {
       </View>
     </SafeAreaView>
   );
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#F8F9FA',
-    },
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: 16,
-      paddingVertical: 16,
-      backgroundColor: '#FFFFFF',
-      borderBottomWidth: 1,
-      borderBottomColor: '#EEEEEE',
-    },
-    headerTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#333',
-    },
-  
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8F9FA',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#00796B',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 40,
+    textAlign: 'center',
+  },
+  menuContainer: {
+    width: '100%',
+    marginTop: 20,
+    maxWidth: 300,
+  },
+  menuButton: {
+    backgroundColor: '#00796B',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  menuButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  logoutButton: {
+    backgroundColor: '#FFFFFF',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FF3B30',
+  },
+  logoutButtonText: {
+    color: '#FF3B30',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
+
+export default Regular;
