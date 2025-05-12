@@ -112,4 +112,38 @@ useEffect(() => {
   const renderItem = ({item, index}) => {
     const isPlaying = playingStates[item.id] || false;
     const videoUrl = `${API_URL}/videos/${item.id}/play`;
-  
+    return (
+        <View style={styles.itemContainer}>
+          <View style={styles.videoContainer}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={styles.videoWrapper}
+              onPress={() => toggleVideoPlayback(item.id)}>
+              {isPlaying ? (
+                <Video
+                  ref={ref => {
+                    videoRefs.current[item.id] = ref;
+                  }}
+                  source={{
+                    uri: videoUrl,
+                    headers: {
+                      Authorization: `Bearer ${videoToken}`,
+                    },
+                  }}
+                  style={styles.videoPlayer}
+                  resizeMode="contain"
+                  repeat={true}
+                  playInBackground={false}
+                  playWhenInactive={false}
+                  paused={!isPlaying}
+                  onError={error => handleVideoError(error, item.id)}
+                  poster={item.thumbnail_url}
+                  posterResizeMode="contain"
+                  bufferConfig={{
+                    minBufferMs: 15000,
+                    maxBufferMs: 50000,
+                    bufferForPlaybackMs: 2500,
+                    bufferForPlaybackAfterRebufferMs: 5000,
+                  }}
+                />
+    
