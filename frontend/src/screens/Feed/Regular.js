@@ -23,4 +23,29 @@ const Regular = ({navigation}) => {
           console.error('Error loading user data:', error);
         }
       };
+      const handleLogout = () => {
+        Alert.alert(
+          'Logout',
+          'Are you sure you want to logout?',
+          [
+            {text: 'Cancel', style: 'cancel'},
+            {
+              text: 'Logout',
+              style: 'destructive',
+              onPress: () => {
+                try {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{name: 'Login'}],
+                  });
+                } catch (error) {
+                  console.error('Logout error:', error);
+                  Alert.alert('Error', 'Failed to logout');
+                }
+              },
+            },
+          ],
+          {cancelable: true},
+        );
+      };
     
