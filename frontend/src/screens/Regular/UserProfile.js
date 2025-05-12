@@ -152,4 +152,21 @@ const UserProfile = ({route, navigation}) => {
                   style={styles.profileImage}
                 />
                 <Text style={styles.username}>@{profile?.username || 'Unknown'}</Text>
-        
+                <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>{profile?.follower_count || 0}</Text>
+            <Text style={styles.statLabel}>Followers</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>{videos?.length || 0}</Text>
+            <Text style={styles.statLabel}>Videos</Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.followButton, isFollowing && styles.followingButton]}
+          onPress={handleFollowToggle}>
+          <Text style={[styles.followButtonText, isFollowing && styles.followingButtonText]}>
+            {isFollowing ? 'Following' : 'Follow'}
+          </Text>
+        </TouchableOpacity>
