@@ -87,4 +87,8 @@ useEffect(() => {
       setPlayingStates(updatedPlayingStates);
     }
   }).current;
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+    minimumViewTime: 300,
+  }).current;
   
