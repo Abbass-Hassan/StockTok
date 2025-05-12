@@ -137,3 +137,14 @@ const EditCreatorProfile = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={styles.formContainer}>
+        <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Name</Text>
+            <TextInput
+              style={[styles.input, errors.name && styles.inputError]}
+              value={name}
+              onChangeText={setName}
+              placeholder="Your full name"
+              placeholderTextColor="#A0A0A0"
+            />
+            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+          </View>
