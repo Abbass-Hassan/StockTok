@@ -35,4 +35,6 @@ const videoRefs = useRef({});
 const fetchVideos = async (page = 1) => {
     try {
       setLoading(true);
-  
+      const token = await getToken();
+    if (!token) throw new Error('Authentication required');
+    setVideoToken(token);
