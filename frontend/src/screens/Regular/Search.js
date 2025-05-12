@@ -26,4 +26,13 @@ const handleSearch = async () => {
   
     console.log('Search button pressed with query:', searchQuery);
     setError(null);
-  
+    try {
+        setLoading(true);
+    
+        console.log('Calling searchUsers API function with:', searchQuery);
+        const response = await searchUsers(searchQuery);
+        console.log(
+          'Search complete. Users found:',
+          response?.data?.users?.length || 0,
+        );
+    
