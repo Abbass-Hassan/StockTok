@@ -47,4 +47,29 @@ const EditCreatorProfile = ({route, navigation}) => {
           }
         });
       };
+      const validateForm = () => {
+        let formErrors = {};
+        let isValid = true;
+    
+        if (!name.trim()) {
+          formErrors.name = 'Name is required';
+          isValid = false;
+        }
+    
+        if (!username.trim()) {
+          formErrors.username = 'Username is required';
+          isValid = false;
+        } else if (username.includes(' ')) {
+          formErrors.username = 'Username cannot contain spaces';
+          isValid = false;
+        }
+    
+        if (bio && bio.length > 1000) {
+          formErrors.bio = 'Bio must be less than 1000 characters';
+          isValid = false;
+        }
+    
+        setErrors(formErrors);
+        return isValid;
+      };
     
