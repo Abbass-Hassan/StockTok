@@ -41,4 +41,10 @@ export const searchUsers = async (query, perPage = 15) => {
     if (!token) throw new Error('Authentication required');
     const encodedUsername = encodeURIComponent(username);
   
-  
+    const url = `${API_URL}/profile/username/${encodedUsername}`;
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+    },
+  });
