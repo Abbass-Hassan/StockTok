@@ -21,3 +21,4 @@ const BOTTOM_INSET = Platform.OS === 'ios' ? 34 : 16;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
 const AVAILABLE_HEIGHT =
   height - TAB_BAR_HEIGHT - BOTTOM_INSET - STATUS_BAR_HEIGHT;
+  const VideoFeedScreen = ({navigation}) => {
