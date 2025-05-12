@@ -5,9 +5,37 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 const HomeScreen = ({navigation}) => {
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: () => {
+            try {
+              // Navigate to login screen
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'Login'}],
+              });
+            } catch (error) {
+              console.error('Logout error:', error);
+              Alert.alert('Error', 'Failed to logout');
+            }
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -43,6 +71,10 @@ const HomeScreen = ({navigation}) => {
             style={styles.menuButton}
             onPress={() => navigation.navigate('MyVideos')}>
             <Text style={styles.menuButtonText}>My Videos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -85,6 +117,20 @@ const styles = StyleSheet.create({
   },
   menuButtonText: {
     color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  logoutButton: {
+    backgroundColor: '#FFFFFF',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FF3B30',
+  },
+  logoutButtonText: {
+    color: '#FF3B30',
     fontSize: 16,
     fontWeight: 'bold',
   },
