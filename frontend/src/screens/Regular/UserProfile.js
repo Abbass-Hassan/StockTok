@@ -19,3 +19,6 @@ import {
   unfollowUser,
   checkFollowingStatus,
 } from '../../api/userProfileApi';
+const {width} = Dimensions.get('window');
+const numColumns = 3;
+const itemWidth = width / numColumns;
