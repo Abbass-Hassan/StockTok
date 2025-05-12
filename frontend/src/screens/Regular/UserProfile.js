@@ -40,3 +40,11 @@ const UserProfile = ({route, navigation}) => {
     try {
       setLoading(true);
       setError(null);
+      const profileResponse = await getUserByUsername(username);
+      if (!profileResponse || !profileResponse.profile) {
+        setError('Could not load user profile');
+        setLoading(false);
+        return;
+      }
+      setProfile(profileResponse.profile);
+      setLoading(false);
