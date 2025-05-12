@@ -48,3 +48,11 @@ const fetchVideos = async (page = 1) => {
     newVideos.forEach(video => {
       newPlayingStates[video.id] = false;
     });
+    if (page === 1) {
+        setVideos(newVideos);
+        setPlayingStates(newPlayingStates);
+      } else {
+        setVideos(prev => [...prev, ...newVideos]);
+        setPlayingStates(prev => ({...prev, ...newPlayingStates}));
+      }
+  
