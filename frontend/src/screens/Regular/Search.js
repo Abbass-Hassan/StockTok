@@ -87,3 +87,7 @@ const renderUserItem = ({item}) => {
     </TouchableOpacity>
   );
 };
+const keyExtractor = (item, index) => {
+  if (!item) return `missing-${index}`;
+  return item.id ? `user-${item.id}` : `user-index-${index}`;
+};
