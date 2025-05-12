@@ -78,4 +78,14 @@ const CreatorProfile = ({navigation}) => {
           </View>
         </TouchableOpacity>
       );
+      const renderEmptyContent = () => (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No videos uploaded yet</Text>
+          <TouchableOpacity
+            style={styles.uploadButton}
+            onPress={() => navigation.navigate('UploadVideo')}>
+            <Text style={styles.uploadButtonText}>Upload Video</Text>
+          </TouchableOpacity>
+        </View>
+      );
     
