@@ -22,3 +22,7 @@ import {
 const {width} = Dimensions.get('window');
 const numColumns = 3;
 const itemWidth = width / numColumns;
+const UserProfile = ({route, navigation}) => {
+    const {username} = route.params;
+    console.log('UserProfile screen opened for:', username);
+  
