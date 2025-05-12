@@ -47,5 +47,11 @@ const Regular = ({navigation}) => {
       ],
       {cancelable: true},
     );
-  };
+  };  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>StockTok for Investors</Text>
+      </View>
+
 
