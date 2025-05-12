@@ -73,5 +73,11 @@ const UserProfile = ({route, navigation}) => {
           } catch {
             setIsFollowing(false);
           }
-        }
+        }    } catch (err) {
+            console.error('Error loading profile:', err);
+            setError('Failed to load profile. Please try again.');
+            setLoading(false);
+          }
+        };
+      
   
