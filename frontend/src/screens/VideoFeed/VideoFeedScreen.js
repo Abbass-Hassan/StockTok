@@ -161,3 +161,12 @@ useEffect(() => {
             </View>
           )}
         </TouchableOpacity>
+        <View style={styles.sideButtonsContainer}>
+          <TouchableOpacity style={styles.sideButton}>
+            <View style={styles.sideButtonCircle}>
+              <Text style={styles.sideButtonIcon}>❤️</Text>
+            </View>
+            <Text style={styles.sideButtonText}>
+              {formatCount(item.likes_count || item.like_investment_count || 0)}
+            </Text>
+          </TouchableOpacity>
