@@ -178,3 +178,24 @@ const UserProfile = ({route, navigation}) => {
       </View>
       <View style={styles.videoSection}>
         <Text style={styles.sectionTitle}>Videos</Text>
+        {videoLoading ? (
+          <View style={styles.videoLoadingContainer}>
+            <ActivityIndicator size="small" color="#00796B" />
+            <Text style={styles.videoLoadingText}>Loading videos...</Text>
+          </View>
+        ) : videos && videos.length > 0 ? (
+          <FlatList
+            data={videos}
+            renderItem={renderVideoItem}
+            keyExtractor={keyExtractor}
+            numColumns={numColumns}
+            contentContainerStyle={styles.gridContainer}
+          />
+        ) : (
+          <View style={styles.emptyVideosContainer}>
+            <Text style={styles.emptyVideosText}>No videos found</Text>
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
+  );
