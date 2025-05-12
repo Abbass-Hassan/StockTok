@@ -12,3 +12,10 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
+import {
+  getUserByUsername,
+  getUserVideos,
+  followUser,
+  unfollowUser,
+  checkFollowingStatus,
+} from '../../api/userProfileApi';
