@@ -73,3 +73,10 @@ const Regular = ({navigation}) => {
             onPress={() => navigation.navigate('WalletOverview')}>
             <Text style={styles.menuButtonText}>My Wallet</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
