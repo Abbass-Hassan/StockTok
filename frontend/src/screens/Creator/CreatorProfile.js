@@ -242,4 +242,35 @@ header: {
     fontSize: 40,
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },  username: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000000',
+    marginBottom: 4,
   },
+  userType: {
+    fontSize: 14,
+    color: '#00796B',
+    marginBottom: 16,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: 16,
+  },
+  statItem: {
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  statNumber: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#666666',
+  },
+
