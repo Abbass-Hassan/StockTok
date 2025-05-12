@@ -176,3 +176,5 @@ const UserProfile = ({route, navigation}) => {
           <Text style={styles.noBio}>No bio provided</Text>
         )}
       </View>
+      <View style={styles.videoSection}>
+        <Text style={styles.sectionTitle}>Videos</Text>
