@@ -36,5 +36,9 @@ export const searchUsers = async (query, perPage = 15) => {
 } catch (error) {
     console.error('Search error details:', error.message);
     return {data: {users: []}};
-  }
+  }export const getUserByUsername = async username => {
+    const token = await getToken();
+    if (!token) throw new Error('Authentication required');
+    const encodedUsername = encodeURIComponent(username);
+  
   
