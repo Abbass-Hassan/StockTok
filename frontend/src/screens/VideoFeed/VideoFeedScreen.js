@@ -196,3 +196,12 @@ useEffect(() => {
       </View>
     </View>
   );
+  const renderLoader = () => {
+    if (!loading) return null;
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </View>
+    );
+  };
+  
