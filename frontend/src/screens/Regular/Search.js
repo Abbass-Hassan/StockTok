@@ -58,11 +58,32 @@ const handleSearch = async () => {
   } finally {
     setLoading(false);
   }
-};const renderUserItem = ({item}) => {
-    console.log('Rendering item:', item?.username);
-  
-    if (!item) {
-      console.warn('Trying to render null item');
-      return null;
-    }
-  
+};
+const renderUserItem = ({item}) => {
+  console.log('Rendering item:', item?.username);
+
+  if (!item) {
+    console.warn('Trying to render null item');
+    return null;
+  }
+  return (
+    <TouchableOpacity
+      style={styles.userItem}
+      onPress={() => {
+        console.log('Navigating to profile for:', item.username);
+        navigation.navigate('UserProfile', {username: item.username});
+      }}>
+      <Image
+        source={{
+          uri: item.profile_photo_url || 'https://via.placeholder.com/50',
+        }}
+        style={styles.userAvatar}
+      />
+      <View style={styles.userInfo}>
+        <Text style={styles.username}>@{item.username || 'Unknown'}</Text>
+        <Text style={styles.name}>{item.name || 'No name provided'}</Text>
+        {item.email && <Text style={styles.email}>{item.email}</Text>}
+      </View>
+    </TouchableOpacity>
+  );
+};
