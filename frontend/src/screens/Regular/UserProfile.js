@@ -105,5 +105,17 @@ const UserProfile = ({route, navigation}) => {
               </TouchableOpacity>
             );
           };
+          const keyExtractor = (item, index) => {
+            if (!item) return `video-missing-${index}`;
+            return item.id ? `video-${item.id}` : `video-index-${index}`;
+          };
         
-  
+          if (loading) {
+            return (
+              <SafeAreaView style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#00796B" />
+                <Text style={styles.loadingText}>Loading profile...</Text>
+              </SafeAreaView>
+            );
+          }
+        
