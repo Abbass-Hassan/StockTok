@@ -35,4 +35,13 @@ const handleSearch = async () => {
           'Search complete. Users found:',
           response?.data?.users?.length || 0,
         );
-    
+        if (response?.data?.users && Array.isArray(response.data.users)) {
+            if (response.data.users.length > 0) {
+              console.log('Setting search results with user data');
+              setSearchResults(response.data.users);
+            } else {
+              console.log('No users found in response');
+              setSearchResults([]);
+              setError('No users found with that username.');
+            }
+      
