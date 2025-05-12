@@ -61,4 +61,21 @@ const CreatorProfile = ({navigation}) => {
         if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
         return num.toString();
       };
+      const renderGridItem = ({item}) => (
+        <TouchableOpacity
+          style={styles.gridItem}
+          onPress={() => navigation.navigate('VideoPlayer', {video: item})}>
+          <View style={styles.thumbnail}>
+            {item.thumbnail_url ? (
+              <Image
+                source={{uri: item.thumbnail_url}}
+                style={styles.thumbnailImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.thumbnailPlaceholder} />
+            )}
+          </View>
+        </TouchableOpacity>
+      );
     
