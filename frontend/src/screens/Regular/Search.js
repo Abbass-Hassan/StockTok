@@ -129,4 +129,12 @@ const keyExtractor = (item, index) => {
       keyExtractor={keyExtractor}
       contentContainerStyle={styles.resultsList}
     />
+) : searchQuery.length > 0 ? (
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyText}>No users found</Text>
+      <Text style={styles.emptySubtext}>
+        Check the username and try again
+      </Text>
+    </View>
+git add . && git commit -m "feat: show empty state if search yields no results"
   
