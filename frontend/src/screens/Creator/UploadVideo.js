@@ -5,10 +5,12 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Image,
   Alert,
   ActivityIndicator,
   Platform,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {uploadVideo} from '../../api/videoApi';
@@ -147,142 +149,253 @@ const UploadVideo = ({navigation}) => {
 
     return (
       <View style={styles.videoPreview}>
-        <Text style={styles.videoName}>
-          {videoFile.fileName || 'Selected Video'}
-        </Text>
-        <Text style={styles.videoInfo}>
-          {((videoFile.fileSize || 0) / (1024 * 1024)).toFixed(2)} MB
-          {videoFile.duration
-            ? ` • ${Math.floor(videoFile.duration / 60)}:${(
-                videoFile.duration % 60
-              )
-                .toString()
-                .padStart(2, '0')}`
-            : ''}
-        </Text>
+        <Text style={styles.videoEmoji}>🎥</Text>
+        <View style={styles.videoInfo}>
+          <Text style={styles.videoName}>
+            {videoFile.fileName || 'Selected Video'}
+          </Text>
+          <Text style={styles.videoDetails}>
+            {((videoFile.fileSize || 0) / (1024 * 1024)).toFixed(2)} MB
+            {videoFile.duration
+              ? ` • ${Math.floor(videoFile.duration / 60)}:${(
+                  videoFile.duration % 60
+                )
+                  .toString()
+                  .padStart(2, '0')}`
+              : ''}
+          </Text>
+        </View>
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Upload Video</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Text style={styles.backButtonText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Upload Video</Text>
+        </View>
 
-      <TouchableOpacity
-        style={styles.uploadBox}
-        onPress={Platform.OS === 'ios' ? pickVideo : mockSelectVideo} // Use real picker on iOS, mock on Android for now
-        disabled={loading}
-        activeOpacity={0.7}>
-        {videoFile ? (
-          renderVideoPreview()
-        ) : (
-          <Text style={styles.uploadText}>
-            Tap to select a video from gallery
-          </Text>
-        )}
-      </TouchableOpacity>
+        <View style={styles.content}>
+          {/* Video Selection */}
+          <TouchableOpacity
+            style={styles.uploadBox}
+            onPress={Platform.OS === 'ios' ? pickVideo : mockSelectVideo}
+            disabled={loading}
+            activeOpacity={0.7}>
+            {videoFile ? (
+              renderVideoPreview()
+            ) : (
+              <View style={styles.uploadPlaceholder}>
+                <Text style={styles.uploadEmoji}>📤</Text>
+                <Text style={styles.uploadText}>
+                  Tap to select a video from gallery
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Add a caption..."
-        value={caption}
-        onChangeText={setCaption}
-        multiline
-        maxLength={1000}
-        editable={!loading}
-      />
+          {/* Caption Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Caption</Text>
+            <TextInput
+              style={[styles.input, styles.multilineInput]}
+              placeholder="Write a caption for your video..."
+              placeholderTextColor="#999999"
+              value={caption}
+              onChangeText={setCaption}
+              multiline
+              maxLength={1000}
+              editable={!loading}
+            />
+            <Text style={styles.charCount}>{caption.length}/1000</Text>
+          </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Initial investment"
-        value={initialInvestment}
-        onChangeText={setInitialInvestment}
-        keyboardType="numeric"
-        editable={!loading}
-      />
+          {/* Investment Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Initial Investment</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter investment amount"
+              placeholderTextColor="#999999"
+              value={initialInvestment}
+              onChangeText={setInitialInvestment}
+              keyboardType="numeric"
+              editable={!loading}
+            />
+          </View>
 
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={handleUpload}
-        disabled={loading || !videoFile || !caption.trim()}>
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Upload Video</Text>
-        )}
-      </TouchableOpacity>
-    </View>
+          {/* Info Card */}
+          <View style={styles.infoCard}>
+            <Text style={styles.infoText}>
+              💡 Initial investment helps boost your video's visibility and
+              potential returns
+            </Text>
+          </View>
+
+          {/* Upload Button */}
+          <TouchableOpacity
+            style={[styles.button, loading && styles.buttonDisabled]}
+            onPress={handleUpload}
+            disabled={loading || !videoFile || !caption.trim()}>
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.buttonText}>Upload Video</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F5F5F5',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#4B7BEC',
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
   },
-  uploadBox: {
-    height: 200,
-    borderWidth: 2,
-    borderColor: '#4B7BEC',
-    borderStyle: 'dashed',
-    borderRadius: 10,
+  backButton: {
+    marginRight: 16,
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#00796B',
+  },
+  content: {
+    padding: 16,
+  },
+  uploadBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#00796B',
+    borderStyle: 'dashed',
+    padding: 20,
     marginBottom: 20,
-    backgroundColor: '#F0F3FF',
-    padding: 15,
+    minHeight: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  uploadPlaceholder: {
+    alignItems: 'center',
+  },
+  uploadEmoji: {
+    fontSize: 48,
+    marginBottom: 12,
   },
   uploadText: {
-    color: '#4B7BEC',
+    color: '#00796B',
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
   },
   videoPreview: {
-    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  videoEmoji: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  videoInfo: {
     alignItems: 'center',
   },
   videoName: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 8,
-    textAlign: 'center',
+    marginBottom: 4,
+    color: '#212121',
   },
-  videoInfo: {
+  videoDetails: {
     fontSize: 14,
-    color: '#666',
+    color: '#666666',
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#212121',
     marginBottom: 8,
   },
   input: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#E0E0E0',
     borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: '#212121',
+  },
+  multilineInput: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  charCount: {
+    position: 'absolute',
+    bottom: 8,
+    right: 12,
+    fontSize: 12,
+    color: '#999999',
+  },
+  infoCard: {
+    backgroundColor: '#E8F5F3',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 24,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#00796B',
+    lineHeight: 20,
   },
   button: {
-    backgroundColor: '#4B7BEC',
+    backgroundColor: '#00796B',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
   },
   buttonDisabled: {
-    backgroundColor: '#A0BEF8',
+    backgroundColor: '#80CBC4',
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
 });
 

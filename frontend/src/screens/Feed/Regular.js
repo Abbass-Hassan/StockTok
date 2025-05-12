@@ -1,14 +1,31 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   SafeAreaView,
+  StatusBar,
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import {getUserData} from '../../utils/tokenStorage';
 
-const HomeScreen = ({navigation}) => {
+const Regular = ({navigation}) => {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const user = await getUserData();
+      setUserData(user);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -20,7 +37,7 @@ const HomeScreen = ({navigation}) => {
           style: 'destructive',
           onPress: () => {
             try {
-              // Navigate to login screen
+              // Simply navigate to login screen
               navigation.reset({
                 index: 0,
                 routes: [{name: 'Login'}],
@@ -38,39 +55,33 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>StockTok for Investors</Text>
+      </View>
+
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome to StockTok</Text>
-        <Text style={styles.subtitle}>You are logged in successfully!</Text>
+        <Text style={styles.welcomeText}>
+          Welcome, {userData?.name || userData?.username || 'Investor'}!
+        </Text>
+
+        <Text style={styles.description}>
+          You're logged in as a regular user (Investor).
+        </Text>
 
         <View style={styles.menuContainer}>
+          {/* New Search Button */}
           <TouchableOpacity
             style={styles.menuButton}
-            onPress={() => navigation.navigate('Dashboard')}>
-            <Text style={styles.menuButtonText}>Creator Dashboard</Text>
+            onPress={() => navigation.navigate('Search')}>
+            <Text style={styles.menuButtonText}>Search Creators</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.menuButton}
             onPress={() => navigation.navigate('WalletOverview')}>
             <Text style={styles.menuButtonText}>My Wallet</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuButton}
-            onPress={() => navigation.navigate('CreatorProfile')}>
-            <Text style={styles.menuButtonText}>My Profile</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuButton}
-            onPress={() => navigation.navigate('UploadVideo')}>
-            <Text style={styles.menuButtonText}>Upload Video</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuButton}
-            onPress={() => navigation.navigate('MyVideos')}>
-            <Text style={styles.menuButtonText}>My Videos</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -87,29 +98,47 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F9FA',
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  title: {
+  welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#4B7BEC',
-    marginBottom: 10,
+    color: '#00796B',
+    marginBottom: 12,
+    textAlign: 'center',
   },
-  subtitle: {
+  description: {
     fontSize: 16,
     color: '#333',
     marginBottom: 40,
+    textAlign: 'center',
   },
   menuContainer: {
     width: '100%',
     marginTop: 20,
+    maxWidth: 300,
   },
   menuButton: {
-    backgroundColor: '#4B7BEC',
+    backgroundColor: '#00796B',
     padding: 15,
     borderRadius: 8,
     marginBottom: 15,
@@ -124,7 +153,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 15,
     borderRadius: 8,
-    marginBottom: 15,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#FF3B30',
@@ -136,4 +164,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default Regular;

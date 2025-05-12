@@ -95,8 +95,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/trending', [VideoDiscoveryController::class, 'getTrendingVideos']);
             Route::get('/following', [VideoDiscoveryController::class, 'getFollowingFeed']);
             Route::get('/search', [VideoDiscoveryController::class, 'searchVideos']);
-            Route::get('/{id}', [VideoDiscoveryController::class, 'getVideoDetails']);
+            
+            // Modified route - different format to avoid conflicts
+            Route::get('/creator/{creatorId}', [VideoDiscoveryController::class, 'getCreatorVideos']);
+            
+            // Make sure these routes come AFTER specific routes to avoid conflicts
+            Route::get('/user/{userId}', [VideoDiscoveryController::class, 'getUserVideos']);
             Route::get('/{id}/stream', [VideoDiscoveryController::class, 'streamVideo']);
+            Route::get('/{id}', [VideoDiscoveryController::class, 'getVideoDetails']);
         });
 
         // Investment routes

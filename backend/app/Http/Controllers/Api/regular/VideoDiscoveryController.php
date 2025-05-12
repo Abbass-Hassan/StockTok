@@ -213,4 +213,70 @@ class VideoDiscoveryController extends Controller
             return $this->errorResponse('Error retrieving video details: ' . $e->getMessage(), 500);
         }
     }
+
+
+    /**
+     * Get videos by a specific user.
+     *
+     * @param int $userId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserVideos($userId, Request $request)
+    {
+        try {
+            $perPage = $request->get('per_page', 15);
+            
+            // Get videos for the specified user
+            $videos = $this->videoService->getUserVideos($userId, $perPage);
+            
+            // Make sure videos are active/public
+            if ($videos->isEmpty()) {
+                return $this->successResponse(
+                    ['videos' => []],
+                    'No videos found for this user'
+                );
+            }
+            
+            return $this->successResponse(
+                ['videos' => $videos],
+                'User videos retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error retrieving user videos: ' . $e->getMessage(), 500);
+        }
+    }
+
+
+    /**
+ * Get videos by a creator directly from the Video model.
+ *
+ * @param int $creatorId
+ * @param Request $request
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function getCreatorVideos($creatorId, Request $request)
+{
+    try {
+        $perPage = $request->get('per_page', 15);
+        
+        // Verify this is a creator
+        $user = User::findOrFail($creatorId);
+        if ($user->user_type !== 'creator') {
+            return $this->errorResponse('This user is not a creator', 400);
+        }
+        
+        // Direct database query to get videos - bypassing any middleware issues
+        $videos = \App\Models\Video::where('user_id', $creatorId)
+                     ->where('is_active', true)
+                     ->orderBy('created_at', 'desc')
+                     ->paginate($perPage);
+        
+        return $this->successResponse(
+            ['videos' => $videos],
+            'Creator videos retrieved successfully'
+        );
+    } catch (\Exception $e) {
+        return $this->errorResponse('Error retrieving creator videos: ' . $e->getMessage(), 500);
+    }
+}
 }

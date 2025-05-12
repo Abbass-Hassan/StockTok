@@ -8,9 +8,11 @@ import {
   Dimensions,
   Alert,
   Platform,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import Video from 'react-native-video';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {getVideoStreamUrl} from '../../api/videoApi';
 import {getToken} from '../../utils/tokenStorage';
 
@@ -26,6 +28,7 @@ const VideoPlayer = ({route, navigation}) => {
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [showControls, setShowControls] = useState(true);
 
   // Get auth token when component mounts
   useEffect(() => {
@@ -129,177 +132,422 @@ const VideoPlayer = ({route, navigation}) => {
     setPaused(!paused);
   };
 
+  // Toggle controls visibility
+  const toggleControls = () => {
+    setShowControls(!showControls);
+  };
+
+  // Format value with proper units
+  const formatValue = value => {
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(1)}K`;
+    }
+    return `$${value.toFixed(2)}`;
+  };
+
+  // Format large numbers
+  const formatCount = count => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
+  };
+
   if (!videoUrl) {
     return (
-      <View
-        style={[
-          styles.container,
-          {justifyContent: 'center', alignItems: 'center'},
-        ]}>
-        <Text
-          style={{
-            fontSize: 16,
-            color: '#666',
-            textAlign: 'center',
-            padding: 20,
-          }}>
-          This video doesn't have a playable URL
-        </Text>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>Go Back</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorTitle}>Unable to Play Video</Text>
+          <Text style={styles.errorDescription}>
+            This video doesn't have a playable URL
+          </Text>
+          <TouchableOpacity
+            style={styles.errorButton}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.errorButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.videoContainer}>
-        <Video
-          ref={videoRef}
-          source={{
-            uri: videoUrl,
-            headers: token ? {Authorization: `Bearer ${token}`} : {},
-          }}
-          style={styles.video}
-          resizeMode="contain"
-          onLoadStart={onLoadStart}
-          onLoad={onLoad}
-          onProgress={onProgress}
-          onError={onError}
-          paused={paused}
-          repeat={true}
-          controls={Platform.OS === 'android'} // Use native controls on Android
-          playInBackground={false}
-          playWhenInactive={false}
-          ignoreSilentSwitch="ignore"
-          useNativeControls={Platform.OS === 'ios'} // Try native controls on iOS
-        />
-
-        {loading && (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#fff" />
-          </View>
-        )}
-
-        {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        )}
-
-        {!loading && !error && !Platform.OS === 'ios' && (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
           <TouchableOpacity
-            style={styles.playPauseButton}
-            onPress={togglePlayPause}
-            activeOpacity={0.7}>
-            <Icon name={paused ? 'play' : 'pause'} size={30} color="#fff" />
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Text style={styles.backText}>‹</Text>
           </TouchableOpacity>
-        )}
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.caption}>{video.caption}</Text>
-
-        <View style={styles.statsContainer}>
-          <Text style={styles.statText}>Views: {video.view_count || 0}</Text>
-          <Text style={styles.statText}>
-            Value: ${video.current_value || 0}
-          </Text>
+          <Text style={styles.headerTitle}>Video Player</Text>
         </View>
 
-        <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-          <Text style={styles.timeText}>{formatTime(duration)}</Text>
-        </View>
+        {/* Video Container */}
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={toggleControls}
+          style={styles.videoWrapper}>
+          <View style={styles.videoContainer}>
+            <Video
+              ref={videoRef}
+              source={{
+                uri: videoUrl,
+                headers: token ? {Authorization: `Bearer ${token}`} : {},
+              }}
+              style={styles.video}
+              resizeMode="contain"
+              onLoadStart={onLoadStart}
+              onLoad={onLoad}
+              onProgress={onProgress}
+              onError={onError}
+              paused={paused}
+              repeat={true}
+              controls={false}
+              playInBackground={false}
+              playWhenInactive={false}
+              ignoreSilentSwitch="ignore"
+            />
+
+            {loading && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+                <Text style={styles.loadingText}>Loading video...</Text>
+              </View>
+            )}
+
+            {error && (
+              <View style={styles.errorOverlay}>
+                <Text style={styles.errorIcon}>⚠️</Text>
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity
+                  style={styles.retryButton}
+                  onPress={() => {
+                    setRetryCount(0);
+                    setLoading(true);
+                    setError(null);
+                    setPaused(false);
+                  }}>
+                  <Text style={styles.retryButtonText}>Retry</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {!loading && !error && showControls && (
+              <View style={styles.controlsOverlay}>
+                <TouchableOpacity
+                  style={styles.playPauseButton}
+                  onPress={togglePlayPause}>
+                  <Text style={styles.playPauseText}>
+                    {paused ? '▶️' : '⏸'}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      {width: `${(currentTime / duration) * 100}%`},
+                    ]}
+                  />
+                </View>
+
+                <View style={styles.timeContainer}>
+                  <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+                  <Text style={styles.timeText}>{formatTime(duration)}</Text>
+                </View>
+              </View>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {/* Video Info */}
+        <ScrollView
+          style={styles.infoContainer}
+          showsVerticalScrollIndicator={false}>
+          <Text style={styles.videoTitle}>{video.caption}</Text>
+
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statIcon}>👁</Text>
+              <Text style={styles.statValue}>
+                {formatCount(video.view_count || 0)}
+              </Text>
+              <Text style={styles.statLabel}>Views</Text>
+            </View>
+
+            <View style={styles.statItem}>
+              <Text style={styles.statIcon}>📈</Text>
+              <Text style={styles.statValue}>
+                {formatValue(video.current_value || 0)}
+              </Text>
+              <Text style={styles.statLabel}>Value</Text>
+            </View>
+
+            <View style={styles.statItem}>
+              <Text style={styles.statIcon}>❤️</Text>
+              <Text style={styles.statValue}>
+                {formatCount(video.like_investment_count || 0)}
+              </Text>
+              <Text style={styles.statLabel}>Likes</Text>
+            </View>
+          </View>
+
+          {/* Additional Info Card */}
+          <View style={styles.infoCard}>
+            <Text style={styles.infoIcon}>ℹ️</Text>
+            <Text style={styles.infoTextWrapper}>
+              <Text style={styles.infoText}>
+                Initial Investment: {formatValue(video.initial_investment || 0)}
+              </Text>
+            </Text>
+          </View>
+
+          {/* View Stats Button */}
+          <TouchableOpacity
+            style={styles.statsButton}
+            onPress={() => navigation.navigate('VideoDetails', {video: video})}>
+            <Text style={styles.statsButtonText}>View Detailed Stats</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
-// Styles remain the same
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  backButton: {
+    marginRight: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#00796B',
+  },
+  videoWrapper: {
+    backgroundColor: '#000000',
   },
   videoContainer: {
     width: width,
     height: width * 0.56, // 16:9 aspect ratio
-    backgroundColor: '#000',
     position: 'relative',
   },
   video: {
     width: '100%',
     height: '100%',
   },
-  loadingContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  errorContainer: {
+  loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
-  errorText: {
-    color: '#fff',
+  loadingText: {
+    color: '#FFFFFF',
+    marginTop: 12,
     fontSize: 16,
-    textAlign: 'center',
+  },
+  errorOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     padding: 20,
   },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: '#00796B',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  controlsOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
   playPauseButton: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  infoContainer: {
-    padding: 15,
+  playPauseText: {
+    fontSize: 40,
   },
-  caption: {
-    fontSize: 18,
+  progressBar: {
+    position: 'absolute',
+    bottom: 40,
+    left: 20,
+    right: 20,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 2,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#00796B',
+    borderRadius: 2,
+  },
+  timeContainer: {
+    position: 'absolute',
+    bottom: 10,
+    left: 20,
+    right: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  timeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+  },
+  infoContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+  },
+  videoTitle: {
+    fontSize: 20,
     fontWeight: '600',
-    marginBottom: 10,
+    color: '#212121',
+    marginBottom: 20,
+    lineHeight: 28,
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+    justifyContent: 'space-around',
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E0E0E0',
+    marginBottom: 20,
   },
-  statText: {
+  statItem: {
+    alignItems: 'center',
+  },
+  statIcon: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#212121',
+  },
+  statLabel: {
     fontSize: 14,
-    color: '#666',
+    color: '#666666',
+    marginTop: 4,
   },
-  timeContainer: {
+  infoCard: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 5,
+    backgroundColor: '#E8F5F3',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
   },
-  timeText: {
-    fontSize: 12,
-    color: '#888',
+  infoIcon: {
+    fontSize: 20,
+    marginRight: 12,
   },
-  backButton: {
+  infoTextWrapper: {
+    flex: 1,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#00796B',
+    fontWeight: '500',
+  },
+  statsButton: {
+    backgroundColor: '#00796B',
+    padding: 16,
+    borderRadius: 8,
     marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#4B7BEC',
+    alignItems: 'center',
+  },
+  statsButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    backgroundColor: '#F5F5F5',
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#212121',
+    marginBottom: 8,
+  },
+  errorDescription: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  errorButton: {
+    backgroundColor: '#00796B',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
     borderRadius: 8,
   },
-  backButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  errorButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
