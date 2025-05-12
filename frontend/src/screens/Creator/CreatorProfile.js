@@ -199,3 +199,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  backButton: {
+    marginRight: 10,
+  },
+  backText: {
+    fontSize: 30,
+    color: '#00796B',
+    fontWeight: '300',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#00796B',
+  },
