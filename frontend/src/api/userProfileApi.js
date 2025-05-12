@@ -128,4 +128,13 @@ export const searchUsers = async (query, perPage = 15) => {
   export const checkFollowingStatus = async followingId => {
     const token = await getToken();
     if (!token) throw new Error('Authentication required');
-  
+    const response = await axios.get(`${API_URL}/follows/user/${followingId}/status`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+    
+      const isFollowing = response.data?.is_following ?? response.data?.data?.is_following ?? false;
+      return {is_following: isFollowing};
+    
