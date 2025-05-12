@@ -93,3 +93,11 @@ const keyExtractor = (item, index) => {
 };
 <SafeAreaView style={styles.container}>
   <StatusBar barStyle="light-content" backgroundColor="#00796B" />
+  <View style={styles.header}>
+  <TouchableOpacity
+    style={styles.backButton}
+    onPress={() => navigation.goBack()}>
+    <Text style={styles.backButtonText}>←</Text>
+  </TouchableOpacity>
+  <Text style={styles.headerTitle}>Search Creators</Text>
+</View>
