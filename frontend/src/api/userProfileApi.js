@@ -17,4 +17,7 @@ export const debugTokenStorage = async () => {
 export const searchUsers = async (query, perPage = 15) => {
     console.log('searchUsers called with query:', query);
     await debugTokenStorage();
-  
+    const token = await getToken();
+  if (!token) throw new Error('Authentication required');
+  const encodedUsername = encodeURIComponent(query);
+  const url = `${API_URL}/profile/username/${encodedUsername}`;
