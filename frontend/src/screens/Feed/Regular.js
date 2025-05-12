@@ -48,4 +48,7 @@ const Regular = ({navigation}) => {
           {cancelable: true},
         );
       };
+      return (
+        <SafeAreaView style={styles.container}>
+          <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
     
