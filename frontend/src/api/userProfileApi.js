@@ -62,4 +62,12 @@ export const searchUsers = async (query, perPage = 15) => {
   export const getUserVideos = async (userId, perPage = 15) => {
     const token = await getToken();
     if (!token) throw new Error('Authentication required');
-  
+    const creatorVideosUrl = `${API_URL}/regular/videos/by-creator/${userId}`;
+  const creatorResponse = await axios.get(creatorVideosUrl, {
+    params: {per_page: perPage},
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+    },
+  });
+  return processVideoResponse(creatorResponse);
