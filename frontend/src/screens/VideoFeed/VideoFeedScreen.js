@@ -103,4 +103,7 @@ useEffect(() => {
       [videoId]: !prev[videoId],
     }));
   };
+  const goToCreatorProfile = userId => {
+    navigation.navigate('UserProfile', {userId: userId});
+  };
   
