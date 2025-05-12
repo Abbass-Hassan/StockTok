@@ -54,3 +54,11 @@ const Regular = ({navigation}) => {
           <View style={styles.header}>
         <Text style={styles.headerTitle}>StockTok for Investors</Text>
       </View>
+      <View style={styles.content}>
+        <Text style={styles.welcomeText}>
+          Welcome, {userData?.name || userData?.username || 'Investor'}!
+        </Text>
+
+        <Text style={styles.description}>
+          You're logged in as a regular user (Investor).
+        </Text>
