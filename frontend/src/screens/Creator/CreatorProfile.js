@@ -132,3 +132,15 @@ const CreatorProfile = ({navigation}) => {
   </View>
   <Text style={styles.username}>@{profile?.username || 'username'}</Text>
   <Text style={styles.userType}>Creator</Text>
+  <View style={styles.statsContainer}>
+  <View style={styles.statItem}>
+    <Text style={styles.statNumber}>{formatNumber(stats?.total_videos || 0)}</Text>
+    <Text style={styles.statLabel}>Videos</Text>
+  </View>
+  ...
+</View>
+<TouchableOpacity
+  style={styles.editButton}
+  onPress={() => navigation.navigate('EditCreatorProfile', {profile})}>
+  <Text style={styles.editButtonText}>Edit Profile</Text>
+</TouchableOpacity>
