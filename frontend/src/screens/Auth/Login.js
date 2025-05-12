@@ -8,7 +8,7 @@ import AuthLayout from '../../components/specific/Auth/AuthLayout';
 import Header from '../../components/specific/Auth/Header';
 import LoginForm from '../../components/specific/Auth/LoginForm';
 import SocialLogin from '../../components/specific/Auth/SocialLogin';
-import SignUpPrompt from '../../components/specific/Auth/SignUpPrompt'; // Fixed import name
+import SignUpPrompt from '../../components/specific/Auth/SignUpPrompt';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -106,11 +106,23 @@ const Login = ({navigation}) => {
         );
       }
 
-      // Navigate even if token/userData storage fails
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Home'}],
-      });
+      // Route based on user type
+      const userType = userData?.user_type_id || userData?.user_type;
+
+      // Navigate to appropriate screen based on user type
+      if (userType === 2 || userType === 'Creator') {
+        // Navigate to Creator Feed
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'CreatorFeed'}],
+        });
+      } else {
+        // Navigate to Regular/Investor Feed
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'RegularFeed'}],
+        });
+      }
     } catch (error) {
       console.error('Login error details:', error);
 
