@@ -13,3 +13,5 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
+import {updateCreatorProfile} from '../../api/creatorProfileApi';
+import {launchImageLibrary} from 'react-native-image-picker';
