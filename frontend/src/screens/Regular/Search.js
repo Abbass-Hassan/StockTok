@@ -120,3 +120,6 @@ const keyExtractor = (item, index) => {
 </View>
 {loading ? (
   <ActivityIndicator style={styles.loader} size="large" color="#00796B" />
+) : error ? (
+    <Text style={styles.errorText}>{error}</Text>
+  
