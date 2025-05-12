@@ -30,4 +30,30 @@ const CreatorProfile = ({navigation}) => {
     useEffect(() => {
       loadProfileData();
     }, []);
-  
+    const loadProfileData = async () => {
+        try {
+          setError(null);
+          setLoading(true);
+          const [profileRes, statsRes, videosRes] = await Promise.all([
+            getCreatorProfile(),
+            getCreatorStats(),
+            getMyVideos(),
+          ]);
+          setProfile(profileRes.data.profile);
+          setStats(statsRes.data);
+          const videoData =
+            videosRes.data.videos?.data || videosRes.data.videos || [];
+          setVideos(videoData);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      };
+    
+      const handleRefresh = () => {
+        setRefreshing(true);
+        loadProfileData();
+      };
+    
