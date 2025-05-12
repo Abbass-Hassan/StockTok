@@ -202,3 +202,9 @@ const EditCreatorProfile = ({route, navigation}) => {
               <Text style={styles.helperText}>Email cannot be changed</Text>
             </View>
           </View>
+          </ScrollView>
+  </SafeAreaView>
+  );
+};
+
+export default EditCreatorProfile;
