@@ -14,3 +14,7 @@ export const debugTokenStorage = async () => {
     return false;
   }
 };
+export const searchUsers = async (query, perPage = 15) => {
+    console.log('searchUsers called with query:', query);
+    await debugTokenStorage();
+  
