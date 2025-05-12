@@ -67,4 +67,9 @@ const fetchVideos = async (page = 1) => {
 useEffect(() => {
     fetchVideos();
   }, []);
+  const handleLoadMore = () => {
+    if (!loading && hasMorePages) {
+      fetchVideos(currentPage + 1);
+    }
+  };
   
