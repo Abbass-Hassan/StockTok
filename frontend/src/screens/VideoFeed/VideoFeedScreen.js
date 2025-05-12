@@ -185,3 +185,14 @@ useEffect(() => {
             <Text style={styles.sideButtonText}>Analytics</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.infoContainer}>
+          <TouchableOpacity onPress={() => goToCreatorProfile(item.user_id)}>
+            <Text style={styles.usernameText}>@{item.username}</Text>
+          </TouchableOpacity>
+          <Text style={styles.captionText} numberOfLines={1}>
+            {item.caption || item.title}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
