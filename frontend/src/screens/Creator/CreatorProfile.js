@@ -118,4 +118,17 @@ const CreatorProfile = ({navigation}) => {
             <Text style={styles.headerTitle}>Profile</Text>
           </View>
           <ScrollView ... />
-    
+          <View style={styles.profileContainer}>
+  <View style={styles.profileImageContainer}>
+    {profile?.profile_photo_url ? (
+      <Image source={{uri: profile.profile_photo_url}} style={styles.profileImage} />
+    ) : (
+      <View style={[styles.profileImage, styles.profileImagePlaceholder]}>
+        <Text style={styles.profileInitials}>
+          {profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}
+        </Text>
+      </View>
+    )}
+  </View>
+  <Text style={styles.username}>@{profile?.username || 'username'}</Text>
+  <Text style={styles.userType}>Creator</Text>
