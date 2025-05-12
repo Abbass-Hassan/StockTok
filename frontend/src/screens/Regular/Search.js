@@ -58,4 +58,11 @@ const handleSearch = async () => {
   } finally {
     setLoading(false);
   }
-};
+};const renderUserItem = ({item}) => {
+    console.log('Rendering item:', item?.username);
+  
+    if (!item) {
+      console.warn('Trying to render null item');
+      return null;
+    }
+  
