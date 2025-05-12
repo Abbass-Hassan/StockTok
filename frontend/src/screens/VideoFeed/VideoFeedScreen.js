@@ -58,3 +58,9 @@ const fetchVideos = async (page = 1) => {
       setHasMorePages(!isLastPage);
     setCurrentPage(page);
     setLoading(false);
+} catch (err) {
+    console.error('Error fetching videos:', err);
+    setError('Failed to load videos. Please try again.');
+    setLoading(false);
+  }
+};
