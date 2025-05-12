@@ -35,3 +35,8 @@ const UserProfile = ({route, navigation}) => {
     console.log('UserProfile useEffect triggered');
     loadProfileData();
   }, []);
+  const loadProfileData = async () => {
+    console.log('Loading profile data for:', username);
+    try {
+      setLoading(true);
+      setError(null);
