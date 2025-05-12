@@ -12,3 +12,15 @@ import {getUserData} from '../../utils/tokenStorage';
 
 const Regular = ({navigation}) => {
   const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const user = await getUserData();
+      setUserData(user);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
