@@ -109,4 +109,7 @@ useEffect(() => {
   const handleVideoError = (error, videoId) => {
     console.error(`Error playing video ${videoId}:`, error);
   };
+  const renderItem = ({item, index}) => {
+    const isPlaying = playingStates[item.id] || false;
+    const videoUrl = `${API_URL}/videos/${item.id}/play`;
   
