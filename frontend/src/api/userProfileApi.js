@@ -32,3 +32,4 @@ export const searchUsers = async (query, perPage = 15) => {
   } else if (response.data?.profile) {
     return { data: { users: [response.data.profile] } };
   }
+  return {data: {users: []}};
