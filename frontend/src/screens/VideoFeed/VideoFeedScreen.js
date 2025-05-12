@@ -146,4 +146,11 @@ useEffect(() => {
                     bufferForPlaybackAfterRebufferMs: 5000,
                   }}
                 />
+            ) : (
+                <Image
+                  source={{uri: item.thumbnail_url}}
+                  style={styles.thumbnail}
+                  resizeMode="contain"
+                />
+              )}
     
