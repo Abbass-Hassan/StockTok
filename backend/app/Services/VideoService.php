@@ -189,5 +189,16 @@ class VideoService
     }
 
 
-    
+    /**
+     * Get all active videos with pagination.
+     *
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getAllVideos($perPage = 3)
+    {
+        return Video::where('is_active', true)
+                    ->orderBy('created_at', 'desc')
+                    ->paginate($perPage);
+    }
 }

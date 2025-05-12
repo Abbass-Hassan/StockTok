@@ -248,35 +248,59 @@ class VideoDiscoveryController extends Controller
 
 
     /**
- * Get videos by a creator directly from the Video model.
- *
- * @param int $creatorId
- * @param Request $request
- * @return \Illuminate\Http\JsonResponse
- */
-public function getCreatorVideos($creatorId, Request $request)
-{
-    try {
-        $perPage = $request->get('per_page', 15);
-        
-        // Verify this is a creator
-        $user = User::findOrFail($creatorId);
-        if ($user->user_type !== 'creator') {
-            return $this->errorResponse('This user is not a creator', 400);
+     * Get videos by a creator directly from the Video model.
+     *
+     * @param int $creatorId
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCreatorVideos($creatorId, Request $request)
+    {
+        try {
+            $perPage = $request->get('per_page', 3);
+            
+            // Verify this is a creator
+            $user = User::findOrFail($creatorId);
+            if ($user->user_type !== 'creator') {
+                return $this->errorResponse('This user is not a creator', 400);
+            }
+            
+            // Direct database query to get videos - bypassing any middleware issues
+            $videos = \App\Models\Video::where('user_id', $creatorId)
+                        ->where('is_active', true)
+                        ->orderBy('created_at', 'desc')
+                        ->paginate($perPage);
+            
+            return $this->successResponse(
+                ['videos' => $videos],
+                'Creator videos retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error retrieving creator videos: ' . $e->getMessage(), 500);
         }
-        
-        // Direct database query to get videos - bypassing any middleware issues
-        $videos = \App\Models\Video::where('user_id', $creatorId)
-                     ->where('is_active', true)
-                     ->orderBy('created_at', 'desc')
-                     ->paginate($perPage);
-        
-        return $this->successResponse(
-            ['videos' => $videos],
-            'Creator videos retrieved successfully'
-        );
-    } catch (\Exception $e) {
-        return $this->errorResponse('Error retrieving creator videos: ' . $e->getMessage(), 500);
     }
-}
+
+
+    /**
+     * Get all videos with pagination.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllVideos(Request $request)
+    {
+        try {
+            $perPage = $request->get('per_page', 15);
+            
+            // Get all active videos with pagination
+            $videos = $this->videoService->getAllVideos($perPage);
+            
+            return $this->successResponse(
+                ['videos' => $videos],
+                'All videos retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error retrieving videos: ' . $e->getMessage(), 500);
+        }
+    }
 }
