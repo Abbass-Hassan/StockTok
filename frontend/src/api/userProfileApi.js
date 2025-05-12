@@ -137,4 +137,13 @@ export const searchUsers = async (query, perPage = 15) => {
     
       const isFollowing = response.data?.is_following ?? response.data?.data?.is_following ?? false;
       return {is_following: isFollowing};
+      const fallbackResponse = await axios.get(`${API_URL}/user/follows/${followingId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+    
+      const isFollowing = fallbackResponse.data?.is_following ?? fallbackResponse.data?.data?.is_following ?? false;
+      return {is_following: isFollowing};
     
