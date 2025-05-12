@@ -59,4 +59,7 @@ export const searchUsers = async (query, perPage = 15) => {
     console.error('Error fetching user profile:', error.message);
     throw error;
   }
+  export const getUserVideos = async (userId, perPage = 15) => {
+    const token = await getToken();
+    if (!token) throw new Error('Authentication required');
   
