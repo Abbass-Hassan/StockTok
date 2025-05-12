@@ -106,4 +106,7 @@ useEffect(() => {
   const goToCreatorProfile = userId => {
     navigation.navigate('UserProfile', {userId: userId});
   };
+  const handleVideoError = (error, videoId) => {
+    console.error(`Error playing video ${videoId}:`, error);
+  };
   
