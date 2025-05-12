@@ -64,3 +64,7 @@ const fetchVideos = async (page = 1) => {
     setLoading(false);
   }
 };
+useEffect(() => {
+    fetchVideos();
+  }, []);
+  
