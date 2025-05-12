@@ -120,3 +120,19 @@ const EditCreatorProfile = ({route, navigation}) => {
         </TouchableOpacity>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.photoContainer}>
+          <TouchableOpacity onPress={selectPhoto}>
+            {photoUrl ? (
+              <Image source={{uri: photoUrl}} style={styles.profileImage} />
+            ) : (
+              <View style={[styles.profileImage, styles.profileImagePlaceholder]}>
+                <Text style={styles.profileInitials}>
+                  {name ? name.charAt(0).toUpperCase() : '?'}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={selectPhoto}>
+            <Text style={styles.changePhotoText}>Change Profile Photo</Text>
+          </TouchableOpacity>
+        </View>
