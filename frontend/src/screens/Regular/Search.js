@@ -101,3 +101,20 @@ const keyExtractor = (item, index) => {
   </TouchableOpacity>
   <Text style={styles.headerTitle}>Search Creators</Text>
 </View>
+<View style={styles.searchContainer}>
+  <TextInput
+    style={styles.searchInput}
+    placeholder="Enter exact username..."
+    value={searchQuery}
+    onChangeText={setSearchQuery}
+    onSubmitEditing={handleSearch}
+    returnKeyType="search"
+    autoCapitalize="none"
+  />
+  <TouchableOpacity
+    style={styles.searchButton}
+    onPress={handleSearch}
+    disabled={loading}>
+    <Text style={styles.searchButtonText}>Search</Text>
+  </TouchableOpacity>
+</View>
