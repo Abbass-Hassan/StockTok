@@ -33,3 +33,8 @@ export const searchUsers = async (query, perPage = 15) => {
     return { data: { users: [response.data.profile] } };
   }
   return {data: {users: []}};
+} catch (error) {
+    console.error('Search error details:', error.message);
+    return {data: {users: []}};
+  }
+  
