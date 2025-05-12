@@ -89,3 +89,4 @@ export const searchUsers = async (query, perPage = 15) => {
     },
   });
   return processVideoResponse(creatorOwnResponse);
+  return {videos: {data: []}};
