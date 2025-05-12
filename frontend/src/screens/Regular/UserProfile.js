@@ -170,3 +170,9 @@ const UserProfile = ({route, navigation}) => {
             {isFollowing ? 'Following' : 'Follow'}
           </Text>
         </TouchableOpacity>
+        {profile?.bio ? (
+          <Text style={styles.bio}>{profile.bio}</Text>
+        ) : (
+          <Text style={styles.noBio}>No bio provided</Text>
+        )}
+      </View>
