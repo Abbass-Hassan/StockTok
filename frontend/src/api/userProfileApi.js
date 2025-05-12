@@ -125,4 +125,7 @@ export const searchUsers = async (query, perPage = 15) => {
     });
     return response.data;
   };
+  export const checkFollowingStatus = async followingId => {
+    const token = await getToken();
+    if (!token) throw new Error('Authentication required');
   
