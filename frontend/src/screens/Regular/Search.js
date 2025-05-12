@@ -91,3 +91,5 @@ const keyExtractor = (item, index) => {
   if (!item) return `missing-${index}`;
   return item.id ? `user-${item.id}` : `user-index-${index}`;
 };
+<SafeAreaView style={styles.container}>
+  <StatusBar barStyle="light-content" backgroundColor="#00796B" />
