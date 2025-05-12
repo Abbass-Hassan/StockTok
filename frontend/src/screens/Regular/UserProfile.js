@@ -48,3 +48,22 @@ const UserProfile = ({route, navigation}) => {
       }
       setProfile(profileResponse.profile);
       setLoading(false);
+      if (profileResponse.profile.id) {
+        try {
+          const videosResponse = await getUserVideos(profileResponse.profile.id);
+          let videosList = [];
+
+          if (videosResponse?.videos?.data) {
+            videosList = videosResponse.videos.data;
+          } else if (videosResponse?.videos) {
+            videosList = Array.isArray(videosResponse.videos)
+              ? videosResponse.videos
+              : videosResponse.videos.data || [];
+          }
+
+          setVideos(videosList);
+        } catch (videoError) {
+          setVideos([]);
+        } finally {
+          setVideoLoading(false);
+        }
