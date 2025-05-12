@@ -9,3 +9,6 @@ import {
   Alert,
 } from 'react-native';
 import {getUserData} from '../../utils/tokenStorage';
+const Regular = ({navigation}) => {
+    const [userData, setUserData] = useState(null);
+  
