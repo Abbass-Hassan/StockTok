@@ -30,4 +30,5 @@ const AVAILABLE_HEIGHT =
     const [activeVideoIndex, setActiveVideoIndex] = useState(0);
     const [videoToken, setVideoToken] = useState(null);
     const [playingStates, setPlayingStates] = useState({});
-    
+    const flatListRef = useRef(null);
+const videoRefs = useRef({});
