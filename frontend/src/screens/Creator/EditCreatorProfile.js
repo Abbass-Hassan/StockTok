@@ -72,4 +72,27 @@ const EditCreatorProfile = ({route, navigation}) => {
         setErrors(formErrors);
         return isValid;
       };
+      const handleSave = async () => {
+        if (!validateForm()) return;
+        setLoading(true);
+    
+        try {
+          const profileData = { name, username, bio, phone, profile_photo: photo };
+          const response = await updateCreatorProfile(profileData);
+    
+          Alert.alert('Success', 'Profile updated successfully', [
+            { text: 'OK', onPress: () => navigation.goBack() },
+          ]);
+        } catch (error) {
+          const errorMessage = error.message || 'Failed to update profile';
+    
+          if (errorMessage.toLowerCase().includes('username') && errorMessage.toLowerCase().includes('taken')) {
+            setErrors({ ...errors, username: 'This username is already taken' });
+          } else {
+            Alert.alert('Error', errorMessage);
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
     
