@@ -79,5 +79,18 @@ const UserProfile = ({route, navigation}) => {
             setLoading(false);
           }
         };
-      
+        const handleFollowToggle = async () => {
+            try {
+              if (isFollowing) {
+                await unfollowUser(profile.id);
+                setIsFollowing(false);
+              } else {
+                await followUser(profile.id);
+                setIsFollowing(true);
+              }
+            } catch {
+              Alert.alert('Error', 'Failed to update follow status. Please try again.');
+            }
+          };
+        
   
