@@ -27,3 +27,8 @@ export const searchUsers = async (query, perPage = 15) => {
       Accept: 'application/json',
     },
   });
+  if (response.data?.data?.profile) {
+    return { data: { users: [response.data.data.profile] } };
+  } else if (response.data?.profile) {
+    return { data: { users: [response.data.profile] } };
+  }
