@@ -100,4 +100,18 @@ export const searchUsers = async (query, perPage = 15) => {
     }
     return {videos: {data: []}};
   }
+  export const followUser = async followingId => {
+    const token = await getToken();
+    if (!token) throw new Error('Authentication required');
+    const response = await axios.post(`${API_URL}/follows`, {
+      following_id: followingId,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  };
   
