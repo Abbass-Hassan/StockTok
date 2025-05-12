@@ -16,3 +16,8 @@ const [searchQuery, setSearchQuery] = useState('');
 const [searchResults, setSearchResults] = useState([]);
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState(null);
+useEffect(() => {
+  debugTokenStorage().then(hasToken => {
+    console.log('Search screen - has valid token:', hasToken);
+  });
+}, []);
