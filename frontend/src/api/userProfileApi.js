@@ -114,4 +114,15 @@ export const searchUsers = async (query, perPage = 15) => {
     });
     return response.data;
   };
+  export const unfollowUser = async followingId => {
+    const token = await getToken();
+    if (!token) throw new Error('Authentication required');
+    const response = await axios.delete(`${API_URL}/follows/${followingId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
+    });
+    return response.data;
+  };
   
