@@ -11,3 +11,6 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
+import Video from 'react-native-video';
+import axios from 'axios';
+import {getToken} from '../../utils/tokenStorage';
