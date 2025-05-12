@@ -126,4 +126,14 @@ const UserProfile = ({route, navigation}) => {
               </SafeAreaView>
             );
           }
+          if (error) {
+            return (
+              <SafeAreaView style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.retryButton} onPress={loadProfileData}>
+                  <Text style={styles.retryButtonText}>Retry</Text>
+                </TouchableOpacity>
+              </SafeAreaView>
+            );
+          }
         
