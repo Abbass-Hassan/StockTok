@@ -162,3 +162,17 @@ const EditCreatorProfile = ({route, navigation}) => {
               <Text style={styles.errorText}>{errors.username}</Text>
             )}
           </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Bio</Text>
+            <TextInput
+              style={[styles.bioInput, errors.bio && styles.inputError]}
+              value={bio}
+              onChangeText={setBio}
+              placeholder="Write a short bio about yourself"
+              placeholderTextColor="#A0A0A0"
+              multiline
+              maxLength={1000}
+            />
+            {errors.bio && <Text style={styles.errorText}>{errors.bio}</Text>}
+            <Text style={styles.charCounter}>{bio.length}/1000</Text>
+          </View>
