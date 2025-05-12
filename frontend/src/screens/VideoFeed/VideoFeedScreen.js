@@ -153,4 +153,11 @@ useEffect(() => {
                   resizeMode="contain"
                 />
               )}
-    
+              {!isPlaying && (
+            <View style={styles.playButtonOverlay}>
+              <View style={styles.playButton}>
+                <Text style={styles.playIcon}>▶️</Text>
+              </View>
+            </View>
+          )}
+        </TouchableOpacity>
