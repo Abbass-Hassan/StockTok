@@ -119,3 +119,4 @@ const EditCreatorProfile = ({route, navigation}) => {
           )}
         </TouchableOpacity>
       </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
