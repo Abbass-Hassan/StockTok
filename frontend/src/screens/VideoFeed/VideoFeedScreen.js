@@ -178,3 +178,10 @@ useEffect(() => {
               {formatCount(item.comments_count || 0)}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.sideButton}>
+            <View style={styles.sideButtonCircle}>
+              <Text style={styles.sideButtonIcon}>📊</Text>
+            </View>
+            <Text style={styles.sideButtonText}>Analytics</Text>
+          </TouchableOpacity>
+        </View>
