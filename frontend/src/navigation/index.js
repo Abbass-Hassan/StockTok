@@ -27,6 +27,9 @@ import DepositFunds from '../screens/Wallet/DepositFunds';
 import WithdrawFunds from '../screens/Wallet/WithdrawFunds';
 import TransactionHistory from '../screens/Wallet/TransactionHistory';
 
+import Search from '../screens/Regular/Search';
+import UserProfile from '../screens/Regular/UserProfile';
+
 const Stack = createStackNavigator();
 
 const Navigation = () => {
@@ -39,7 +42,6 @@ const Navigation = () => {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="ProfileCompletion" component={ProfileCompletion} />
-
         {/* Feed Screens */}
         <Stack.Screen
           name="CreatorFeed"
@@ -59,7 +61,6 @@ const Navigation = () => {
             headerBackVisible: false,
           }}
         />
-
         {/* Creator Screens */}
         <Stack.Screen
           name="Dashboard"
@@ -110,7 +111,6 @@ const Navigation = () => {
             headerShown: false,
           }}
         />
-
         {/* Wallet Screens */}
         <Stack.Screen
           name="WalletOverview"
@@ -136,6 +136,20 @@ const Navigation = () => {
         <Stack.Screen
           name="TransactionHistory"
           component={TransactionHistory}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Search"
+          component={Search}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfile}
           options={{
             headerShown: false,
           }}
