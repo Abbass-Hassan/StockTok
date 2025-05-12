@@ -21,3 +21,9 @@ useEffect(() => {
     console.log('Search screen - has valid token:', hasToken);
   });
 }, []);
+const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+  
+    console.log('Search button pressed with query:', searchQuery);
+    setError(null);
+  
