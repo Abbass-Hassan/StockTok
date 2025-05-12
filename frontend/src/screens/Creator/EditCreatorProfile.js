@@ -192,3 +192,13 @@ const EditCreatorProfile = ({route, navigation}) => {
                 <Text style={styles.errorText}>{errors.phone}</Text>
               )}
             </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Email</Text>
+              <TextInput
+                style={[styles.input, styles.disabledInput]}
+                value={profile?.email || ''}
+                editable={false}
+              />
+              <Text style={styles.helperText}>Email cannot be changed</Text>
+            </View>
+          </View>
