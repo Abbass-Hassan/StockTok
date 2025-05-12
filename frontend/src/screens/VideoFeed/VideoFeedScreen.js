@@ -97,4 +97,10 @@ useEffect(() => {
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
   };
+  const toggleVideoPlayback = videoId => {
+    setPlayingStates(prev => ({
+      ...prev,
+      [videoId]: !prev[videoId],
+    }));
+  };
   
