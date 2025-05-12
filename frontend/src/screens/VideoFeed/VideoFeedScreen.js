@@ -239,4 +239,13 @@ useEffect(() => {
       />
     </View>
   );
+  container: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  itemContainer: {
+    height: height - TAB_BAR_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   
