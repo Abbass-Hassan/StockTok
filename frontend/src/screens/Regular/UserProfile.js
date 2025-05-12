@@ -67,3 +67,11 @@ const UserProfile = ({route, navigation}) => {
         } finally {
           setVideoLoading(false);
         }
+        try {
+            const followResponse = await checkFollowingStatus(profileResponse.profile.id);
+            setIsFollowing(followResponse?.is_following || false);
+          } catch {
+            setIsFollowing(false);
+          }
+        }
+  
