@@ -80,3 +80,12 @@ export const searchUsers = async (query, perPage = 15) => {
     },
   });
   return processVideoResponse(regularResponse);
+  const creatorOwnUrl = `${API_URL}/creator/videos`;
+  const creatorOwnResponse = await axios.get(creatorOwnUrl, {
+    params: {per_page: perPage},
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+    },
+  });
+  return processVideoResponse(creatorOwnResponse);
