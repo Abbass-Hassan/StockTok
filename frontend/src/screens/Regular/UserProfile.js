@@ -25,4 +25,9 @@ const itemWidth = width / numColumns;
 const UserProfile = ({route, navigation}) => {
     const {username} = route.params;
     console.log('UserProfile screen opened for:', username);
-  
+    const [profile, setProfile] = useState(null);
+  const [videos, setVideos] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [videoLoading, setVideoLoading] = useState(true);
