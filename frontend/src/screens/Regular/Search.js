@@ -118,3 +118,5 @@ const keyExtractor = (item, index) => {
     <Text style={styles.searchButtonText}>Search</Text>
   </TouchableOpacity>
 </View>
+{loading ? (
+  <ActivityIndicator style={styles.loader} size="large" color="#00796B" />
