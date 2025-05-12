@@ -44,4 +44,12 @@ const handleSearch = async () => {
               setSearchResults([]);
               setError('No users found with that username.');
             }
+        } else {
+            console.log(
+              'Invalid response format:',
+              JSON.stringify(response).substring(0, 200),
+            );
+            setSearchResults([]);
+            setError('Invalid response from server. Please try again.');
+          }
       
