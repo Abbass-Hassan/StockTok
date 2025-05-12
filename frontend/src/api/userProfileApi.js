@@ -55,3 +55,8 @@ export const searchUsers = async (query, perPage = 15) => {
   } else {
     throw new Error('Invalid response structure');
   }
+} catch (error) {
+    console.error('Error fetching user profile:', error.message);
+    throw error;
+  }
+  
