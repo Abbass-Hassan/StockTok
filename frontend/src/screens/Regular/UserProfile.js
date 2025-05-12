@@ -118,4 +118,12 @@ const UserProfile = ({route, navigation}) => {
               </SafeAreaView>
             );
           }
+          if (loading) {
+            return (
+              <SafeAreaView style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#00796B" />
+                <Text style={styles.loadingText}>Loading profile...</Text>
+              </SafeAreaView>
+            );
+          }
         
