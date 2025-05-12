@@ -176,3 +176,5 @@ const EditCreatorProfile = ({route, navigation}) => {
             {errors.bio && <Text style={styles.errorText}>{errors.bio}</Text>}
             <Text style={styles.charCounter}>{bio.length}/1000</Text>
           </View>
+          <View style={styles.privateInfoSection}>
+            <Text style={styles.sectionTitle}>Private Information</Text>
