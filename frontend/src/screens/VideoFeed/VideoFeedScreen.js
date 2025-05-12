@@ -38,3 +38,10 @@ const fetchVideos = async (page = 1) => {
       const token = await getToken();
     if (!token) throw new Error('Authentication required');
     setVideoToken(token);
+    const response = await axios.get(`${API_URL}/videos/all?page=${page}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const newVideos = response.data.data.videos.data;
+      const isLastPage = !response.data.data.videos.next_page_url;
+  
