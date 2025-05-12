@@ -11,6 +11,7 @@ import ProfileCompletion from '../screens/Auth/ProfileCompletion';
 // Feed screens
 import HomeScreen from '../screens/Feed';
 import Regular from '../screens/Feed/Regular';
+import VideoFeedScreen from '../screens/VideoFeed/VideoFeedScreen'; // Added VideoFeed import
 
 // Creator screens
 import UploadVideo from '../screens/Creator/UploadVideo';
@@ -59,6 +60,14 @@ const Navigation = () => {
             headerShown: true,
             title: 'StockTok',
             headerBackVisible: false,
+          }}
+        />
+        {/* VideoFeed Screen - Added */}
+        <Stack.Screen
+          name="VideoFeed"
+          component={VideoFeedScreen}
+          options={{
+            headerShown: false,
           }}
         />
         {/* Creator Screens */}
