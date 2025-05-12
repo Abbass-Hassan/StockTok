@@ -29,6 +29,12 @@ const HomeScreen = ({navigation}) => {
 
           <TouchableOpacity
             style={styles.menuButton}
+            onPress={() => navigation.navigate('CreatorProfile')}>
+            <Text style={styles.menuButtonText}>My Profile</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.menuButton}
             onPress={() => navigation.navigate('UploadVideo')}>
             <Text style={styles.menuButtonText}>Upload Video</Text>
           </TouchableOpacity>
