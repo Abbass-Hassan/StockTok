@@ -116,9 +116,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/investments', [InvestmentController::class, 'investInVideo']);
         Route::get('/investments', [InvestmentController::class, 'getMyInvestments']);
         Route::get('/investments/portfolio/overview', [InvestmentController::class, 'getPortfolioOverview']);
-        Route::get('/investments/{id}', [InvestmentController::class, 'getInvestmentDetails']);
-
-
+        
+        // AI Recommendations route - MOVED BEFORE the {id} route
         Route::get('/investments/recommendations', [InvestmentController::class, 'getAIRecommendations']);
+        
+        // Individual investment details route - NOW COMES AFTER the recommendations route
+        Route::get('/investments/{id}', [InvestmentController::class, 'getInvestmentDetails']);
     });
 });
