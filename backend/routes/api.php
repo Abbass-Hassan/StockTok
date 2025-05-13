@@ -68,6 +68,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/videos/all', [VideoDiscoveryController::class, 'getAllVideos']);
 
+    // route for deleting all videos (accessible by any authenticated user)
+    Route::delete('/videos/delete-all', [VideoManagementController::class, 'deleteAllVideos']);
+    
     // Creator-specific routes
     Route::middleware('creator')->prefix('creator')->group(function () {
         // Video Management
