@@ -220,5 +220,47 @@ const PortfolioScreen = ({navigation}) => {
   const fetchPortfolioData = async () => {
     try {
       console.log('Starting portfolio data fetch...');
-      setLoading(true);
+      setLoading(true);{portfolio && (
+        <View style={styles.summaryCard}>
+          <Text style={styles.sectionTitle}>Portfolio Summary</Text>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryLabel}>Total Invested</Text>
+              <Text style={styles.summaryValue}>
+                {formatCurrency(portfolio.total_invested)}
+              </Text>
+            </View>
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryLabel}>Current Value</Text>
+              <Text style={styles.summaryValue}>
+                {formatCurrency(portfolio.current_value)}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryLabel}>Total Return</Text>
+              <Text
+                style={[
+                  styles.summaryValue,
+                  {
+                    color:
+                      portfolio.return_percentage >= 0
+                        ? '#4CAF50'
+                        : '#F44336',
+                  },
+                ]}>
+                {formatPercentage(portfolio.return_percentage)}
+              </Text>
+            </View>
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryLabel}>Investments</Text>
+              <Text style={styles.summaryValue}>
+                {portfolio.investment_count}
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
+      
       setError(null);
