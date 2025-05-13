@@ -4,12 +4,18 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
-  Image,
   Alert,
   ActivityIndicator,
+  RefreshControl,
+  SafeAreaView,
+  StatusBar,
+  Platform,
+  TouchableOpacity,
 } from 'react-native';
 import {getMyVideos} from '../../api/videoApi';
+import VideoCard from '../../components/common/VideoCard';
+import EmptyState from '../../components/common/EmptyState';
+import FloatingActionButton from '../../components/common/FloatingActionButton';
 
 const MyVideos = ({navigation}) => {
   // State variables
@@ -64,161 +70,138 @@ const MyVideos = ({navigation}) => {
 
   // Render a video item
   const renderVideoItem = ({item}) => (
-    <TouchableOpacity
-      style={styles.videoCard}
-      onPress={() => navigation.navigate('VideoPlayer', {video: item})}>
-      <Image
-        source={{uri: item.thumbnail_url || 'https://via.placeholder.com/150'}}
-        style={styles.thumbnail}
-        resizeMode="cover"
-      />
-      <View style={styles.videoInfo}>
-        <Text style={styles.caption} numberOfLines={2}>
-          {item.caption}
-        </Text>
-        <View style={styles.statsRow}>
-          <Text style={styles.statText}>Views: {item.view_count || 0}</Text>
-          <Text style={styles.statText}>Value: ${item.current_value || 0}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+    <VideoCard
+      video={item}
+      onPress={() => navigation.navigate('VideoPlayer', {video: item})}
+    />
   );
 
   // Render empty state
   const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>You haven't uploaded any videos yet</Text>
-      <TouchableOpacity
-        style={styles.uploadButton}
-        onPress={() => navigation.navigate('UploadVideo')}>
-        <Text style={styles.uploadButtonText}>Upload a Video</Text>
-      </TouchableOpacity>
-    </View>
+    <EmptyState
+      title="No Videos Yet"
+      description="Start sharing your content and track your investment growth"
+      actionText="Upload Your First Video"
+      onAction={() => navigation.navigate('UploadVideo')}
+    />
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>My Videos</Text>
-
-      {loading && !refreshing ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4B7BEC" />
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backButton}>
+              <Text style={styles.backButtonText}>‹</Text>
+            </TouchableOpacity>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>My Videos</Text>
+              <Text style={styles.subtitle}>
+                {videos.length} {videos.length === 1 ? 'video' : 'videos'}
+              </Text>
+            </View>
+          </View>
         </View>
-      ) : (
-        <FlatList
-          data={videos}
-          renderItem={renderVideoItem}
-          keyExtractor={item => item.id?.toString() || Math.random().toString()}
-          contentContainerStyle={styles.listContainer}
-          ListEmptyComponent={renderEmptyState}
-          onRefresh={handleRefresh}
-          refreshing={refreshing}
-        />
-      )}
 
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => navigation.navigate('UploadVideo')}>
-        <Text style={styles.floatingButtonText}>+</Text>
-      </TouchableOpacity>
-    </View>
+        {loading && !refreshing ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#00796B" />
+            <Text style={styles.loadingText}>Loading your videos...</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={videos}
+            renderItem={renderVideoItem}
+            keyExtractor={item =>
+              item.id?.toString() || Math.random().toString()
+            }
+            contentContainerStyle={styles.listContainer}
+            ListEmptyComponent={renderEmptyState}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={['#00796B']}
+                tintColor="#00796B"
+              />
+            }
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+
+        <FloatingActionButton
+          onPress={() => navigation.navigate('UploadVideo')}
+          text="+"
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
-    padding: 15,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    marginRight: 12,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
+  },
+  titleContainer: {
+    flex: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#4B7BEC',
+    color: '#00796B',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666666',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666666',
+  },
   listContainer: {
-    flexGrow: 1,
-  },
-  videoCard: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 15,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  thumbnail: {
-    width: '100%',
-    height: 180,
-    backgroundColor: '#ddd',
-  },
-  videoInfo: {
-    padding: 12,
-  },
-  caption: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  statText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 30,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  uploadButton: {
-    backgroundColor: '#4B7BEC',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  uploadButtonText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-  floatingButton: {
-    position: 'absolute',
-    right: 20,
-    bottom: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#4B7BEC',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-  },
-  floatingButtonText: {
-    color: 'white',
-    fontSize: 30,
-    fontWeight: 'bold',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 80, // Space for FAB
   },
 });
 

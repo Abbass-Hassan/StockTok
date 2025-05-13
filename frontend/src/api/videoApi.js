@@ -1,8 +1,10 @@
+// src/api/videoApi.js - Updated with getAllVideos function
+
 import axios from 'axios';
 import {getToken} from '../utils/tokenStorage';
 
 // Use the same API_URL as in auth.js
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = 'http://13.37.224.245:8000/api';
 
 // Function to upload a video
 export const uploadVideo = async (
@@ -78,10 +80,34 @@ export const getMyVideos = async () => {
   }
 };
 
+// Function to get all videos (for feed) with pagination
+export const getAllVideos = async (page = 1) => {
+  try {
+    // Get token from storage
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/videos/all?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get all videos error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch video feed',
+    );
+  }
+};
+
 // Function to get video streaming URL
 export const getVideoStreamUrl = videoId => {
-  // This is the URL to your backend's video streaming endpoint for creators
-  return `${API_URL}/creator/videos/${videoId}/stream`;
+  // Use the common endpoint that's accessible to all authenticated users
+  return `${API_URL}/videos/${videoId}/play`;
 };
 
 // Function to get video details
@@ -104,6 +130,104 @@ export const getVideoDetails = async videoId => {
     console.error('Get video details error:', error.response?.data || error);
     throw new Error(
       error.response?.data?.message || 'Failed to fetch video details',
+    );
+  }
+};
+
+// Function to like a video
+export const likeVideo = async videoId => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.post(
+      `${API_URL}/videos/${videoId}/like`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Like video error:', error.response?.data || error);
+    throw new Error(error.response?.data?.message || 'Failed to like video');
+  }
+};
+
+// Function to get earnings for specific video
+export const getVideoEarnings = async videoId => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    // Updated URL to match your Laravel route structure
+    const response = await axios.get(
+      `${API_URL}/creator/earnings/videos/${videoId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Get video earnings error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch video earnings',
+    );
+  }
+};
+
+// Get creator statistics
+export const getCreatorStats = async () => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/creator/stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get creator stats error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch creator stats',
+    );
+  }
+};
+
+// Get earnings dashboard
+export const getDashboard = async () => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await axios.get(`${API_URL}/creator/earnings/dashboard`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Get dashboard error:', error.response?.data || error);
+    throw new Error(
+      error.response?.data?.message || 'Failed to fetch dashboard',
     );
   }
 };

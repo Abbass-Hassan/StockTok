@@ -9,7 +9,12 @@ import {
 } from 'react-native';
 import * as authApi from '../../api/auth';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {getToken, clearToken, clearUserData} from '../../utils/tokenStorage';
+import {
+  getToken,
+  clearToken,
+  clearUserData,
+  storeUserData,
+} from '../../utils/tokenStorage';
 
 // Import components
 import ProfileCompletionForm from '../../components/specific/Auth/ProfileCompletionForm';
@@ -169,6 +174,9 @@ const ProfileCompletion = ({navigation, route}) => {
         return;
       }
 
+      // Map userType string to user_type_id
+      const userTypeId = userType === 'Creator' ? 2 : 1;
+
       // Prepare profile data
       const profileData = {
         username: username.trim(),
@@ -177,6 +185,7 @@ const ProfileCompletion = ({navigation, route}) => {
         bio: bio.trim(),
         gender: gender,
         user_type: userType,
+        user_type_id: userTypeId,
         profile_photo: profilePhoto,
       };
 
@@ -184,11 +193,46 @@ const ProfileCompletion = ({navigation, route}) => {
       const response = await authApi.completeProfile(token, profileData);
       console.log('Profile completed successfully:', response);
 
-      // Navigate to home screen
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Home'}],
-      });
+      // Extract updated user data from response if available
+      let updatedUserData = null;
+      if (response?.data?.user) {
+        updatedUserData = response.data.user;
+      } else if (response?.data?.data?.user) {
+        updatedUserData = response.data.data.user;
+      } else if (response?.user) {
+        updatedUserData = response.user;
+      } else if (response?.data) {
+        updatedUserData = response.data;
+      }
+
+      // Update stored user data if available
+      if (updatedUserData) {
+        await storeUserData(updatedUserData);
+      } else {
+        // If no updated user data in response, update stored data with local data
+        const currentUserData = await getUserData();
+        const mergedUserData = {
+          ...currentUserData,
+          user_type: userType,
+          user_type_id: userTypeId,
+        };
+        await storeUserData(mergedUserData);
+      }
+
+      // Navigate based on user type
+      if (userType === 'Creator' || userTypeId === 2) {
+        // Navigate to Creator Feed
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'CreatorFeed'}],
+        });
+      } else {
+        // Navigate to Regular/Investor Feed
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'RegularFeed'}],
+        });
+      }
     } catch (error) {
       console.error('Profile completion error details:', error);
 
@@ -237,7 +281,7 @@ const ProfileCompletion = ({navigation, route}) => {
           setFullName={setFullName}
           phoneNumber={phoneNumber}
           setPhoneNumber={setPhoneNumber}
-          bio={bio} // FIXED: Changed from bio={setBio} to bio={bio}
+          bio={bio}
           setBio={setBio}
           gender={gender}
           setGender={setGender}

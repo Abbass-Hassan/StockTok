@@ -63,6 +63,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Video comments route
     Route::get('/videos/{videoId}/comments', [CommentController::class, 'getVideoComments']);
 
+    // *** MOVED OUTSIDE MIDDLEWARE: Video streaming route accessible to all authenticated users ***
+    Route::get('/videos/{id}/play', [VideoManagementController::class, 'streamVideo']);
+
+    Route::get('/videos/all', [VideoDiscoveryController::class, 'getAllVideos']);
+
     // Creator-specific routes
     Route::middleware('creator')->prefix('creator')->group(function () {
         // Video Management
@@ -71,8 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/videos/{id}', [VideoManagementController::class, 'getVideoDetails']);
         Route::put('/videos/{id}', [VideoManagementController::class, 'updateVideo']);
         Route::delete('/videos/{id}', [VideoManagementController::class, 'deleteVideo']);
-        Route::get('/videos/{id}/stream', [VideoManagementController::class, 'streamVideo']);
-
+        // Stream route moved outside middleware
 
         // Earnings routes
         Route::get('/earnings/dashboard', [EarningsController::class, 'getDashboard']);
@@ -95,8 +99,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/trending', [VideoDiscoveryController::class, 'getTrendingVideos']);
             Route::get('/following', [VideoDiscoveryController::class, 'getFollowingFeed']);
             Route::get('/search', [VideoDiscoveryController::class, 'searchVideos']);
-            Route::get('/{id}', [VideoDiscoveryController::class, 'getVideoDetails']);
+            
+            // Modified route - different format to avoid conflicts
+            Route::get('/creator/{creatorId}', [VideoDiscoveryController::class, 'getCreatorVideos']);
+            
+            // Make sure these routes come AFTER specific routes to avoid conflicts
+            Route::get('/user/{userId}', [VideoDiscoveryController::class, 'getUserVideos']);
             Route::get('/{id}/stream', [VideoDiscoveryController::class, 'streamVideo']);
+            Route::get('/{id}', [VideoDiscoveryController::class, 'getVideoDetails']);
         });
 
         // Investment routes
