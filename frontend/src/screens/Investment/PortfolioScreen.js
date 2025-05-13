@@ -717,3 +717,10 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
   const [error, setError] = useState(null);
   const [investment, setInvestment] = useState(null);
   const [performance, setPerformance] = useState(null);
+  const fetchInvestmentDetails = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log(`Fetching details for investment ID: ${investmentId}`);
+      const response = await investmentApi.getInvestmentDetails(investmentId);
