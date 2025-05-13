@@ -86,3 +86,16 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
                   />
                 </TouchableOpacity>
               </Text>
+              <TouchableOpacity
+              style={[
+                styles.submitButton,
+                (!amount || isLoading) && styles.submitButtonDisabled,
+              ]}
+              onPress={handleSubmit}
+              disabled={!amount || isLoading}>
+              {isLoading ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
+                <Text style={styles.submitButtonText}>Submit</Text>
+              )}
+            </TouchableOpacity>
