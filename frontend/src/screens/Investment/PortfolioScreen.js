@@ -733,3 +733,9 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
       }
 
       setLoading(false);
+    } catch (err) {
+      console.error('Error fetching investment details:', err);
+      setError(err.message || 'Failed to load investment details');
+      setLoading(false);
+    }
+  };
