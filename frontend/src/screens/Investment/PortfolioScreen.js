@@ -763,3 +763,14 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
       navigation.navigate('UserProfile', {userId: investment.video.user.id});
     }
   };
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#7A67EE" />
+          <Text style={styles.loadingText}>Loading investment details...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
