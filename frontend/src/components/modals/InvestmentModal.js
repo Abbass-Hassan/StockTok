@@ -68,3 +68,21 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
                 <Icon name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>
+                Amount($)
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      'Investment Info',
+                      '25% of your investment goes directly to the creator, while 75% is invested in the video.',
+                    )
+                  }>
+                  <Icon
+                    name="information-circle-outline"
+                    size={18}
+                    color="#666"
+                    style={{marginLeft: 5}}
+                  />
+                </TouchableOpacity>
+              </Text>
