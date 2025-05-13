@@ -172,3 +172,20 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
     marginTop: 10,
     fontSize: 14,
   },
+  submitButton: {
+    width: '100%',
+    height: 55,
+    backgroundColor: '#00796B',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#7AB99A',
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
