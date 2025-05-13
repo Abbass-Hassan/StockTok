@@ -8,6 +8,7 @@ use App\Services\WalletService;
 use App\Services\VideoService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use App\Services\AIService;
 
 class InvestmentController extends Controller
 {
@@ -168,4 +169,64 @@ class InvestmentController extends Controller
             'by_creator' => $byCreator
         ], 'Portfolio overview retrieved successfully');
     }
+
+
+
+
+    // /**
+    //  * Get AI-powered investment recommendations.
+    //  *
+    //  * @return \Illuminate\Http\JsonResponse
+    //  */
+    // public function getAIRecommendations()
+    // {
+    //     $user = auth()->user();
+        
+    //     // Create AIService instance
+    //     $aiService = app(AIService::class);
+        
+    //     // Get recommendations
+    //     $recommendations = $aiService->getInvestmentRecommendations($user->id);
+        
+    //     if (!$recommendations['success']) {
+    //         return $this->errorResponse($recommendations['message'], 400);
+    //     }
+        
+    //     return $this->successResponse(
+    //         $recommendations,
+    //         'AI investment recommendations retrieved successfully'
+    //     );
+    // }
+
+/**
+ * Get AI-powered investment recommendations.
+ *
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function getAIRecommendations()
+{
+    try {
+        $user = auth()->user();
+        
+        // Create AIService instance with the correct namespace
+        $aiService = new \App\Services\AIService();
+        
+        // Get real AI-powered recommendations
+        $recommendations = $aiService->getInvestmentRecommendations($user->id);
+        
+        if (!$recommendations['success']) {
+            return $this->errorResponse($recommendations['message'], 400);
+        }
+        
+        return $this->successResponse(
+            $recommendations,
+            'AI investment recommendations retrieved successfully'
+        );
+    } catch (\Exception $e) {
+        return $this->errorResponse(
+            'Error: ' . $e->getMessage(),
+            500
+        );
+    }
+}
 }
