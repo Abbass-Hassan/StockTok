@@ -78,4 +78,19 @@ export const investmentApi = {
               );
         
               return response.data;
-        
+            } catch (error) {
+                console.error('Investment API Error Full Details:');
+                console.error('Error message:', error.message);
+                console.error('Status code:', error.response?.status);
+                console.error('Response data:', error.response?.data);
+                console.error('Request URL:', error.config?.url);
+          
+                const errorMsg =
+                  error.response?.data?.message ||
+                  error.response?.data?.error ||
+                  error.message ||
+                  'Failed to fetch investments';
+                throw new Error(errorMsg);
+              }
+            },
+          
