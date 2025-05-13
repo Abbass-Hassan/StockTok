@@ -222,4 +222,17 @@ const AVAILABLE_HEIGHT =
           </View>
         );
       };
+      if (error) {
+        return (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+            <Text style={[styles.errorText, {fontSize: 15, color: '#AAAAAA', marginBottom: 25}]}>
+              Please check your connection and try again.
+            </Text>
+            <TouchableOpacity style={styles.retryButton} onPress={() => fetchVideos()}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      }
     
