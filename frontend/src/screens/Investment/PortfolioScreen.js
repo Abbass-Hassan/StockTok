@@ -692,3 +692,17 @@ const styles = StyleSheet.create({
 });
 
 export default PortfolioScreen;
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  StatusBar,
+  SafeAreaView,
+  Dimensions,
+  Platform,
+} from 'react-native';
