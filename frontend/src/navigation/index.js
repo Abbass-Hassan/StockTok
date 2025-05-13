@@ -28,6 +28,11 @@ import DepositFunds from '../screens/Wallet/DepositFunds';
 import WithdrawFunds from '../screens/Wallet/WithdrawFunds';
 import TransactionHistory from '../screens/Wallet/TransactionHistory';
 
+// Investment screens
+import PortfolioScreen from '../screens/Investment/PortfolioScreen';
+import InvestmentDetailsScreen from '../screens/Investment/InvestmentDetailsScreen';
+import AllInvestmentsScreen from '../screens/Investment/AllInvestmentsScreen';
+
 import Search from '../screens/Regular/Search';
 import UserProfile from '../screens/Regular/UserProfile';
 
@@ -145,6 +150,28 @@ const Navigation = () => {
         <Stack.Screen
           name="TransactionHistory"
           component={TransactionHistory}
+          options={{
+            headerShown: false,
+          }}
+        />
+        {/* Investment Screens */}
+        <Stack.Screen
+          name="Portfolio"
+          component={PortfolioScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="InvestmentDetails"
+          component={InvestmentDetailsScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="AllInvestments"
+          component={AllInvestmentsScreen}
           options={{
             headerShown: false,
           }}
