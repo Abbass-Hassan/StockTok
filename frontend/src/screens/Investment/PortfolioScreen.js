@@ -115,3 +115,7 @@ const PortfolioScreen = ({navigation}) => {
       month: 'short',
       day: 'numeric',
     });
+    const viewInvestmentDetails = investmentId => {
+      navigation.navigate('InvestmentDetails', {investmentId});
+    };
+  
