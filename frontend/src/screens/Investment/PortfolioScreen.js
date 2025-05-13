@@ -87,3 +87,9 @@ const PortfolioScreen = ({navigation}) => {
       }
 
       setLoading(false);
+    } catch (err) {
+      console.error('Error fetching portfolio data:');
+      setError(err.message || 'Failed to load portfolio data');
+      setLoading(false);
+    }
+  };
