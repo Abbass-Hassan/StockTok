@@ -62,3 +62,8 @@ const PortfolioScreen = ({navigation}) => {
       console.log('Starting portfolio data fetch...');
       setLoading(true);
       setError(null);
+      console.log('Fetching portfolio overview...');
+      const overviewResponse = await investmentApi.getPortfolioOverview();
+
+      console.log('Fetching investments...');
+      const investmentsResponse = await investmentApi.getMyInvestments();
