@@ -34,4 +34,17 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
     
         setIsLoading(true);
         setError(null);
-    
+        try {
+            const response = await investmentApi.investInVideo(videoId, amount);
+            setIsLoading(false);
+            Vibration.vibrate(50);
+            Alert.alert(
+              'Investment Successful',
+              `You have successfully invested $${amount} in this video!`,
+              [{text: 'OK'}],
+            );
+            if (onSuccess) {
+              onSuccess(response.data.investment);
+            }
+            onClose();
+      
