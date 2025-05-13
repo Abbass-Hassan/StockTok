@@ -193,4 +193,27 @@ class VideoManagementController extends Controller
             return $this->errorResponse('Error streaming video: ' . $e->getMessage(), 500);
         }
     }
+
+
+    /**
+     * Delete all videos from the database.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteAllVideos()
+    {
+        try {
+            $count = $this->videoService->deleteAllVideos();
+            
+            return $this->successResponse(
+                ['deleted_count' => $count],
+                'All videos have been permanently deleted from the database'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse(
+                'Failed to delete videos: ' . $e->getMessage(),
+                500
+            );
+        }
+    }
 }

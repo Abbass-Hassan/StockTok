@@ -201,4 +201,18 @@ class VideoService
                     ->orderBy('created_at', 'desc')
                     ->paginate($perPage);
     }
+
+
+    /**
+     * Delete all videos from the database.
+     * 
+     * @return int Number of videos deleted
+     */
+    public function deleteAllVideos()
+    {
+        return DB::transaction(function () {
+            // This will permanently delete all videos from the database
+            return Video::query()->delete();
+        });
+    }
 }
