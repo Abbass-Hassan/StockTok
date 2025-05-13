@@ -198,7 +198,7 @@ class InvestmentController extends Controller
     //     );
     // }
 
-    /**
+/**
  * Get AI-powered investment recommendations.
  *
  * @return \Illuminate\Http\JsonResponse
@@ -211,8 +211,12 @@ public function getAIRecommendations()
         // Create AIService instance with the correct namespace
         $aiService = new \App\Services\AIService();
         
-        // Get test recommendations
-        $recommendations = $aiService->getTestRecommendations($user->id);
+        // Get real AI-powered recommendations
+        $recommendations = $aiService->getInvestmentRecommendations($user->id);
+        
+        if (!$recommendations['success']) {
+            return $this->errorResponse($recommendations['message'], 400);
+        }
         
         return $this->successResponse(
             $recommendations,
