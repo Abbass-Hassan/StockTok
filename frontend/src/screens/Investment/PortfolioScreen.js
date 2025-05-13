@@ -275,4 +275,21 @@ const PortfolioScreen = ({navigation}) => {
           />
         </View>
       )}
+      {investments && investments.length > 0 && (
+        <View style={styles.investmentsSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Your Investments</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('AllInvestments')}>
+              <Text style={styles.seeAllButton}>See All</Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={investments.slice(0, 5)}
+            renderItem={renderInvestmentItem}
+            keyExtractor={item => `investment-${item.id}`}
+            scrollEnabled={false}
+          />
+        </View>
+      )}
       
