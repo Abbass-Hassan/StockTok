@@ -98,3 +98,7 @@ const PortfolioScreen = ({navigation}) => {
     await fetchPortfolioData();
     setRefreshing(false);
   };
+  useEffect(() => {
+    testApiConnection();
+    fetchPortfolioData();
+  }, []);
