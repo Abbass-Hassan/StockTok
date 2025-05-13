@@ -70,7 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // route for deleting all videos (accessible by any authenticated user)
     Route::delete('/videos/delete-all', [VideoManagementController::class, 'deleteAllVideos']);
-    
+
     // Creator-specific routes
     Route::middleware('creator')->prefix('creator')->group(function () {
         // Video Management
@@ -117,5 +117,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/investments', [InvestmentController::class, 'getMyInvestments']);
         Route::get('/investments/portfolio/overview', [InvestmentController::class, 'getPortfolioOverview']);
         Route::get('/investments/{id}', [InvestmentController::class, 'getInvestmentDetails']);
+
+
+        Route::get('/investments/recommendations', [InvestmentController::class, 'getAIRecommendations']);
     });
 });
