@@ -21,3 +21,10 @@ import axios from 'axios';
 
 const API_URL = 'http://13.37.224.245:8000/api';
 const {width} = Dimensions.get('window');
+const PortfolioScreen = ({navigation}) => {
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
+  const [portfolio, setPortfolio] = useState(null);
+  const [investments, setInvestments] = useState([]);
+  const [creatorInvestments, setCreatorInvestments] = useState([]);
