@@ -10,10 +10,13 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
+  Alert,
+  Animated,
 } from 'react-native';
 import Video from 'react-native-video';
 import axios from 'axios';
 import {getToken} from '../../utils/tokenStorage';
+import InvestmentModal from '../../components/modals/InvestmentModal';
 
 const API_URL = 'http://13.37.224.245:8000/api';
 const {height, width} = Dimensions.get('window');
@@ -39,6 +42,15 @@ const VideoFeedScreen = ({navigation}) => {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [videoToken, setVideoToken] = useState(null);
   const [playingStates, setPlayingStates] = useState({});
+
+  // Investment modal states
+  const [investmentModalVisible, setInvestmentModalVisible] = useState(false);
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+
+  // Animation states for heart
+  const [likeAnimations, setLikeAnimations] = useState({});
+  const animatedHeartScale = useRef(new Animated.Value(0)).current;
+  const animatedHeartOpacity = useRef(new Animated.Value(0)).current;
 
   const flatListRef = useRef(null);
   const videoRefs = useRef({});
@@ -71,30 +83,50 @@ const VideoFeedScreen = ({navigation}) => {
         },
       });
 
-      const newVideos = response.data.data.videos.data;
-      const isLastPage = !response.data.data.videos.next_page_url;
+      // Check if we have videos data
+      if (
+        response.data.data &&
+        response.data.data.videos &&
+        response.data.data.videos.data
+      ) {
+        const newVideos = response.data.data.videos.data;
+        const isLastPage = !response.data.data.videos.next_page_url;
 
-      // Initialize playing states for new videos
-      const newPlayingStates = {};
-      newVideos.forEach(video => {
-        newPlayingStates[video.id] = false;
-      });
+        // Initialize playing states for new videos
+        const newPlayingStates = {};
+        newVideos.forEach(video => {
+          newPlayingStates[video.id] = false;
+        });
 
-      if (page === 1) {
-        setVideos(newVideos);
-        setPlayingStates(newPlayingStates);
+        if (page === 1) {
+          setVideos(newVideos);
+          setPlayingStates(newPlayingStates);
+        } else {
+          setVideos(prevVideos => [...prevVideos, ...newVideos]);
+          setPlayingStates(prev => ({...prev, ...newPlayingStates}));
+        }
+
+        setHasMorePages(!isLastPage);
       } else {
-        setVideos(prevVideos => [...prevVideos, ...newVideos]);
-        setPlayingStates(prev => ({...prev, ...newPlayingStates}));
+        // Handle case where there are no videos (especially for following feed)
+        setVideos([]);
+        setHasMorePages(false);
       }
 
-      setHasMorePages(!isLastPage);
       setCurrentPage(page);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching videos:', err);
-      setError('Failed to load videos. Please try again.');
-      setLoading(false);
+
+      // Check if error is specifically about not following anyone
+      if (err.response && err.response.status === 404 && type === 'following') {
+        setVideos([]);
+        setError(null); // Clear any existing error
+        setLoading(false);
+      } else {
+        setError('Failed to load videos. Please try again.');
+        setLoading(false);
+      }
     }
   };
 
@@ -119,6 +151,73 @@ const VideoFeedScreen = ({navigation}) => {
   useEffect(() => {
     fetchVideos();
   }, []);
+
+  // Animate heart when like is successful
+  const animateHeart = videoId => {
+    // Reset animations
+    animatedHeartScale.setValue(0);
+    animatedHeartOpacity.setValue(0);
+
+    // Start animations
+    Animated.parallel([
+      Animated.timing(animatedHeartScale, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animatedHeartOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Fade out animation
+    setTimeout(() => {
+      Animated.timing(animatedHeartOpacity, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }).start(() => {
+        setLikeAnimations(prev => ({
+          ...prev,
+          [videoId]: false,
+        }));
+      });
+    }, 1500);
+  };
+
+  // Open investment modal for a video
+  const handleLikePress = videoId => {
+    setSelectedVideoId(videoId);
+    setInvestmentModalVisible(true);
+  };
+
+  // Handle successful investment
+  const handleInvestmentSuccess = investment => {
+    // Update videos list to reflect the new investment
+    setVideos(prevVideos =>
+      prevVideos.map(video => {
+        if (video.id === selectedVideoId) {
+          return {
+            ...video,
+            like_investment_count: video.like_investment_count + 1,
+            // You may also update other properties if the API returns them
+          };
+        }
+        return video;
+      }),
+    );
+
+    // Start heart animation for the liked video
+    setLikeAnimations(prev => ({
+      ...prev,
+      [selectedVideoId]: true,
+    }));
+
+    // Trigger animation
+    animateHeart(selectedVideoId);
+  };
 
   // Handle when a user scrolls to end of the list
   const handleLoadMore = () => {
@@ -161,6 +260,7 @@ const VideoFeedScreen = ({navigation}) => {
     return count.toString();
   };
 
+  // Toggle play/pause for a specific video
   const toggleVideoPlayback = videoId => {
     // Create haptic feedback when toggling video
     if (Platform.OS === 'ios') {
@@ -196,11 +296,27 @@ const VideoFeedScreen = ({navigation}) => {
   const renderItem = ({item, index}) => {
     const isPlaying = playingStates[item.id] || false;
     const videoUrl = `${API_URL}/videos/${item.id}/play`;
+    const isAnimatingLike = likeAnimations[item.id] || false;
 
     return (
       <View style={styles.itemContainer}>
         {/* Video Container with reduced size to center it */}
         <View style={styles.videoContainer}>
+          {/* Heart Animation - Only show when actively animating */}
+          {isAnimatingLike && (
+            <Animated.View
+              style={[
+                styles.heartAnimation,
+                {
+                  transform: [{scale: animatedHeartScale}],
+                  opacity: animatedHeartOpacity,
+                },
+              ]}>
+              <Text style={styles.heartIcon}>❤️</Text>
+              <Text style={styles.heartText}>+1</Text>
+            </Animated.View>
+          )}
+
           {/* Video Player */}
           <TouchableOpacity
             activeOpacity={1}
@@ -247,6 +363,7 @@ const VideoFeedScreen = ({navigation}) => {
                 <View style={styles.playButton}>
                   <Text style={styles.playIcon}>▶️</Text>
                 </View>
+                <Text style={styles.tapToPlayText}>Tap to play</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -254,7 +371,9 @@ const VideoFeedScreen = ({navigation}) => {
           {/* Side buttons */}
           <View style={styles.sideButtonsContainer}>
             {/* Heart button */}
-            <TouchableOpacity style={styles.sideButton}>
+            <TouchableOpacity
+              style={styles.sideButton}
+              onPress={() => handleLikePress(item.id)}>
               <View style={styles.sideButtonCircle}>
                 <Text style={styles.sideButtonIcon}>❤️</Text>
               </View>
@@ -322,20 +441,22 @@ const VideoFeedScreen = ({navigation}) => {
         </Text>
         <Text style={styles.emptyStateText}>
           {feedType === 'following'
-            ? 'Follow some creators to see their videos here!'
+            ? 'You are not following any creators yet. Follow some creators to see their videos here!'
             : 'Check back later for trending videos'}
         </Text>
-        <TouchableOpacity
-          style={styles.emptyStateButton}
-          onPress={() =>
-            feedType === 'following'
-              ? switchFeedType('trending')
-              : fetchVideos()
-          }>
-          <Text style={styles.emptyStateButtonText}>
-            {feedType === 'following' ? 'Explore Trending' : 'Refresh'}
-          </Text>
-        </TouchableOpacity>
+        {feedType === 'following' ? (
+          <TouchableOpacity
+            style={styles.emptyStateButton}
+            onPress={() => switchFeedType('trending')}>
+            <Text style={styles.emptyStateButtonText}>Explore Trending</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.emptyStateButton}
+            onPress={() => fetchVideos()}>
+            <Text style={styles.emptyStateButtonText}>Refresh</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -426,6 +547,15 @@ const VideoFeedScreen = ({navigation}) => {
           />
         )}
       </View>
+
+      {/* Investment Modal */}
+      <InvestmentModal
+        visible={investmentModalVisible}
+        videoId={selectedVideoId}
+        onClose={() => setInvestmentModalVisible(false)}
+        onSuccess={handleInvestmentSuccess}
+        navigation={navigation}
+      />
     </View>
   );
 };
@@ -500,16 +630,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
-  tapToPlayText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '500',
-    marginTop: 15,
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 3,
-    opacity: 0.8,
-  },
   playButton: {
     width: 80,
     height: 80,
@@ -526,6 +646,44 @@ const styles = StyleSheet.create({
   },
   playIcon: {
     fontSize: 36,
+  },
+  tapToPlayText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 15,
+    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 3,
+    opacity: 0.8,
+  },
+
+  // Heart animation
+  heartAnimation: {
+    position: 'absolute',
+    top: '40%',
+    left: '50%',
+    marginLeft: -50,
+    zIndex: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 50,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  heartIcon: {
+    fontSize: 30,
+    marginBottom: 5,
+  },
+  heartText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 
   // Side buttons styling
