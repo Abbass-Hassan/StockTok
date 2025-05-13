@@ -34,4 +34,36 @@ const AVAILABLE_HEIGHT =
     const [playingStates, setPlayingStates] = useState({});
     const flatListRef = useRef(null);
     const videoRefs = useRef({});
-  
+    const fetchVideos = async (page = 1, type = feedType) => {
+        try {
+          setLoading(true);
+          const token = await getToken();
+          if (!token) throw new Error('Authentication required');
+          setVideoToken(token);
+          let endpoint = type === 'trending'
+            ? `${API_URL}/regular/videos/trending?page=${page}`
+            : `${API_URL}/regular/videos/following?page=${page}`;
+          const response = await axios.get(endpoint, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const newVideos = response.data.data.videos.data;
+          const isLastPage = !response.data.data.videos.next_page_url;
+          const newPlayingStates = {};
+          newVideos.forEach(video => newPlayingStates[video.id] = false);
+          if (page === 1) {
+            setVideos(newVideos);
+            setPlayingStates(newPlayingStates);
+          } else {
+            setVideos(prev => [...prev, ...newVideos]);
+            setPlayingStates(prev => ({ ...prev, ...newPlayingStates }));
+          }
+          setHasMorePages(!isLastPage);
+          setCurrentPage(page);
+          setLoading(false);
+        } catch (err) {
+          console.error('Error fetching videos:', err);
+          setError('Failed to load videos. Please try again.');
+          setLoading(false);
+        }
+      };
+    
