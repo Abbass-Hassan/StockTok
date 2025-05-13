@@ -724,3 +724,12 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
 
       console.log(`Fetching details for investment ID: ${investmentId}`);
       const response = await investmentApi.getInvestmentDetails(investmentId);
+      if (response.status === 'success') {
+        console.log('Setting investment data in state');
+        setInvestment(response.data.investment);
+        setPerformance(response.data.performance);
+      } else {
+        throw new Error('Failed to fetch investment details');
+      }
+
+      setLoading(false);
