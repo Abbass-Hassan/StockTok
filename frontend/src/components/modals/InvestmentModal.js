@@ -99,3 +99,9 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
                 <Text style={styles.submitButtonText}>Submit</Text>
               )}
             </TouchableOpacity>
+            <View style={styles.indicatorLine} />
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
