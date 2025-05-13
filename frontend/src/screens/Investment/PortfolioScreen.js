@@ -102,3 +102,16 @@ const PortfolioScreen = ({navigation}) => {
     testApiConnection();
     fetchPortfolioData();
   }, []);
+  const formatCurrency = amount => '$' + parseFloat(amount).toFixed(2);
+
+  const formatPercentage = percentage => {
+    const value = parseFloat(percentage).toFixed(2);
+    return value > 0 ? `+${value}%` : `${value}%`;
+  };
+
+  const formatDate = dateString =>
+    new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
