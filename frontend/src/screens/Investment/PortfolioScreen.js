@@ -145,4 +145,15 @@ const PortfolioScreen = ({navigation}) => {
         </View>
       );
     };
+    if (loading && !refreshing) {
+      return (
+        <SafeAreaView style={styles.container}>
+          <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#7A67EE" />
+            <Text style={styles.loadingText}>Loading portfolio data...</Text>
+          </View>
+        </SafeAreaView>
+      );
+    }
   
