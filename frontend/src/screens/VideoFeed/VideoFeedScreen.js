@@ -119,4 +119,11 @@ const AVAILABLE_HEIGHT =
           [videoId]: !prev[videoId],
         }));
       };
+      const goToCreatorProfile = userId => {
+        navigation.navigate('UserProfile', {userId});
+      };
+    
+      const handleVideoError = (error, videoId) => {
+        console.error(`Error playing video ${videoId}:`, error);
+      };
     
