@@ -93,4 +93,10 @@ export const investmentApi = {
                 throw new Error(errorMsg);
               }
             },
-          
+            getInvestmentDetails: async investmentId => {
+                try {
+                  const token = await getToken();
+                  if (!token) {
+                    throw new Error('Authentication required');
+                  }
+            
