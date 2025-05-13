@@ -136,6 +136,10 @@ export const investmentApi = {
                     throw new Error(errorMsg);
                   }
                 },
-                git add .
-                git commit -m "Add error handling to getInvestmentDetails"
+                getPortfolioOverview: async () => {
+                    try {
+                      const token = await getToken();
+                      if (!token) {
+                        throw new Error('Authentication required');
+                      }
                 
