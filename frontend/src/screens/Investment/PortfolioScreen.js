@@ -379,4 +379,23 @@ const PortfolioScreen = ({navigation}) => {
         shadowRadius: 3.84,
         elevation: 2,
       },
+      investmentCard: {
+        borderWidth: 1,
+        borderColor: '#E1E8ED',
+        borderRadius: 8,
+        marginBottom: 12,
+        overflow: 'hidden',
+      },
+      investmentCardHeader: {
+        flexDirection: 'row',
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E1E8ED',
+        backgroundColor: '#F8F9FA',
+      },
+      investmentCardFooter: {
+        flexDirection: 'row',
+        padding: 12,
+        backgroundColor: '#FFFFFF',
+      },
       
