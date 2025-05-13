@@ -22,3 +22,16 @@ const BOTTOM_INSET = Platform.OS === 'ios' ? 34 : 16;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
 const AVAILABLE_HEIGHT =
   height - TAB_BAR_HEIGHT - BOTTOM_INSET - STATUS_BAR_HEIGHT;
+  const VideoFeedScreen = ({navigation}) => {
+    const [feedType, setFeedType] = useState('trending');
+    const [videos, setVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMorePages, setHasMorePages] = useState(true);
+    const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+    const [videoToken, setVideoToken] = useState(null);
+    const [playingStates, setPlayingStates] = useState({});
+    const flatListRef = useRef(null);
+    const videoRefs = useRef({});
+  
