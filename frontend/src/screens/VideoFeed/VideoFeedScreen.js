@@ -83,4 +83,20 @@ const AVAILABLE_HEIGHT =
       const handleLoadMore = () => {
         if (!loading && hasMorePages) fetchVideos(currentPage + 1);
       };
+      const handleViewableItemsChanged = useRef(({viewableItems}) => {
+        if (viewableItems.length > 0) {
+          const newActiveIndex = viewableItems[0].index;
+          const activeVideoId = viewableItems[0].item.id;
+          const updatedStates = { ...playingStates };
+          Object.keys(updatedStates).forEach(id => updatedStates[id] = false);
+          updatedStates[activeVideoId] = true;
+          setActiveVideoIndex(newActiveIndex);
+          setPlayingStates(updatedStates);
+        }
+      }).current;
+    
+      const viewabilityConfig = useRef({
+        itemVisiblePercentThreshold: 50,
+        minimumViewTime: 300,
+      }).current;
     
