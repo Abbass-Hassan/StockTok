@@ -758,3 +758,8 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
       minute: '2-digit',
     });
   };
+  const viewCreatorProfile = () => {
+    if (investment && investment.video && investment.video.user) {
+      navigation.navigate('UserProfile', {userId: investment.video.user.id});
+    }
+  };
