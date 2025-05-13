@@ -77,4 +77,7 @@ const AVAILABLE_HEIGHT =
           if (flatListRef.current) flatListRef.current.scrollToOffset({ offset: 0 });
         }
       };
+      useEffect(() => {
+        fetchVideos();
+      }, []);
     
