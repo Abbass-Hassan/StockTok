@@ -53,4 +53,13 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
             Vibration.vibrate([0, 50, 50, 50]);
           }
         };
-      
+        return (
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={visible}
+              onRequestClose={onClose}>
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+        
