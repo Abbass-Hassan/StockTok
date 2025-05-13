@@ -711,3 +711,9 @@ import {getToken} from '../../utils/tokenStorage';
 import Icon from 'react-native-vector-icons/Ionicons';
 const API_URL = 'http://13.37.224.245:8000/api';
 const {width} = Dimensions.get('window');
+const InvestmentDetailsScreen = ({route, navigation}) => {
+  const {investmentId} = route.params;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [investment, setInvestment] = useState(null);
+  const [performance, setPerformance] = useState(null);
