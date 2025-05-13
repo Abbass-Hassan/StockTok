@@ -93,3 +93,8 @@ const PortfolioScreen = ({navigation}) => {
       setLoading(false);
     }
   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchPortfolioData();
+    setRefreshing(false);
+  };
