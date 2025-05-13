@@ -739,3 +739,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    console.log('InvestmentDetailsScreen - Loading initial data');
+    fetchInvestmentDetails();
+  }, [investmentId]);
