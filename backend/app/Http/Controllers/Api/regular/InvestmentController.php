@@ -8,6 +8,7 @@ use App\Services\WalletService;
 use App\Services\VideoService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use App\Services\AIService;
 
 class InvestmentController extends Controller
 {
@@ -196,8 +197,8 @@ class InvestmentController extends Controller
     //         'AI investment recommendations retrieved successfully'
     //     );
     // }
+    
     /**
-/**
  * Get AI-powered investment recommendations.
  *
  * @return \Illuminate\Http\JsonResponse
@@ -207,10 +208,10 @@ public function getAIRecommendations()
     try {
         $user = auth()->user();
         
-        // Create AIService instance
-        $aiService = app(AIService::class);
+        // Create AIService instance with the correct namespace
+        $aiService = new AIService();
         
-        // Get test recommendations (no actual AI call yet)
+        // Get test recommendations
         $recommendations = $aiService->getTestRecommendations($user->id);
         
         return $this->successResponse(
