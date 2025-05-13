@@ -197,15 +197,31 @@ class InvestmentController extends Controller
     //     );
     // }
     /**
- * Get AI-powered investment recommendations (minimal test).
+/**
+ * Get AI-powered investment recommendations.
  *
  * @return \Illuminate\Http\JsonResponse
  */
 public function getAIRecommendations()
 {
-    return $this->successResponse(
-        ['message' => 'Test successful'],
-        'Test successful'
-    );
+    try {
+        $user = auth()->user();
+        
+        // Create AIService instance
+        $aiService = app(AIService::class);
+        
+        // Get test recommendations (no actual AI call yet)
+        $recommendations = $aiService->getTestRecommendations($user->id);
+        
+        return $this->successResponse(
+            $recommendations,
+            'AI investment recommendations retrieved successfully'
+        );
+    } catch (\Exception $e) {
+        return $this->errorResponse(
+            'Error: ' . $e->getMessage(),
+            500
+        );
+    }
 }
 }
