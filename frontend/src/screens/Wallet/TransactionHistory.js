@@ -52,6 +52,7 @@ const TransactionHistory = ({navigation}) => {
         return '💼';
       case 'creator_earning':
       case 'investment_return':
+      case 'investor_reward':
         return '💰';
       default:
         return '📄';
@@ -70,6 +71,8 @@ const TransactionHistory = ({navigation}) => {
         return 'Return';
       case 'creator_earning':
         return 'Earning';
+      case 'investor_reward':
+        return 'Investor Reward';
       default:
         return type
           ? type.charAt(0).toUpperCase() + type.slice(1)
@@ -90,7 +93,8 @@ const TransactionHistory = ({navigation}) => {
     const displayPrefix =
       type === 'deposit' ||
       type === 'creator_earning' ||
-      type === 'investment_return'
+      type === 'investment_return' ||
+      type === 'investor_reward'
         ? '+'
         : '-';
 
