@@ -99,4 +99,26 @@ export const investmentApi = {
                   if (!token) {
                     throw new Error('Authentication required');
                   }
+                  console.log(
+                    'Making get investment details request to:',
+                    `${API_URL}/regular/investments/${investmentId}`,
+                  );
+            
+                  const response = await axios.get(
+                    `${API_URL}/regular/investments/${investmentId}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                      },
+                    },
+                  );
+            
+                  console.log('Investment Details API Response status:', response.status);
+                  console.log(
+                    'Investment Details API Response data:',
+                    JSON.stringify(response.data).substring(0, 100),
+                  );
+            
+                  return response.data;
             
