@@ -339,4 +339,22 @@ const PortfolioScreen = ({navigation}) => {
           </ScrollView>
         </SafeAreaView>
       );
+      container: {
+        flex: 1,
+        backgroundColor: '#F5F7FA',
+      },
+      header: {
+        backgroundColor: '#FFFFFF',
+        padding: 16,
+        paddingTop: Platform.OS === 'ios' ? 8 : 16,
+        paddingBottom: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E1E8ED',
+        marginBottom: 8,
+      },
+      headerTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#14171A',
+      },
       
