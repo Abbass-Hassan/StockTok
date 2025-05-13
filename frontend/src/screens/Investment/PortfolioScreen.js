@@ -67,3 +67,23 @@ const PortfolioScreen = ({navigation}) => {
 
       console.log('Fetching investments...');
       const investmentsResponse = await investmentApi.getMyInvestments();
+      if (
+        overviewResponse?.status === 'success' &&
+        overviewResponse?.data?.portfolio &&
+        investmentsResponse?.status === 'success' &&
+        investmentsResponse?.data?.investments
+      ) {
+        setPortfolio(overviewResponse.data.portfolio);
+        setCreatorInvestments(
+          overviewResponse.data.by_creator
+            ? Object.values(overviewResponse.data.by_creator)
+            : [],
+        );
+        setInvestments(investmentsResponse.data.investments.data || []);
+      } else {
+        throw new Error(
+          'Failed to fetch portfolio data: Invalid data structure',
+        );
+      }
+
+      setLoading(false);
