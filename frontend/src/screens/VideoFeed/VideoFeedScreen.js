@@ -99,4 +99,24 @@ const AVAILABLE_HEIGHT =
         itemVisiblePercentThreshold: 50,
         minimumViewTime: 300,
       }).current;
+      const formatCount = count => {
+        if (!count) return '0';
+        if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
+        if (count >= 1_000) return `${(count / 1_000).toFixed(1)}K`;
+        return count.toString();
+      };
+    
+      const toggleVideoPlayback = videoId => {
+        if (Platform.OS === 'ios') {
+          const impactLight = require('react-native').ImpactFeedbackGenerator;
+          if (impactLight) new impactLight('light').impactOccurred();
+        } else if (Platform.OS === 'android') {
+          require('react-native').Vibration.vibrate(10);
+        }
+    
+        setPlayingStates(prev => ({
+          ...prev,
+          [videoId]: !prev[videoId],
+        }));
+      };
     
