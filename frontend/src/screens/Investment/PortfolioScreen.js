@@ -709,3 +709,5 @@ import {
 import {investmentApi} from '../../api/investmentApi';
 import {getToken} from '../../utils/tokenStorage';
 import Icon from 'react-native-vector-icons/Ionicons';
+const API_URL = 'http://13.37.224.245:8000/api';
+const {width} = Dimensions.get('window');
