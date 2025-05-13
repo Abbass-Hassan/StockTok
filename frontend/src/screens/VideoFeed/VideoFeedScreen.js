@@ -80,4 +80,7 @@ const AVAILABLE_HEIGHT =
       useEffect(() => {
         fetchVideos();
       }, []);
+      const handleLoadMore = () => {
+        if (!loading && hasMorePages) fetchVideos(currentPage + 1);
+      };
     
