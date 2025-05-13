@@ -1,8 +1,10 @@
 FROM bitnami/laravel 
 
-# Build argument for environment
+# Build arguments for environment and API key
 ARG ENV=production
+ARG OPENAI_API_KEY
 ENV APP_ENV=${ENV}
+ENV OPENAI_API_KEY=${OPENAI_API_KEY}
 
 WORKDIR /app
 

@@ -51,6 +51,7 @@ jobs:
           build-args: |
             ENV=${{ steps.set-env.outputs.ENV_TAG }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
 
   deploy:
     needs: build-and-push
@@ -130,6 +131,7 @@ jobs:
             echo "GITHUB_REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" > .env
             echo "IMAGE_TAG=${{ steps.set-env.outputs.ENV_TAG }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
 
             # Login to GitHub Container Registry
             echo "Logging in to GitHub Container Registry..."
