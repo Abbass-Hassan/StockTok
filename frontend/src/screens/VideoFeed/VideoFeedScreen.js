@@ -66,4 +66,15 @@ const AVAILABLE_HEIGHT =
           setLoading(false);
         }
       };
+      const switchFeedType = type => {
+        if (type !== feedType) {
+          setFeedType(type);
+          setVideos([]);
+          setCurrentPage(1);
+          setHasMorePages(true);
+          setActiveVideoIndex(0);
+          fetchVideos(1, type);
+          if (flatListRef.current) flatListRef.current.scrollToOffset({ offset: 0 });
+        }
+      };
     
