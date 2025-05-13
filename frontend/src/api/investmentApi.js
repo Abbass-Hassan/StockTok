@@ -56,4 +56,26 @@ export const investmentApi = {
               if (!token) {
                 throw new Error('Authentication required');
               }
+              console.log(
+                'Making get investments request to:',
+                `${API_URL}/regular/investments?per_page=${perPage}`,
+              );
+        
+              const response = await axios.get(
+                `${API_URL}/regular/investments?per_page=${perPage}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                  },
+                },
+              );
+        
+              console.log('Investments API Response status:', response.status);
+              console.log(
+                'Investments API Response data:',
+                JSON.stringify(response.data).substring(0, 100),
+              );
+        
+              return response.data;
         
