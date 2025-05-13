@@ -132,4 +132,17 @@ const PortfolioScreen = ({navigation}) => {
         </TouchableOpacity>
       );
     };
+    const renderCreatorItem = ({item, index}) => {
+      const colors = [/* palette */];
+      const color = colors[index % colors.length];
+      const percentage = portfolio?.total_invested
+        ? (item.total_invested / portfolio.total_invested) * 100
+        : 0;
+  
+      return (
+        <View style={styles.creatorItem}>
+          {/* details */}
+        </View>
+      );
+    };
   
