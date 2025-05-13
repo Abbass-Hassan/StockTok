@@ -323,4 +323,20 @@ const PortfolioScreen = ({navigation}) => {
           </SafeAreaView>
         );
       }
+      return (
+        <SafeAreaView style={styles.container}>
+          <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Investment Portfolio</Text>
+          </View>
+      
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            {/* Summary, Distribution, and Investments sections go here */}
+          </ScrollView>
+        </SafeAreaView>
+      );
       
