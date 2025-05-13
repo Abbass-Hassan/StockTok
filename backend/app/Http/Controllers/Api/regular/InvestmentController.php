@@ -197,7 +197,7 @@ class InvestmentController extends Controller
     //         'AI investment recommendations retrieved successfully'
     //     );
     // }
-    
+
     /**
  * Get AI-powered investment recommendations.
  *
@@ -209,7 +209,7 @@ public function getAIRecommendations()
         $user = auth()->user();
         
         // Create AIService instance with the correct namespace
-        $aiService = new AIService();
+        $aiService = new \App\Services\AIService();
         
         // Get test recommendations
         $recommendations = $aiService->getTestRecommendations($user->id);
