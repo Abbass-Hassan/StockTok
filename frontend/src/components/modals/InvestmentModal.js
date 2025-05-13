@@ -62,4 +62,9 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
               <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.centeredView}>
                   <View style={styles.modalView}>
-        
+                  <View style={styles.headerContainer}>
+              <Text style={styles.headerText}>Like</Text>
+              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                <Icon name="close" size={24} color="#000" />
+              </TouchableOpacity>
+            </View>
