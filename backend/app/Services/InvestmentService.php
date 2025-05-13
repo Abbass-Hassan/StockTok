@@ -11,88 +11,210 @@ use Illuminate\Support\Facades\DB;
 
 class InvestmentService
 {
+    // /**
+    //  * Invest in a video (like with investment).
+    //  */
+    // public function investInVideo($user, $videoId, $amount)
+    // {
+    //     // Start a database transaction to ensure all operations complete successfully
+    //     return DB::transaction(function () use ($user, $videoId, $amount) {
+    //         // Find the video and creator
+    //         $video = Video::findOrFail($videoId);
+    //         $creator = User::findOrFail($video->user_id);
+            
+    //         // Calculate creator's share
+    //         $creatorShare = $amount * 0.25; // 25% to creator
+    //         $investmentAmount = $amount - $creatorShare;
+            
+    //         // Check if user has enough balance
+    //         $wallet = $user->wallet;
+    //         if ($wallet->balance < $amount) {
+    //             return [
+    //                 'success' => false,
+    //                 'message' => 'Insufficient funds'
+    //             ];
+    //         }
+            
+    //         // Create the investment record
+    //         $investment = LikeInvestment::create([
+    //             'user_id' => $user->id,
+    //             'video_id' => $videoId,
+    //             'amount' => $investmentAmount,
+    //             'created_at' => now(),
+    //             'status' => 'active',
+    //             'return_percentage' => 0,
+    //             'current_value' => $investmentAmount
+    //         ]);
+            
+    //         // Update user's wallet (decrease balance)
+    //         $wallet->decrement('balance', $amount);
+    //         $wallet->update(['last_updated' => now()]);
+            
+    //         // Add creator's share to their wallet
+    //         $creatorWallet = $creator->wallet;
+    //         $creatorWallet->increment('balance', $creatorShare);
+    //         $creatorWallet->update(['last_updated' => now()]);
+            
+    //         // Record the investment transaction
+    //         Transaction::create([
+    //             'wallet_id' => $wallet->id,
+    //             'amount' => -$amount,
+    //             'transaction_type' => 'like_investment',
+    //             'related_video_id' => $videoId,
+    //             'related_like_investment_id' => $investment->id,
+    //             'created_at' => now(),
+    //             'status' => 'completed',
+    //             'description' => 'Investment in video #' . $videoId,
+    //             'fee_amount' => 0  // No fee on investments
+    //         ]);
+            
+    //         // Record the creator earning transaction
+    //         Transaction::create([
+    //             'wallet_id' => $creatorWallet->id,
+    //             'amount' => $creatorShare,
+    //             'transaction_type' => 'creator_earning',
+    //             'related_video_id' => $videoId,
+    //             'related_like_investment_id' => $investment->id,
+    //             'created_at' => now(),
+    //             'status' => 'completed',
+    //             'description' => 'Creator earnings from video #' . $videoId,
+    //             'fee_amount' => 0  // No fee on creator earnings
+    //         ]);
+            
+    //         // Update video stats
+    //         $video->increment('like_investment_count');
+    //         $video->increment('current_value', $investmentAmount);
+            
+    //         return [
+    //             'success' => true,
+    //             'investment' => $investment,
+    //             'video' => $video,
+    //             'creator_share' => $creatorShare
+    //         ];
+    //     });
+    // }
+
     /**
-     * Invest in a video (like with investment).
-     */
-    public function investInVideo($user, $videoId, $amount)
-    {
-        // Start a database transaction to ensure all operations complete successfully
-        return DB::transaction(function () use ($user, $videoId, $amount) {
-            // Find the video and creator
-            $video = Video::findOrFail($videoId);
-            $creator = User::findOrFail($video->user_id);
-            
-            // Calculate creator's share
-            $creatorShare = $amount * 0.25; // 25% to creator
-            $investmentAmount = $amount - $creatorShare;
-            
-            // Check if user has enough balance
-            $wallet = $user->wallet;
-            if ($wallet->balance < $amount) {
-                return [
-                    'success' => false,
-                    'message' => 'Insufficient funds'
-                ];
-            }
-            
-            // Create the investment record
-            $investment = LikeInvestment::create([
-                'user_id' => $user->id,
-                'video_id' => $videoId,
-                'amount' => $investmentAmount,
-                'created_at' => now(),
-                'status' => 'active',
-                'return_percentage' => 0,
-                'current_value' => $investmentAmount
-            ]);
-            
-            // Update user's wallet (decrease balance)
-            $wallet->decrement('balance', $amount);
-            $wallet->update(['last_updated' => now()]);
-            
-            // Add creator's share to their wallet
-            $creatorWallet = $creator->wallet;
-            $creatorWallet->increment('balance', $creatorShare);
-            $creatorWallet->update(['last_updated' => now()]);
-            
-            // Record the investment transaction
-            Transaction::create([
-                'wallet_id' => $wallet->id,
-                'amount' => -$amount,
-                'transaction_type' => 'like_investment',
-                'related_video_id' => $videoId,
-                'related_like_investment_id' => $investment->id,
-                'created_at' => now(),
-                'status' => 'completed',
-                'description' => 'Investment in video #' . $videoId,
-                'fee_amount' => 0  // No fee on investments
-            ]);
-            
-            // Record the creator earning transaction
-            Transaction::create([
-                'wallet_id' => $creatorWallet->id,
-                'amount' => $creatorShare,
-                'transaction_type' => 'creator_earning',
-                'related_video_id' => $videoId,
-                'related_like_investment_id' => $investment->id,
-                'created_at' => now(),
-                'status' => 'completed',
-                'description' => 'Creator earnings from video #' . $videoId,
-                'fee_amount' => 0  // No fee on creator earnings
-            ]);
-            
-            // Update video stats
-            $video->increment('like_investment_count');
-            $video->increment('current_value', $investmentAmount);
-            
+ * Invest in a video (like with investment).
+ */
+public function investInVideo($user, $videoId, $amount)
+{
+    // Start a database transaction to ensure all operations complete successfully
+    return DB::transaction(function () use ($user, $videoId, $amount) {
+        // Find the video and creator
+        $video = Video::findOrFail($videoId);
+        $creator = User::findOrFail($video->user_id);
+        
+        // Calculate creator's share
+        $creatorShare = $amount * 0.25; // 25% to creator
+        $investmentAmount = $amount - $creatorShare;
+        
+        // Check if user has enough balance
+        $wallet = $user->wallet;
+        if ($wallet->balance < $amount) {
             return [
-                'success' => true,
-                'investment' => $investment,
-                'video' => $video,
-                'creator_share' => $creatorShare
+                'success' => false,
+                'message' => 'Insufficient funds'
             ];
-        });
-    }
+        }
+        
+        // Create the investment record
+        $investment = LikeInvestment::create([
+            'user_id' => $user->id,
+            'video_id' => $videoId,
+            'amount' => $investmentAmount,
+            'created_at' => now(),
+            'status' => 'active',
+            'return_percentage' => 0,
+            'current_value' => $investmentAmount
+        ]);
+        
+        // Update user's wallet (decrease balance)
+        $wallet->decrement('balance', $amount);
+        $wallet->update(['last_updated' => now()]);
+        
+        // Add creator's share to their wallet
+        $creatorWallet = $creator->wallet;
+        $creatorWallet->increment('balance', $creatorShare);
+        $creatorWallet->update(['last_updated' => now()]);
+        
+        // Record the investment transaction
+        Transaction::create([
+            'wallet_id' => $wallet->id,
+            'amount' => -$amount,
+            'transaction_type' => 'like_investment',
+            'related_video_id' => $videoId,
+            'related_like_investment_id' => $investment->id,
+            'created_at' => now(),
+            'status' => 'completed',
+            'description' => 'Investment in video #' . $videoId,
+            'fee_amount' => 0  // No fee on investments
+        ]);
+        
+        // Record the creator earning transaction
+        Transaction::create([
+            'wallet_id' => $creatorWallet->id,
+            'amount' => $creatorShare,
+            'transaction_type' => 'creator_earning',
+            'related_video_id' => $videoId,
+            'related_like_investment_id' => $investment->id,
+            'created_at' => now(),
+            'status' => 'completed',
+            'description' => 'Creator earnings from video #' . $videoId,
+            'fee_amount' => 0  // No fee on creator earnings
+        ]);
+        
+        // Update video stats
+        $video->increment('like_investment_count');
+        $video->increment('current_value', $investmentAmount);
+        
+        // NEW CODE: Distribute rewards to previous investors
+        // Get existing investors (excluding current investor)
+        $existingInvestments = LikeInvestment::where('video_id', $videoId)
+            ->where('user_id', '!=', $user->id)
+            ->where('status', 'active')
+            ->get();
+
+        // If there are previous investors, distribute 10% of the new investment among them
+        if ($existingInvestments->count() > 0) {
+            $investorRewardPool = $amount * 0.10; // 10% to previous investors
+            
+            // Calculate total existing investment amount for proportional distribution
+            $totalExistingAmount = $existingInvestments->sum('amount');
+            
+            foreach ($existingInvestments as $existingInvestment) {
+                // Calculate proportional share based on investment amount
+                $sharePercentage = $existingInvestment->amount / $totalExistingAmount;
+                $rewardAmount = $investorRewardPool * $sharePercentage;
+                
+                // Add reward to investor's wallet
+                $investorWallet = User::find($existingInvestment->user_id)->wallet;
+                $investorWallet->increment('balance', $rewardAmount);
+                
+                // Record transaction
+                Transaction::create([
+                    'wallet_id' => $investorWallet->id,
+                    'amount' => $rewardAmount,
+                    'transaction_type' => 'investor_reward',
+                    'related_video_id' => $videoId,
+                    'related_like_investment_id' => $investment->id,
+                    'created_at' => now(),
+                    'status' => 'completed',
+                    'description' => 'Reward from new investment in video #' . $videoId,
+                    'fee_amount' => 0
+                ]);
+            }
+        }
+        // END NEW CODE
+        
+        return [
+            'success' => true,
+            'investment' => $investment,
+            'video' => $video,
+            'creator_share' => $creatorShare
+        ];
+    });
+}
 
     /**
      * Get details of a specific investment.
