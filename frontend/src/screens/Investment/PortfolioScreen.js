@@ -217,3 +217,8 @@ const PortfolioScreen = ({navigation}) => {
       console.error('Request URL:', error.config?.url);
     }
   };
+  const fetchPortfolioData = async () => {
+    try {
+      console.log('Starting portfolio data fetch...');
+      setLoading(true);
+      setError(null);
