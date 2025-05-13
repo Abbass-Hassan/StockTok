@@ -743,3 +743,18 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
     console.log('InvestmentDetailsScreen - Loading initial data');
     fetchInvestmentDetails();
   }, [investmentId]);
+  const formatCurrency = amount => '$' + parseFloat(amount).toFixed(2);
+  const formatPercentage = percentage => {
+    const value = parseFloat(percentage).toFixed(2);
+    return value > 0 ? `+${value}%` : `${value}%`;
+  };
+  const formatDate = dateString => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
