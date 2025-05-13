@@ -126,4 +126,70 @@ const AVAILABLE_HEIGHT =
       const handleVideoError = (error, videoId) => {
         console.error(`Error playing video ${videoId}:`, error);
       };
+      const renderItem = ({item, index}) => {
+        const isPlaying = playingStates[item.id] || false;
+        const videoUrl = `${API_URL}/videos/${item.id}/play`;
+    
+        return (
+          <View style={styles.itemContainer}>
+            <View style={styles.videoContainer}>
+              <TouchableOpacity
+                activeOpacity={1}
+                style={styles.videoWrapper}
+                onPress={() => toggleVideoPlayback(item.id)}>
+                {isPlaying ? (
+                  <Video
+                    ref={ref => videoRefs.current[item.id] = ref}
+                    source={{
+                      uri: videoUrl,
+                      headers: { Authorization: `Bearer ${videoToken}` },
+                    }}
+                    style={styles.videoPlayer}
+                    resizeMode="contain"
+                    repeat
+                    paused={!isPlaying}
+                    onError={e => handleVideoError(e, item.id)}
+                    poster={item.thumbnail_url}
+                    posterResizeMode="contain"
+                  />
+                ) : (
+                  <Image source={{uri: item.thumbnail_url}} style={styles.thumbnail} resizeMode="contain" />
+                )}
+                {!isPlaying && (
+                  <View style={styles.playButtonOverlay}>
+                    <View style={styles.playButton}>
+                      <Text style={styles.playIcon}>▶️</Text>
+                    </View>
+                  </View>
+                )}
+              </TouchableOpacity>
+    
+              {/* Side Buttons */}
+              <View style={styles.sideButtonsContainer}>
+                <TouchableOpacity style={styles.sideButton}>
+                  <View style={styles.sideButtonCircle}><Text style={styles.sideButtonIcon}>❤️</Text></View>
+                  <Text style={styles.sideButtonText}>{formatCount(item.likes_count || item.like_investment_count || 0)}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sideButton}>
+                  <View style={styles.sideButtonCircle}><Text style={styles.sideButtonIcon}>💬</Text></View>
+                  <Text style={styles.sideButtonText}>{formatCount(item.comments_count || 0)}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sideButton}>
+                  <View style={styles.sideButtonCircle}><Text style={styles.sideButtonIcon}>📊</Text></View>
+                  <Text style={styles.sideButtonText}>Analytics</Text>
+                </TouchableOpacity>
+              </View>
+    
+              <View style={styles.infoContainer}>
+                <TouchableOpacity onPress={() => goToCreatorProfile(item.user_id)}>
+                  <Text style={styles.usernameText}>@{item.username}</Text>
+                </TouchableOpacity>
+                <Text style={styles.captionText} numberOfLines={1}>
+                  {item.caption || item.title}
+                </Text>
+              </View>
+            </View>
+          </View>
+        );
+      };
     
