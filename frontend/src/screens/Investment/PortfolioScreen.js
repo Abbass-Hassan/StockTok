@@ -304,4 +304,23 @@ const PortfolioScreen = ({navigation}) => {
           </SafeAreaView>
         );
       }
+      if (!loading && portfolio && portfolio.investment_count === 0) {
+        return (
+          <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+            <View style={styles.emptyContainer}>
+              <Icon name="wallet-outline" size={70} color="#7A67EE" />
+              <Text style={styles.emptyTitle}>No Investments Yet</Text>
+              <Text style={styles.emptyText}>
+                Start investing in videos to build your portfolio and earn returns.
+              </Text>
+              <TouchableOpacity
+                style={styles.exploreButton}
+                onPress={() => navigation.navigate('VideoFeed')}>
+                <Text style={styles.exploreButtonText}>Explore Videos</Text>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        );
+      }
       
