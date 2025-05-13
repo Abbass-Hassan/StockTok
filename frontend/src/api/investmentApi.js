@@ -50,4 +50,10 @@ export const investmentApi = {
             throw new Error(errorMsg);
           }
         },
-      
+        getMyInvestments: async (perPage = 15) => {
+            try {
+              const token = await getToken();
+              if (!token) {
+                throw new Error('Authentication required');
+              }
+        
