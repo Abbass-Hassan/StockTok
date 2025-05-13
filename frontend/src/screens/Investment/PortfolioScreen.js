@@ -807,3 +807,6 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
       </SafeAreaView>
     );
   }
+  const isPositiveReturn = parseFloat(performance.return_percentage) >= 0;
+  const returnColor = isPositiveReturn ? '#4CAF50' : '#F44336';
+  const returnIcon = isPositiveReturn ? 'trending-up' : 'trending-down';
