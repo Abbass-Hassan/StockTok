@@ -263,4 +263,16 @@ const PortfolioScreen = ({navigation}) => {
         </View>
       )}
       
-      setError(null);
+      setError(null);{creatorInvestments && creatorInvestments.length > 0 && (
+        <View style={styles.distributionSection}>
+          <Text style={styles.sectionTitle}>Investment Distribution</Text>
+          <FlatList
+            data={creatorInvestments}
+            renderItem={renderCreatorItem}
+            keyExtractor={(item, index) => `creator-${index}`}
+            horizontal={false}
+            scrollEnabled={false}
+          />
+        </View>
+      )}
+      
