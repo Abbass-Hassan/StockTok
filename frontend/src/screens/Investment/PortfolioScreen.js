@@ -118,4 +118,18 @@ const PortfolioScreen = ({navigation}) => {
     const viewInvestmentDetails = investmentId => {
       navigation.navigate('InvestmentDetails', {investmentId});
     };
+    const renderInvestmentItem = ({item}) => {
+      const returnPercentage =
+        ((item.current_value - item.amount) / item.amount) * 100;
+      const returnColor = returnPercentage >= 0 ? '#4CAF50' : '#F44336';
+      
+      return (
+        <TouchableOpacity
+          style={styles.investmentCard}
+          onPress={() => viewInvestmentDetails(item.id)}>
+          {/* header */}
+          {/* footer */}
+        </TouchableOpacity>
+      );
+    };
   
