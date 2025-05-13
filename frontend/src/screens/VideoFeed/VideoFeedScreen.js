@@ -192,4 +192,34 @@ const AVAILABLE_HEIGHT =
           </View>
         );
       };
+      const renderLoader = () => {
+        if (!loading) return null;
+        return (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#FFFFFF" />
+            <Text style={styles.loaderText}>Loading videos...</Text>
+          </View>
+        );
+      };
+    
+      const renderEmptyState = () => {
+        if (loading || videos.length > 0) return null;
+        return (
+          <View style={styles.emptyStateContainer}>
+            <Text style={styles.emptyStateTitle}>
+              {feedType === 'following' ? 'No videos from creators you follow' : 'No trending videos available'}
+            </Text>
+            <Text style={styles.emptyStateText}>
+              {feedType === 'following' ? 'Follow some creators to see their videos here!' : 'Check back later for trending videos'}
+            </Text>
+            <TouchableOpacity style={styles.emptyStateButton} onPress={() =>
+              feedType === 'following' ? switchFeedType('trending') : fetchVideos()
+            }>
+              <Text style={styles.emptyStateButtonText}>
+                {feedType === 'following' ? 'Explore Trending' : 'Refresh'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        );
+      };
     
