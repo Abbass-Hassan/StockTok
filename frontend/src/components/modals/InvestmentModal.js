@@ -26,4 +26,12 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
         setError(null);
       }
     }, [visible]);
-  
+    const handleSubmit = async () => {
+        if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+          setError('Please enter a valid amount');
+          return;
+        }
+    
+        setIsLoading(true);
+        setError(null);
+    
