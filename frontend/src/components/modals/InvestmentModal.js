@@ -47,4 +47,10 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
               onSuccess(response.data.investment);
             }
             onClose();
+        } catch (err) {
+            setIsLoading(false);
+            setError(err.message);
+            Vibration.vibrate([0, 50, 50, 50]);
+          }
+        };
       
