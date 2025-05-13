@@ -142,4 +142,30 @@ export const investmentApi = {
                       if (!token) {
                         throw new Error('Authentication required');
                       }
+                      console.log(
+                        'Token obtained for portfolio request:',
+                        token ? `${token.substring(0, 10)}...` : 'No token',
+                      );
+                      console.log(
+                        'Making portfolio overview request to:',
+                        `${API_URL}/regular/investments/portfolio/overview`,
+                      );
+                
+                      const response = await axios.get(
+                        `${API_URL}/regular/investments/portfolio/overview`,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                          },
+                        },
+                      );
+                
+                      console.log('Portfolio API Response status:', response.status);
+                      console.log(
+                        'Portfolio API Response data preview:',
+                        JSON.stringify(response.data).substring(0, 100),
+                      );
+                
+                      return response.data;
                 
