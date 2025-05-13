@@ -791,4 +791,19 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
     );
   }
 
-  
+  if (!investment || !performance) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+        <View style={styles.errorContainer}>
+          <Icon name="alert-circle-outline" size={50} color="#F44336" />
+          <Text style={styles.errorText}>Investment not found</Text>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.retryButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
