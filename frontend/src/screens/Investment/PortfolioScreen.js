@@ -283,10 +283,10 @@ const PortfolioScreen = ({navigation}) => {
   // Render loading state
   if (loading && !refreshing) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#7A67EE" />
+          <ActivityIndicator size="large" color="#00796B" />
           <Text style={styles.loadingText}>Loading portfolio data...</Text>
         </View>
       </SafeAreaView>
@@ -296,7 +296,7 @@ const PortfolioScreen = ({navigation}) => {
   // Render error state
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
         <View style={styles.errorContainer}>
           <Icon name="alert-circle-outline" size={50} color="#F44336" />
@@ -314,10 +314,21 @@ const PortfolioScreen = ({navigation}) => {
   // Render empty state
   if (!loading && portfolio && portfolio.investment_count === 0) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+        {/* Header with back button */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.backText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Investment Portfolio</Text>
+        </View>
+
         <View style={styles.emptyContainer}>
-          <Icon name="wallet-outline" size={70} color="#7A67EE" />
+          <Icon name="wallet-outline" size={70} color="#00796B" />
           <Text style={styles.emptyTitle}>No Investments Yet</Text>
           <Text style={styles.emptyText}>
             Start investing in videos to build your portfolio and earn returns.
@@ -334,19 +345,30 @@ const PortfolioScreen = ({navigation}) => {
 
   // Render portfolio screen
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Header */}
+      {/* Header with back button */}
       <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Text style={styles.backText}>‹</Text>
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Investment Portfolio</Text>
       </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#00796B']}
+            tintColor="#00796B"
+          />
+        }
+        showsVerticalScrollIndicator={false}>
         {/* Portfolio Summary Card */}
         {portfolio && (
           <View style={styles.summaryCard}>
@@ -429,9 +451,9 @@ const PortfolioScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#FFFFFF',
   },
   scrollContent: {
     padding: 16,
@@ -439,17 +461,30 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#FFFFFF',
-    padding: 16,
-    paddingTop: Platform.OS === 'ios' ? 8 : 16,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E1E8ED',
-    marginBottom: 8,
+    borderBottomColor: '#E0E0E0',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#14171A',
+    fontWeight: '600',
+    color: '#00796B',
+  },
+  backButton: {
+    marginRight: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
   },
   // Summary Card Styles
   summaryCard: {
@@ -564,7 +599,7 @@ const styles = StyleSheet.create({
   },
   seeAllButton: {
     fontSize: 14,
-    color: '#7A67EE',
+    color: '#00796B',
     fontWeight: '500',
   },
   investmentCard: {
@@ -584,7 +619,7 @@ const styles = StyleSheet.create({
   videoThumbnail: {
     width: 60,
     height: 60,
-    borderRadius: 4,
+    borderRadius: 8,
     marginRight: 12,
   },
   investmentInfo: {
@@ -646,10 +681,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: '#7A67EE',
+    backgroundColor: '#00796B',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 24,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   retryButtonText: {
     color: '#FFFFFF',
@@ -668,21 +708,26 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#14171A',
+    marginBottom: 8,
   },
   emptyText: {
-    marginTop: 8,
     marginBottom: 24,
     fontSize: 16,
     color: '#657786',
     textAlign: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: 24,
     lineHeight: 22,
   },
   exploreButton: {
-    backgroundColor: '#7A67EE',
-    paddingHorizontal: 24,
+    backgroundColor: '#00796B',
+    paddingHorizontal: 32,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 24,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   exploreButtonText: {
     color: '#FFFFFF',
