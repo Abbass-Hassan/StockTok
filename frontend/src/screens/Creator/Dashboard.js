@@ -211,25 +211,6 @@ const Dashboard = ({navigation}) => {
             </View>
           </View>
 
-          {/* Engagement Stats Card */}
-          <View style={styles.engagementCard}>
-            <Text style={styles.sectionTitle}>Engagement</Text>
-            <View style={styles.engagementRow}>
-              <View style={styles.engagementItem}>
-                <Text style={styles.engagementLabel}>Avg Views per Video</Text>
-                <Text style={styles.engagementValue}>
-                  {formatNumber(stats?.average_views_per_video || 0)}
-                </Text>
-              </View>
-              <View style={styles.engagementItem}>
-                <Text style={styles.engagementLabel}>Engagement Rate</Text>
-                <Text style={styles.engagementValue}>
-                  {stats?.engagement_rate || 0}%
-                </Text>
-              </View>
-            </View>
-          </View>
-
           {/* Monthly Earnings Chart */}
           {monthlyChartData && monthlyChartData.labels.length > 0 && (
             <View style={styles.chartCard}>
@@ -279,13 +260,11 @@ const Dashboard = ({navigation}) => {
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() => navigation.navigate('UploadVideo')}>
-                <Text style={styles.actionIcon}>📹</Text>
                 <Text style={styles.actionText}>Upload Video</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() => navigation.navigate('MyVideos')}>
-                <Text style={styles.actionIcon}>🎬</Text>
                 <Text style={styles.actionText}>My Videos</Text>
               </TouchableOpacity>
             </View>
@@ -360,8 +339,8 @@ const styles = StyleSheet.create({
     marginTop: -4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '600',
     color: '#00796B',
   },
   content: {
@@ -434,36 +413,6 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 4,
   },
-  engagementCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  engagementRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  engagementItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  engagementLabel: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  engagementValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#00796B',
-  },
   chartCard: {
     backgroundColor: '#FFFFFF',
     padding: 16,
@@ -523,19 +472,16 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#E8F5F3',
-    borderRadius: 12,
-    width: '40%',
-  },
-  actionIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    backgroundColor: '#00796B',
+    borderRadius: 10,
+    width: '45%',
   },
   actionText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#00796B',
+    color: '#FFFFFF',
     textAlign: 'center',
   },
 });
