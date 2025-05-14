@@ -9,6 +9,7 @@ use App\Services\VideoService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Services\AIService;
+use Illuminate\Support\Facades\Log;
 
 class InvestmentController extends Controller
 {
@@ -90,6 +91,7 @@ class InvestmentController extends Controller
         $user = auth()->user();
         $perPage = $request->get('per_page', 15);
         
+        // Get investments (now ensures all values are up-to-date)
         $investments = $this->investmentService->getUserInvestments($user->id, $perPage);
         
         return $this->successResponse(
@@ -108,7 +110,7 @@ class InvestmentController extends Controller
     {
         $user = auth()->user();
         
-        // Get the investment - using getInvestmentDetails instead of getInvestmentById
+        // Get the investment - getInvestmentDetails now ensures values are up-to-date
         $investment = $this->investmentService->getInvestmentDetails($id);
         
         // Check if investment exists and belongs to the user
@@ -116,9 +118,16 @@ class InvestmentController extends Controller
             return $this->errorResponse('Investment not found', 404);
         }
         
-        // Calculate current returns for this investment - using calculateReturns for updating
-        // This is the original behavior to update the DB when viewing details
+        // Calculate current returns for this investment
         $performance = $this->investmentService->calculateReturns($id);
+        
+        Log::info('Investment details API response', [
+            'investment_id' => $id,
+            'current_value' => $investment->current_value,
+            'return_percentage' => $investment->return_percentage,
+            'performance_current_value' => $performance['current_value'],
+            'performance_return_percentage' => $performance['return_percentage']
+        ]);
         
         return $this->successResponse([
             'investment' => $investment,
@@ -135,49 +144,40 @@ class InvestmentController extends Controller
     {
         $user = auth()->user();
         
-        // Get all user's investments
+        // Get all user's investments - now this ensures they are all up-to-date
         $investments = $this->investmentService->getUserInvestments($user->id, 100);
         
         // Calculate total invested amount
         $totalInvested = $investments->sum('amount');
         
-        // Calculate current value without updating the database
-        $currentValue = 0;
-        $returnPercentage = 0;
+        // Calculate current value directly from the updated investments
+        $currentValue = $investments->sum('current_value');
         
-        // Calculate current values without updating the database
-        if ($investments->count() > 0) {
-            foreach ($investments as $investment) {
-                // Use the non-updating calculation method
-                $returns = $this->investmentService->calculateInvestmentReturns($investment);
-                $currentValue += $returns['current_value'];
-            }
-            
-            // Calculate overall return percentage
-            if ($totalInvested > 0) {
-                $returnPercentage = (($currentValue - $totalInvested) / $totalInvested) * 100;
-            }
+        // Calculate return percentage
+        $returnPercentage = 0;
+        if ($totalInvested > 0) {
+            $returnPercentage = (($currentValue - $totalInvested) / $totalInvested) * 100;
         }
         
-        // Group investments by video creator without updating DB
+        // Group investments by video creator
         $byCreator = $investments->groupBy('video.user_id')
             ->map(function($items) {
-                $creatorTotalInvested = $items->sum('amount');
-                $creatorCurrentValue = 0;
-                
-                // Calculate current value for each investment in this group
-                foreach ($items as $investment) {
-                    $returns = $this->investmentService->calculateInvestmentReturns($investment);
-                    $creatorCurrentValue += $returns['current_value'];
-                }
-                
                 return [
                     'creator_name' => $items->first()->video->user->name ?? 'Unknown Creator',
                     'investment_count' => $items->count(),
-                    'total_invested' => $creatorTotalInvested,
-                    'current_value' => $creatorCurrentValue
+                    'total_invested' => $items->sum('amount'),
+                    'current_value' => $items->sum('current_value')
                 ];
             });
+        
+        // Log the portfolio calculation for debugging
+        Log::info('Portfolio overview calculation', [
+            'user_id' => $user->id,
+            'total_invested' => $totalInvested,
+            'current_value' => $currentValue,
+            'return_percentage' => $returnPercentage,
+            'investment_count' => $investments->count()
+        ]);
         
         return $this->successResponse([
             'portfolio' => [
