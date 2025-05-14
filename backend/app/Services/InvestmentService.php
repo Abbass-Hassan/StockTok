@@ -157,7 +157,7 @@ public function investInVideo($user, $videoId, $amount)
      */
     public function getInvestmentDetails($investmentId)
     {
-        return LikeInvestment::with(['user', 'video'])
+        return LikeInvestment::with(['user', 'video', 'video.user'])
                             ->findOrFail($investmentId);
     }
 

@@ -195,7 +195,6 @@ const PortfolioScreen = ({navigation}) => {
               @
               {item.video?.user?.username ||
                 item.video?.user?.name ||
-                item.creator_name ||
                 'Unknown Creator'}
             </Text>
             <Text style={styles.videoTitle} numberOfLines={1}>
@@ -437,7 +436,7 @@ const PortfolioScreen = ({navigation}) => {
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Your Investments</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('AllInvestments')}>
+                onPress={() => navigation.navigate('AllInvestmentsScreen')}>
                 <Text style={styles.seeAllButton}>See All</Text>
               </TouchableOpacity>
             </View>

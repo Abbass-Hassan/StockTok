@@ -26,68 +26,6 @@ const AllInvestmentsScreen = ({navigation}) => {
   const [investments, setInvestments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMorePages, setHasMorePages] = useState(true);
-  const [userCache, setUserCache] = useState({}); // Cache to store user data by ID
-
-  // Function to fetch user details by ID
-  const fetchUserById = useCallback(
-    async userId => {
-      // Skip if we already have this user in the cache
-      if (userCache[userId]) {
-        return userCache[userId];
-      }
-
-      try {
-        const token = await getToken();
-        const response = await axios.get(`${API_URL}/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (response.data.status === 'success') {
-          const userData = response.data.data.user;
-
-          // Update the cache with the new user data
-          setUserCache(prevCache => ({
-            ...prevCache,
-            [userId]: userData,
-          }));
-
-          return userData;
-        }
-        return null;
-      } catch (error) {
-        console.error(`Error fetching user ${userId}:`, error.message);
-        return null;
-      }
-    },
-    [userCache],
-  );
-
-  // Fetch users for all investments
-  const fetchUsersForInvestments = useCallback(
-    async investmentsList => {
-      const userIds = new Set();
-
-      // Collect all unique user IDs from the investments
-      investmentsList.forEach(item => {
-        if (item.video?.user_id && !userCache[item.video.user_id]) {
-          userIds.add(item.video.user_id);
-        }
-      });
-
-      // Fetch details for each user ID
-      const userPromises = Array.from(userIds).map(userId =>
-        fetchUserById(userId),
-      );
-      await Promise.all(userPromises);
-
-      // Log the updated user cache for debugging
-      console.log('Updated user cache:', Object.keys(userCache));
-    },
-    [fetchUserById, userCache],
-  );
 
   // Fetch investments
   const fetchInvestments = async (page = 1, refresh = false) => {
@@ -102,39 +40,20 @@ const AllInvestmentsScreen = ({navigation}) => {
 
       console.log(`Fetching investments page ${page}, refresh: ${refresh}`);
 
-      // Use the api function to get investments
       const response = await investmentApi.getMyInvestments(ITEMS_PER_PAGE);
 
-      console.log(
-        'Investments response received:',
-        JSON.stringify(response).substring(0, 100),
-      );
-
-      // Check for the correct nested structure with status property
       if (response?.status === 'success' && response?.data?.investments) {
         const newInvestments = response.data.investments.data || [];
         const isLastPage = !response.data.investments.next_page_url;
 
-        console.log(
-          `Got ${newInvestments.length} investments, isLastPage: ${isLastPage}`,
-        );
-
-        // Fetch users for the new investments
-        await fetchUsersForInvestments(newInvestments);
-
         if (page === 1 || refresh) {
           setInvestments(newInvestments);
         } else {
-          // Add new investments while preventing duplicates based on ID
           setInvestments(prevInvestments => {
-            // Get existing IDs
             const existingIds = new Set(prevInvestments.map(item => item.id));
-
-            // Filter out investments that are already in the list
             const uniqueNewInvestments = newInvestments.filter(
               newItem => !existingIds.has(newItem.id),
             );
-
             return [...prevInvestments, ...uniqueNewInvestments];
           });
         }
@@ -142,10 +61,6 @@ const AllInvestmentsScreen = ({navigation}) => {
         setHasMorePages(!isLastPage);
         setCurrentPage(page);
       } else {
-        console.error(
-          'Invalid data structure in investments response:',
-          response,
-        );
         throw new Error('Failed to fetch investments: Invalid data structure');
       }
 
@@ -210,22 +125,13 @@ const AllInvestmentsScreen = ({navigation}) => {
   };
 
   // Render investment item
-  const renderInvestmentItem = ({item, index}) => {
+  const renderInvestmentItem = ({item}) => {
     // Calculate return percentage
     const returnPercentage =
       ((item.current_value - item.amount) / item.amount) * 100;
 
     // Determine text color based on return
     const returnColor = returnPercentage >= 0 ? '#4CAF50' : '#F44336';
-
-    // Get the user from cache if available
-    const userId = item.video?.user_id;
-    const user = userId ? userCache[userId] : null;
-
-    // Display username if available from cache, otherwise show caption
-    const displayName = user
-      ? `@${user.username || user.name}`
-      : item.video?.caption || 'Untitled Video';
 
     return (
       <TouchableOpacity
@@ -241,10 +147,13 @@ const AllInvestmentsScreen = ({navigation}) => {
           />
           <View style={styles.investmentInfo}>
             <Text style={styles.creatorName} numberOfLines={1}>
-              {displayName}
+              @
+              {item.video?.user?.username ||
+                item.video?.user?.name ||
+                'Unknown Creator'}
             </Text>
             <Text style={styles.videoTitle} numberOfLines={1}>
-              {item.video?.caption || 'Video'}
+              {item.video?.caption || 'Untitled Video'}
             </Text>
             <Text style={styles.investmentDate}>
               {formatDate(item.created_at)}
@@ -274,8 +183,6 @@ const AllInvestmentsScreen = ({navigation}) => {
       </TouchableOpacity>
     );
   };
-
-  // Rest of your component remains the same...
 
   // Render list footer (loading indicator when loading more data)
   const renderFooter = () => {
@@ -326,8 +233,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     return (
       <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-
-        {/* Header - Consistent Design */}
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
@@ -384,7 +289,6 @@ const AllInvestmentsScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  // Your styles remain the same...
   safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
