@@ -12,6 +12,7 @@ import {
   RefreshControl,
   FlatList,
   Dimensions,
+  Platform,
 } from 'react-native';
 import {getCreatorProfile, getCreatorStats} from '../../api/creatorProfileApi';
 import {getMyVideos} from '../../api/videoApi';
@@ -127,118 +128,126 @@ const CreatorProfile = ({navigation}) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    // Force white background with inline style as well
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: '#FFFFFF'}]}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Dashboard Style Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.backText}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
-      </View>
+      {/* Add another white background layer */}
+      <View style={[styles.container, {backgroundColor: '#FFFFFF'}]}>
+        {/* Force white background for header with important styling */}
+        <View style={[styles.header, {backgroundColor: '#FFFFFF'}]}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Text style={[styles.backText, {color: '#00796B'}]}>‹</Text>
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, {color: '#00796B'}]}>Profile</Text>
+        </View>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={['#00796B']}
-            tintColor="#00796B"
-          />
-        }>
-        {/* Profile Info */}
-        <View style={styles.profileContainer}>
-          {/* Profile Image */}
-          <View style={styles.profileImageContainer}>
-            {profile?.profile_photo_url ? (
-              <Image
-                source={{uri: profile.profile_photo_url}}
-                style={styles.profileImage}
-              />
-            ) : (
-              <View
-                style={[styles.profileImage, styles.profileImagePlaceholder]}>
-                <Text style={styles.profileInitials}>
-                  {profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={['#00796B']}
+              tintColor="#00796B"
+            />
+          }>
+          {/* Profile Info */}
+          <View style={styles.profileContainer}>
+            {/* Profile Image */}
+            <View style={styles.profileImageContainer}>
+              {profile?.profile_photo_url ? (
+                <Image
+                  source={{uri: profile.profile_photo_url}}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <View
+                  style={[styles.profileImage, styles.profileImagePlaceholder]}>
+                  <Text style={styles.profileInitials}>
+                    {profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Username */}
+            <Text style={styles.username}>
+              @{profile?.username || 'username'}
+            </Text>
+            <Text style={styles.userType}>Creator</Text>
+
+            {/* Stats */}
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>
+                  {formatNumber(stats?.total_videos || 0)}
                 </Text>
+                <Text style={styles.statLabel}>Videos</Text>
               </View>
+
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>
+                  {formatNumber(stats?.follower_count || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Followers</Text>
+              </View>
+
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>
+                  {formatNumber(stats?.total_views || 0)}
+                </Text>
+                <Text style={styles.statLabel}>Views</Text>
+              </View>
+            </View>
+
+            {/* Edit Profile Button */}
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() =>
+                navigation.navigate('EditCreatorProfile', {profile})
+              }>
+              <Text style={styles.editButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
+
+            {/* Bio */}
+            {profile?.bio ? (
+              <Text style={styles.bio}>{profile.bio}</Text>
+            ) : (
+              <Text style={styles.tapToBio}>Tap to add bio</Text>
             )}
           </View>
 
-          {/* Username */}
-          <Text style={styles.username}>
-            @{profile?.username || 'username'}
-          </Text>
-          <Text style={styles.userType}>Creator</Text>
-
-          {/* Stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>
-                {formatNumber(stats?.total_videos || 0)}
-              </Text>
-              <Text style={styles.statLabel}>Videos</Text>
-            </View>
-
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>
-                {formatNumber(stats?.follower_count || 0)}
-              </Text>
-              <Text style={styles.statLabel}>Followers</Text>
-            </View>
-
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>
-                {formatNumber(stats?.total_views || 0)}
-              </Text>
-              <Text style={styles.statLabel}>Views</Text>
-            </View>
+          {/* Video Grid */}
+          <View style={styles.videoGridContainer}>
+            {videos && videos.length > 0 ? (
+              <FlatList
+                data={videos}
+                renderItem={renderGridItem}
+                keyExtractor={item =>
+                  item.id?.toString() || Math.random().toString()
+                }
+                numColumns={numColumns}
+                scrollEnabled={false}
+                contentContainerStyle={styles.gridContainer}
+              />
+            ) : (
+              renderEmptyContent()
+            )}
           </View>
-
-          {/* Edit Profile Button */}
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() =>
-              navigation.navigate('EditCreatorProfile', {profile})
-            }>
-            <Text style={styles.editButtonText}>Edit Profile</Text>
-          </TouchableOpacity>
-
-          {/* Bio */}
-          {profile?.bio ? (
-            <Text style={styles.bio}>{profile.bio}</Text>
-          ) : (
-            <Text style={styles.tapToBio}>Tap to add bio</Text>
-          )}
-        </View>
-
-        {/* Video Grid */}
-        <View style={styles.videoGridContainer}>
-          {videos && videos.length > 0 ? (
-            <FlatList
-              data={videos}
-              renderItem={renderGridItem}
-              keyExtractor={item =>
-                item.id?.toString() || Math.random().toString()
-              }
-              numColumns={numColumns}
-              scrollEnabled={false}
-              contentContainerStyle={styles.gridContainer}
-            />
-          ) : (
-            renderEmptyContent()
-          )}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -279,24 +288,30 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   backButton: {
-    marginRight: 10,
+    marginRight: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backText: {
-    fontSize: 30,
+    fontSize: 32,
     color: '#00796B',
-    fontWeight: '300',
+    marginTop: -4,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#00796B',
   },
   profileContainer: {

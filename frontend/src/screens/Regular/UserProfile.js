@@ -12,6 +12,7 @@ import {
   StatusBar,
   Dimensions,
   Alert,
+  Platform,
 } from 'react-native';
 import {
   getUserByUsername,
@@ -23,7 +24,7 @@ import {
 
 const {width} = Dimensions.get('window');
 const numColumns = 3;
-const itemWidth = width / numColumns;
+const itemWidth = (width - 32) / numColumns; // Accounting for container padding
 
 const UserProfile = ({route, navigation}) => {
   const {username} = route.params;
@@ -217,95 +218,101 @@ const UserProfile = ({route, navigation}) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#00796B" />
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
-      </View>
-
-      <View style={styles.profileSection}>
-        {/* Profile Image */}
-        <Image
-          source={{
-            uri:
-              profile?.profile_photo_url || 'https://via.placeholder.com/100',
-          }}
-          style={styles.profileImage}
-        />
-
-        {/* Username */}
-        <Text style={styles.username}>@{profile?.username || 'Unknown'}</Text>
-
-        {/* Stats */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>
-              {profile?.follower_count || 0}
-            </Text>
-            <Text style={styles.statLabel}>Followers</Text>
-          </View>
-
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{videos?.length || 0}</Text>
-            <Text style={styles.statLabel}>Videos</Text>
-          </View>
+      <View style={styles.container}>
+        {/* Header with white background and teal text */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.backText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Profile</Text>
         </View>
 
-        {/* Follow Button */}
-        <TouchableOpacity
-          style={[styles.followButton, isFollowing && styles.followingButton]}
-          onPress={handleFollowToggle}>
-          <Text
-            style={[
-              styles.followButtonText,
-              isFollowing && styles.followingButtonText,
-            ]}>
-            {isFollowing ? 'Following' : 'Follow'}
-          </Text>
-        </TouchableOpacity>
-
-        {/* Bio */}
-        {profile?.bio ? (
-          <Text style={styles.bio}>{profile.bio}</Text>
-        ) : (
-          <Text style={styles.noBio}>No bio provided</Text>
-        )}
-      </View>
-
-      {/* Video Grid */}
-      <View style={styles.videoSection}>
-        <Text style={styles.sectionTitle}>Videos</Text>
-
-        {videoLoading ? (
-          <View style={styles.videoLoadingContainer}>
-            <ActivityIndicator size="small" color="#00796B" />
-            <Text style={styles.videoLoadingText}>Loading videos...</Text>
-          </View>
-        ) : videos && videos.length > 0 ? (
-          <FlatList
-            data={videos}
-            renderItem={renderVideoItem}
-            keyExtractor={keyExtractor}
-            numColumns={numColumns}
-            contentContainerStyle={styles.gridContainer}
+        <View style={styles.profileSection}>
+          {/* Profile Image */}
+          <Image
+            source={{
+              uri:
+                profile?.profile_photo_url || 'https://via.placeholder.com/100',
+            }}
+            style={styles.profileImage}
           />
-        ) : (
-          <View style={styles.emptyVideosContainer}>
-            <Text style={styles.emptyVideosText}>No videos found</Text>
+
+          {/* Username */}
+          <Text style={styles.username}>@{profile?.username || 'Unknown'}</Text>
+
+          {/* Stats */}
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>
+                {profile?.follower_count || 0}
+              </Text>
+              <Text style={styles.statLabel}>Followers</Text>
+            </View>
+
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{videos?.length || 0}</Text>
+              <Text style={styles.statLabel}>Videos</Text>
+            </View>
           </View>
-        )}
+
+          {/* Follow Button */}
+          <TouchableOpacity
+            style={[styles.followButton, isFollowing && styles.followingButton]}
+            onPress={handleFollowToggle}>
+            <Text
+              style={[
+                styles.followButtonText,
+                isFollowing && styles.followingButtonText,
+              ]}>
+              {isFollowing ? 'Following' : 'Follow'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Bio */}
+          {profile?.bio ? (
+            <Text style={styles.bio}>{profile.bio}</Text>
+          ) : (
+            <Text style={styles.noBio}>No bio provided</Text>
+          )}
+        </View>
+
+        {/* Video Grid - Removed "Videos" title */}
+        <View style={styles.videoSection}>
+          {videoLoading ? (
+            <View style={styles.videoLoadingContainer}>
+              <ActivityIndicator size="small" color="#00796B" />
+              <Text style={styles.videoLoadingText}>Loading videos...</Text>
+            </View>
+          ) : videos && videos.length > 0 ? (
+            <FlatList
+              data={videos}
+              renderItem={renderVideoItem}
+              keyExtractor={keyExtractor}
+              numColumns={numColumns}
+              contentContainerStyle={styles.gridContainer}
+              showsVerticalScrollIndicator={false}
+            />
+          ) : (
+            <View style={styles.emptyVideosContainer}>
+              <Text style={styles.emptyVideosText}>No videos available</Text>
+            </View>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -346,40 +353,51 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#00796B',
   },
   backButton: {
     marginRight: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  backButtonText: {
-    fontSize: 24,
-    color: '#FFFFFF',
+  backText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#00796B',
   },
   profileSection: {
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: 24,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+    backgroundColor: '#FFFFFF',
   },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     backgroundColor: '#E0E0E0',
-    marginBottom: 12,
+    marginBottom: 16,
+    borderWidth: 3,
+    borderColor: '#E0F2F1',
   },
   username: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#00796B',
     marginBottom: 8,
@@ -387,16 +405,18 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginVertical: 16,
+    width: '80%',
   },
   statItem: {
     alignItems: 'center',
-    marginHorizontal: 24,
+    flex: 1,
   },
   statNumber: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#00796B',
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
@@ -404,10 +424,15 @@ const styles = StyleSheet.create({
   },
   followButton: {
     backgroundColor: '#00796B',
-    paddingVertical: 8,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 40,
+    borderRadius: 14,
     marginBottom: 16,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
   },
   followingButton: {
     backgroundColor: '#FFFFFF',
@@ -418,15 +443,18 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
   },
   followingButtonText: {
     color: '#00796B',
   },
   bio: {
     fontSize: 14,
-    color: '#757575',
+    color: '#424242',
     textAlign: 'center',
     marginTop: 8,
+    lineHeight: 20,
+    maxWidth: '90%',
   },
   noBio: {
     fontSize: 14,
@@ -437,31 +465,28 @@ const styles = StyleSheet.create({
   },
   videoSection: {
     flex: 1,
-    padding: 16,
+    paddingTop: 16,
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
   },
   videoLoadingContainer: {
-    paddingVertical: 20,
+    paddingVertical: 30,
     alignItems: 'center',
   },
   videoLoadingText: {
-    marginTop: 8,
+    marginTop: 12,
     fontSize: 14,
     color: '#757575',
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#00796B',
-    marginBottom: 12,
-  },
   gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    paddingBottom: 16,
   },
   gridItem: {
     width: itemWidth,
     height: itemWidth,
-    padding: 2,
+    margin: 2,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   thumbnailImage: {
     width: '100%',
@@ -472,11 +497,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 30,
   },
   emptyVideosText: {
     fontSize: 16,
     color: '#757575',
     textAlign: 'center',
+    backgroundColor: '#F5F5F5',
+    padding: 20,
+    borderRadius: 8,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
 });
 
