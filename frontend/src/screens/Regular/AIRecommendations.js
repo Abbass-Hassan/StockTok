@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -96,13 +97,13 @@ const AIRecommendations = ({navigation}) => {
       case 'low':
         return '#06D6A0';
       default:
-        return '#7A67EE';
+        return '#00796B';
     }
   };
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
         <ActivityIndicator size="large" color="#00796B" />
         <Text style={styles.loadingText}>Getting smart recommendations...</Text>
@@ -111,14 +112,22 @@ const AIRecommendations = ({navigation}) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
+      {/* Header with consistent styling */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>AI Investment Recommendations</Text>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Text style={styles.backText}>‹</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>AI Recommendations</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.overviewCard}>
           <Text style={styles.cardTitle}>Your Portfolio Overview</Text>
           <View style={styles.statRow}>
@@ -240,15 +249,15 @@ const AIRecommendations = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#FFFFFF',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#FFFFFF',
   },
   loadingText: {
     marginTop: 15,
@@ -256,19 +265,31 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    marginRight: 16,
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+  },
+  backText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#00796B',
   },
   content: {
     padding: 16,
@@ -276,7 +297,7 @@ const styles = StyleSheet.create({
   },
   overviewCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
@@ -284,6 +305,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   cardTitle: {
     fontSize: 16,
@@ -313,7 +336,7 @@ const styles = StyleSheet.create({
   },
   insightsCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 20,
     shadowColor: '#000',
@@ -321,6 +344,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   insightText: {
     fontSize: 14,
@@ -336,7 +361,7 @@ const styles = StyleSheet.create({
   },
   recommendationCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
@@ -344,6 +369,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   cardHeader: {
     flexDirection: 'row',
