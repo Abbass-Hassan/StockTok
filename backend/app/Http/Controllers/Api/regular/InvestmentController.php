@@ -10,6 +10,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Services\AIService;
 use Illuminate\Support\Facades\Log;
+use App\Models\Transaction;
 
 class InvestmentController extends Controller
 {
@@ -159,6 +160,12 @@ class InvestmentController extends Controller
             $returnPercentage = (($currentValue - $totalInvested) / $totalInvested) * 100;
         }
         
+        // Get total investor rewards for this user
+        $totalRewards = Transaction::where('wallet_id', $user->wallet->id)
+            ->where('transaction_type', 'investor_reward')
+            ->where('status', 'completed')
+            ->sum('amount');
+        
         // Group investments by video creator
         $byCreator = $investments->groupBy('video.user_id')
             ->map(function($items) {
@@ -176,7 +183,8 @@ class InvestmentController extends Controller
             'total_invested' => $totalInvested,
             'current_value' => $currentValue,
             'return_percentage' => $returnPercentage,
-            'investment_count' => $investments->count()
+            'investment_count' => $investments->count(),
+            'total_investor_rewards' => $totalRewards
         ]);
         
         return $this->successResponse([
@@ -184,10 +192,57 @@ class InvestmentController extends Controller
                 'total_invested' => $totalInvested,
                 'current_value' => $currentValue,
                 'return_percentage' => $returnPercentage,
-                'investment_count' => $investments->count()
+                'investment_count' => $investments->count(),
+                'total_rewards' => $totalRewards
             ],
             'by_creator' => $byCreator
         ], 'Portfolio overview retrieved successfully');
+    }
+
+    /**
+     * Get user's transaction history.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTransactionHistory(Request $request)
+    {
+        $user = auth()->user();
+        $perPage = $request->get('per_page', 15);
+        
+        // Get the user's wallet
+        $wallet = $user->wallet;
+        
+        if (!$wallet) {
+            return $this->errorResponse('Wallet not found', 404);
+        }
+        
+        // Get transactions
+        $transactions = Transaction::where('wallet_id', $wallet->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+            
+        // Force sync any investments for transactions that are rewards
+        $rewardTransactions = $transactions->filter(function($transaction) {
+            return $transaction->transaction_type === 'investor_reward';
+        });
+        
+        // Group by video_id to avoid duplicate syncs
+        $videoIds = $rewardTransactions->pluck('related_video_id')->unique();
+        
+        foreach ($videoIds as $videoId) {
+            $investments = \App\Models\LikeInvestment::where('user_id', $user->id)
+                ->where('video_id', $videoId)
+                ->get();
+                
+            foreach ($investments as $investment) {
+                $this->investmentService->syncInvestmentWithTransactions($investment->id);
+            }
+        }
+        
+        return $this->successResponse([
+            'transactions' => $transactions,
+        ], 'Transaction history retrieved successfully');
     }
 
     /**

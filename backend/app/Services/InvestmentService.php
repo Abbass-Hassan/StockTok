@@ -108,19 +108,20 @@ public function investInVideo($user, $videoId, $amount)
                 // Add reward to investor's wallet
                 $investorWallet = User::find($existingInvestment->user_id)->wallet;
                 $investorWallet->increment('balance', $rewardAmount);
-                $investorWallet->update(['last_updated' => now()]); // Added this line
+                $investorWallet->update(['last_updated' => now()]);
                 
-                // Update the investment's current value and return percentage
+                // FIXED: Update the investment's current value and return percentage
                 $newCurrentValue = $existingInvestment->current_value + $rewardAmount;
                 $newReturnPercentage = (($newCurrentValue - $existingInvestment->amount) / $existingInvestment->amount) * 100;
                 
+                // Update the investment with new current value
                 $existingInvestment->update([
                     'current_value' => $newCurrentValue,
                     'return_percentage' => $newReturnPercentage
                 ]);
                 
                 // Record transaction - amount is already positive
-                Transaction::create([
+                $transaction = Transaction::create([
                     'wallet_id' => $investorWallet->id,
                     'amount' => $rewardAmount,
                     'transaction_type' => 'investor_reward',
@@ -130,6 +131,18 @@ public function investInVideo($user, $videoId, $amount)
                     'status' => 'completed',
                     'description' => 'Reward from new investment in video #' . $videoId,
                     'fee_amount' => 0
+                ]);
+                
+                // Log the reward details
+                Log::info('Investor reward distributed', [
+                    'user_id' => $existingInvestment->user_id,
+                    'video_id' => $videoId,
+                    'investment_id' => $existingInvestment->id,
+                    'reward_amount' => $rewardAmount,
+                    'transaction_id' => $transaction->id,
+                    'previous_value' => $existingInvestment->current_value - $rewardAmount,
+                    'new_value' => $newCurrentValue,
+                    'new_return_percentage' => $newReturnPercentage
                 ]);
             }
 
@@ -218,56 +231,117 @@ public function investInVideo($user, $videoId, $amount)
     }
 
     /**
+     * ADDED: Sync investment values with transaction history.
+     * This ensures that investor rewards are properly reflected in investment values.
+     */
+    public function syncInvestmentWithTransactions($investmentId)
+    {
+        $investment = LikeInvestment::findOrFail($investmentId);
+        
+        // Get all investor reward transactions for this investment
+        $rewardTransactions = Transaction::where('wallet_id', $investment->user->wallet->id)
+            ->where('transaction_type', 'investor_reward')
+            ->where('related_video_id', $investment->video_id)
+            ->where('status', 'completed')
+            ->get();
+            
+        $totalRewards = $rewardTransactions->sum('amount');
+        
+        // Update investment value to include rewards
+        $updatedValue = $investment->amount + $totalRewards;
+        $returnPercentage = $investment->amount > 0 
+            ? (($updatedValue - $investment->amount) / $investment->amount) * 100 
+            : 0;
+            
+        Log::info('Syncing investment with transactions', [
+            'investment_id' => $investmentId,
+            'original_amount' => $investment->amount,
+            'reward_transactions_count' => $rewardTransactions->count(),
+            'total_rewards' => $totalRewards,
+            'updated_value' => $updatedValue,
+            'return_percentage' => $returnPercentage
+        ]);
+        
+        // Update the investment
+        $investment->update([
+            'current_value' => $updatedValue,
+            'return_percentage' => $returnPercentage
+        ]);
+        
+        return [
+            'investment' => $investment,
+            'original_amount' => $investment->amount,
+            'current_value' => $updatedValue,
+            'return_percentage' => $returnPercentage,
+            'reward_transactions' => $rewardTransactions->count()
+        ];
+    }
+
+    /**
      * Calculate investment returns without updating the database.
      * Use this for displaying investment data without side effects.
+     * MODIFIED: Now also checks for investor rewards in transactions
      */
     public function calculateInvestmentReturns($investment)
     {
         $video = $investment->video;
         
+        // First get the base calculation
+        $ownershipPercentage = $investment->amount / $video->current_value;
+        $baseCurrentValue = $video->current_value * $ownershipPercentage;
+        
+        // Now get any direct rewards from transactions
+        $rewardTransactions = Transaction::where('wallet_id', $investment->user->wallet->id)
+            ->where('transaction_type', 'investor_reward')
+            ->where('related_video_id', $investment->video_id)
+            ->where('status', 'completed')
+            ->get();
+            
+        $totalRewards = $rewardTransactions->sum('amount');
+        
+        // Calculate final current value including direct rewards
+        $finalCurrentValue = $baseCurrentValue + $totalRewards;
+        
         // Avoid division by zero
-        if ($video->current_value <= 0) {
+        if ($investment->amount <= 0) {
             return [
                 'original_amount' => $investment->amount,
-                'current_value' => $investment->amount, // Preserve original amount
+                'current_value' => $investment->amount,
                 'return_percentage' => 0
             ];
         }
         
-        // Calculate what percentage of the video this investment owns
-        $ownershipPercentage = $investment->amount / $video->current_value;
-        
-        // Calculate current value of the investment based on the video's current value
-        $currentValue = $video->current_value * $ownershipPercentage;
-        
         // Calculate return percentage
-        $returnPercentage = (($currentValue - $investment->amount) / $investment->amount) * 100;
+        $returnPercentage = (($finalCurrentValue - $investment->amount) / $investment->amount) * 100;
         
         Log::info('Investment return calculation', [
             'investment_id' => $investment->id,
             'original_amount' => $investment->amount,
             'video_current_value' => $video->current_value,
             'ownership_percentage' => $ownershipPercentage,
-            'calculated_current_value' => $currentValue,
+            'base_current_value' => $baseCurrentValue,
+            'reward_transactions' => $rewardTransactions->count(),
+            'total_rewards' => $totalRewards,
+            'final_current_value' => $finalCurrentValue,
             'return_percentage' => $returnPercentage
         ]);
         
         return [
             'original_amount' => $investment->amount,
-            'current_value' => $currentValue,
+            'current_value' => $finalCurrentValue,
             'return_percentage' => $returnPercentage
         ];
     }
 
     /**
      * Calculate current returns for an investment and update the database.
-     * MODIFIED: Improved logging and return value consistency
+     * MODIFIED: Now also considers investor rewards from transactions
      */
     public function calculateReturns($investmentId)
     {
         $investment = LikeInvestment::with('video')->findOrFail($investmentId);
         
-        // Use the read-only method to calculate returns
+        // Use the improved method to calculate returns
         $returns = $this->calculateInvestmentReturns($investment);
         
         // Log before updating

@@ -22,6 +22,25 @@ import axios from 'axios';
 const API_URL = 'http://35.181.171.137:8000/api';
 const {width} = Dimensions.get('window');
 
+// Utility functions for consistent formatting
+const formatCurrency = amount => {
+  return '$' + parseFloat(amount).toFixed(2);
+};
+
+const formatPercentage = percentage => {
+  const value = parseFloat(percentage).toFixed(2);
+  return value > 0 ? `+${value}%` : `${value}%`;
+};
+
+const formatDate = dateString => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
 const PortfolioScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -29,6 +48,15 @@ const PortfolioScreen = ({navigation}) => {
   const [portfolio, setPortfolio] = useState(null);
   const [investments, setInvestments] = useState([]);
   const [creatorInvestments, setCreatorInvestments] = useState([]);
+
+  // Force refresh when screen comes into focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchPortfolioData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // Test API connection
   const testApiConnection = async () => {
@@ -143,27 +171,6 @@ const PortfolioScreen = ({navigation}) => {
     fetchPortfolioData();
   }, []);
 
-  // Format currency
-  const formatCurrency = amount => {
-    return '$' + parseFloat(amount).toFixed(2);
-  };
-
-  // Format percentage
-  const formatPercentage = percentage => {
-    const value = parseFloat(percentage).toFixed(2);
-    return value > 0 ? `+${value}%` : `${value}%`;
-  };
-
-  // Format date
-  const formatDate = dateString => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   // View investment details
   const viewInvestmentDetails = investmentId => {
     navigation.navigate('InvestmentDetails', {investmentId});
@@ -171,9 +178,8 @@ const PortfolioScreen = ({navigation}) => {
 
   // Render investment item
   const renderInvestmentItem = ({item}) => {
-    // Calculate return percentage
-    const returnPercentage =
-      ((item.current_value - item.amount) / item.amount) * 100;
+    // Use the consistent return percentage directly from the item
+    const returnPercentage = item.return_percentage || 0;
 
     // Determine text color based on return
     const returnColor = returnPercentage >= 0 ? '#4CAF50' : '#F44336';
@@ -361,6 +367,12 @@ const PortfolioScreen = ({navigation}) => {
         <Text style={styles.headerTitle}>Investment Portfolio</Text>
       </View>
 
+      {refreshing && (
+        <View style={styles.refreshIndicator}>
+          <Text style={styles.refreshText}>Updating investment values...</Text>
+        </View>
+      )}
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={
@@ -488,6 +500,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: '#00796B',
     marginTop: -4,
+  },
+  refreshIndicator: {
+    backgroundColor: 'rgba(0, 121, 107, 0.1)',
+    padding: 8,
+    alignItems: 'center',
+  },
+  refreshText: {
+    color: '#00796B',
+    fontSize: 14,
   },
   // Summary Card Styles
   summaryCard: {

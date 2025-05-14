@@ -10,6 +10,7 @@ import {
   StatusBar,
   SafeAreaView,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import {investmentApi} from '../../api/investmentApi';
 import {getToken} from '../../utils/tokenStorage';
@@ -19,6 +20,26 @@ import axios from 'axios';
 const API_URL = 'http://35.181.171.137:8000/api';
 const ITEMS_PER_PAGE = 10; // Set a consistent items per page
 
+// Shared utility functions for consistent formatting
+export const formatCurrency = amount => {
+  return '$' + parseFloat(amount).toFixed(2);
+};
+
+export const formatPercentage = percentage => {
+  const value = parseFloat(percentage).toFixed(2);
+  return value > 0 ? `+${value}%` : `${value}%`;
+};
+
+// Format date
+const formatDate = dateString => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
 const AllInvestmentsScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -26,6 +47,15 @@ const AllInvestmentsScreen = ({navigation}) => {
   const [investments, setInvestments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMorePages, setHasMorePages] = useState(true);
+
+  // Force refresh when screen comes into focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchInvestments(1, true);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // Fetch investments
   const fetchInvestments = async (page = 1, refresh = false) => {
@@ -98,27 +128,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     fetchInvestments();
   }, []);
 
-  // Format currency
-  const formatCurrency = amount => {
-    return '$' + parseFloat(amount).toFixed(2);
-  };
-
-  // Format percentage
-  const formatPercentage = percentage => {
-    const value = parseFloat(percentage).toFixed(2);
-    return value > 0 ? `+${value}%` : `${value}%`;
-  };
-
-  // Format date
-  const formatDate = dateString => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   // View investment details
   const viewInvestmentDetails = investmentId => {
     navigation.navigate('InvestmentDetails', {investmentId});
@@ -127,8 +136,7 @@ const AllInvestmentsScreen = ({navigation}) => {
   // Render investment item
   const renderInvestmentItem = ({item}) => {
     // Calculate return percentage
-    const returnPercentage =
-      ((item.current_value - item.amount) / item.amount) * 100;
+    const returnPercentage = item.return_percentage || 0;
 
     // Determine text color based on return
     const returnColor = returnPercentage >= 0 ? '#4CAF50' : '#F44336';
@@ -272,6 +280,12 @@ const AllInvestmentsScreen = ({navigation}) => {
         <Text style={styles.headerTitle}>My Investments</Text>
       </View>
 
+      {refreshing && (
+        <View style={styles.refreshIndicator}>
+          <Text style={styles.refreshText}>Updating investment values...</Text>
+        </View>
+      )}
+
       <FlatList
         data={investments}
         renderItem={renderInvestmentItem}
@@ -319,6 +333,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#00796B',
+  },
+  refreshIndicator: {
+    backgroundColor: 'rgba(0, 121, 107, 0.1)',
+    padding: 8,
+    alignItems: 'center',
+  },
+  refreshText: {
+    color: '#00796B',
+    fontSize: 14,
   },
   listContent: {
     padding: 16,

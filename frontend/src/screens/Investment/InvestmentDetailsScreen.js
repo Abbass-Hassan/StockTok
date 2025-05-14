@@ -11,18 +11,51 @@ import {
   SafeAreaView,
   Dimensions,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import {investmentApi} from '../../api/investmentApi';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const {width} = Dimensions.get('window');
 
+// Utility functions for consistent formatting
+const formatCurrency = amount => {
+  return '$' + parseFloat(amount).toFixed(2);
+};
+
+const formatPercentage = percentage => {
+  const value = parseFloat(percentage).toFixed(2);
+  return value > 0 ? `+${value}%` : `${value}%`;
+};
+
+// Format date with time
+const formatDetailedDate = dateString => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
 const InvestmentDetailsScreen = ({route, navigation}) => {
   const {investmentId} = route.params;
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [investment, setInvestment] = useState(null);
   const [performance, setPerformance] = useState(null);
+
+  // Force refresh when screen comes into focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchInvestmentDetails();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // Fetch investment details
   const fetchInvestmentDetails = async () => {
@@ -53,34 +86,18 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
     }
   };
 
+  // Handle refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchInvestmentDetails();
+    setRefreshing(false);
+  };
+
   // Load initial data
   useEffect(() => {
     console.log('InvestmentDetailsScreen - Loading initial data');
     fetchInvestmentDetails();
   }, [investmentId]);
-
-  // Format currency
-  const formatCurrency = amount => {
-    return '$' + parseFloat(amount).toFixed(2);
-  };
-
-  // Format percentage
-  const formatPercentage = percentage => {
-    const value = parseFloat(percentage).toFixed(2);
-    return value > 0 ? `+${value}%` : `${value}%`;
-  };
-
-  // Format date
-  const formatDate = dateString => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   // Navigate to creator profile
   const viewCreatorProfile = () => {
@@ -152,6 +169,11 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
   const returnColor = isPositiveReturn ? '#4CAF50' : '#F44336';
   const returnIcon = isPositiveReturn ? 'trending-up' : 'trending-down';
 
+  // Calculate profit/loss amount
+  const profitLossAmount = Math.abs(
+    performance.current_value - performance.original_amount,
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
@@ -166,10 +188,24 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
         <Text style={styles.headerTitle}>Investment Details</Text>
       </View>
 
+      {refreshing && (
+        <View style={styles.refreshIndicator}>
+          <Text style={styles.refreshText}>Updating investment values...</Text>
+        </View>
+      )}
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#00796B']}
+            tintColor="#00796B"
+          />
+        }>
         {/* Video and Creator Info */}
         <View style={styles.videoCard}>
           <Image
@@ -196,7 +232,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
           <View style={styles.summaryItem}>
             <Text style={styles.summaryLabel}>Investment Date</Text>
             <Text style={styles.summaryValue}>
-              {formatDate(investment.created_at)}
+              {formatDetailedDate(investment.created_at)}
             </Text>
           </View>
           <View style={styles.divider} />
@@ -224,11 +260,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
             </View>
             <Text style={styles.returnText}>
               {isPositiveReturn ? 'Profit' : 'Loss'}:{' '}
-              {formatCurrency(
-                Math.abs(
-                  performance.current_value - performance.original_amount,
-                ),
-              )}
+              {formatCurrency(profitLossAmount)}
             </Text>
           </View>
         </View>
@@ -347,6 +379,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#00796B',
+  },
+  refreshIndicator: {
+    backgroundColor: 'rgba(0, 121, 107, 0.1)',
+    padding: 8,
+    alignItems: 'center',
+  },
+  refreshText: {
+    color: '#00796B',
+    fontSize: 14,
   },
   // Video Card Styles
   videoCard: {
