@@ -10,24 +10,16 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getUserData} from '../../utils/tokenStorage';
-
-// Make sure to add this in your navigation configuration:
-/*
-navigation.setOptions({
-  headerShown: false, // This will hide the navigation header
-});
-*/
 
 const Regular = ({navigation}) => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    // Hide the navigation header
     navigation.setOptions({
       headerShown: false,
     });
-
     loadUserData();
   }, [navigation]);
 
@@ -50,15 +42,10 @@ const Regular = ({navigation}) => {
           text: 'Logout',
           style: 'destructive',
           onPress: () => {
-            try {
-              navigation.reset({
-                index: 0,
-                routes: [{name: 'Login'}],
-              });
-            } catch (error) {
-              console.error('Logout error:', error);
-              Alert.alert('Error', 'Failed to logout');
-            }
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'Login'}],
+            });
           },
         },
       ],
@@ -70,8 +57,13 @@ const Regular = ({navigation}) => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Single header with consistent styling */}
       <View style={styles.header}>
+        <Ionicons
+          name="logo-bitcoin"
+          size={24}
+          color="#00796B"
+          style={{marginRight: 8}}
+        />
         <Text style={styles.headerTitle}>StockTok</Text>
       </View>
 
@@ -92,12 +84,24 @@ const Regular = ({navigation}) => {
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('VideoFeed')}>
+              <Ionicons
+                name="play-circle-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.icon}
+              />
               <Text style={styles.menuButtonText}>Discover Videos</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('Search')}>
+              <Ionicons
+                name="search-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.icon}
+              />
               <Text style={styles.menuButtonText}>Search Creators</Text>
             </TouchableOpacity>
           </View>
@@ -109,21 +113,37 @@ const Regular = ({navigation}) => {
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('Portfolio')}>
+              <Ionicons
+                name="wallet-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.icon}
+              />
               <Text style={styles.menuButtonText}>Investment Portfolio</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('AllInvestments')}>
+              <Ionicons
+                name="stats-chart-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.icon}
+              />
               <Text style={styles.menuButtonText}>My Investments</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('AIRecommendations')}>
-              <Text style={styles.menuButtonText}>
-                AI Investment Recommendations
-              </Text>
+              <Ionicons
+                name="bulb-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.icon}
+              />
+              <Text style={styles.menuButtonText}>AI Recommendations</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -134,18 +154,36 @@ const Regular = ({navigation}) => {
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('WalletOverview')}>
+              <Ionicons
+                name="card-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.icon}
+              />
               <Text style={styles.menuButtonText}>My Wallet</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('TransactionHistory')}>
+              <Ionicons
+                name="time-outline"
+                size={20}
+                color="#FFFFFF"
+                style={styles.icon}
+              />
               <Text style={styles.menuButtonText}>Transaction History</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Ionicons
+            name="log-out-outline"
+            size={20}
+            color="#FF3B30"
+            style={styles.icon}
+          />
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -160,12 +198,14 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'android' ? 16 : 12,
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
-    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 20,
@@ -206,11 +246,13 @@ const styles = StyleSheet.create({
     maxWidth: 350,
   },
   menuButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#00796B',
     padding: 16,
     borderRadius: 10,
     marginBottom: 12,
-    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
@@ -223,11 +265,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
+  icon: {
+    marginRight: 8,
+  },
   logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     padding: 16,
     borderRadius: 10,
-    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#FF3B30',
     marginTop: 20,

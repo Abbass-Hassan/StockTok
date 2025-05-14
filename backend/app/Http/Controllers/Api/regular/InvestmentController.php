@@ -116,7 +116,8 @@ class InvestmentController extends Controller
             return $this->errorResponse('Investment not found', 404);
         }
         
-        // Calculate current returns for this investment
+        // Calculate current returns for this investment - using calculateReturns for updating
+        // This is the original behavior to update the DB when viewing details
         $performance = $this->investmentService->calculateReturns($id);
         
         return $this->successResponse([
@@ -137,25 +138,44 @@ class InvestmentController extends Controller
         // Get all user's investments
         $investments = $this->investmentService->getUserInvestments($user->id, 100);
         
-        // Calculate total invested
+        // Calculate total invested amount
         $totalInvested = $investments->sum('amount');
         
-        // Calculate current total value
-        $currentValue = $investments->sum('current_value');
+        // Calculate current value without updating the database
+        $currentValue = 0;
+        $returnPercentage = 0;
         
-        // Calculate return percentage
-        $returnPercentage = $totalInvested > 0 
-            ? (($currentValue - $totalInvested) / $totalInvested) * 100 
-            : 0;
+        // Calculate current values without updating the database
+        if ($investments->count() > 0) {
+            foreach ($investments as $investment) {
+                // Use the non-updating calculation method
+                $returns = $this->investmentService->calculateInvestmentReturns($investment);
+                $currentValue += $returns['current_value'];
+            }
+            
+            // Calculate overall return percentage
+            if ($totalInvested > 0) {
+                $returnPercentage = (($currentValue - $totalInvested) / $totalInvested) * 100;
+            }
+        }
         
-        // Group investments by video creator
+        // Group investments by video creator without updating DB
         $byCreator = $investments->groupBy('video.user_id')
             ->map(function($items) {
+                $creatorTotalInvested = $items->sum('amount');
+                $creatorCurrentValue = 0;
+                
+                // Calculate current value for each investment in this group
+                foreach ($items as $investment) {
+                    $returns = $this->investmentService->calculateInvestmentReturns($investment);
+                    $creatorCurrentValue += $returns['current_value'];
+                }
+                
                 return [
                     'creator_name' => $items->first()->video->user->name ?? 'Unknown Creator',
                     'investment_count' => $items->count(),
-                    'total_invested' => $items->sum('amount'),
-                    'current_value' => $items->sum('current_value')
+                    'total_invested' => $creatorTotalInvested,
+                    'current_value' => $creatorCurrentValue
                 ];
             });
         
@@ -170,63 +190,35 @@ class InvestmentController extends Controller
         ], 'Portfolio overview retrieved successfully');
     }
 
-
-
-
-    // /**
-    //  * Get AI-powered investment recommendations.
-    //  *
-    //  * @return \Illuminate\Http\JsonResponse
-    //  */
-    // public function getAIRecommendations()
-    // {
-    //     $user = auth()->user();
-        
-    //     // Create AIService instance
-    //     $aiService = app(AIService::class);
-        
-    //     // Get recommendations
-    //     $recommendations = $aiService->getInvestmentRecommendations($user->id);
-        
-    //     if (!$recommendations['success']) {
-    //         return $this->errorResponse($recommendations['message'], 400);
-    //     }
-        
-    //     return $this->successResponse(
-    //         $recommendations,
-    //         'AI investment recommendations retrieved successfully'
-    //     );
-    // }
-
-/**
- * Get AI-powered investment recommendations.
- *
- * @return \Illuminate\Http\JsonResponse
- */
-public function getAIRecommendations()
-{
-    try {
-        $user = auth()->user();
-        
-        // Create AIService instance with the correct namespace
-        $aiService = new \App\Services\AIService();
-        
-        // Get real AI-powered recommendations
-        $recommendations = $aiService->getInvestmentRecommendations($user->id);
-        
-        if (!$recommendations['success']) {
-            return $this->errorResponse($recommendations['message'], 400);
+    /**
+     * Get AI-powered investment recommendations.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAIRecommendations()
+    {
+        try {
+            $user = auth()->user();
+            
+            // Create AIService instance with the correct namespace
+            $aiService = new \App\Services\AIService();
+            
+            // Get real AI-powered recommendations
+            $recommendations = $aiService->getInvestmentRecommendations($user->id);
+            
+            if (!$recommendations['success']) {
+                return $this->errorResponse($recommendations['message'], 400);
+            }
+            
+            return $this->successResponse(
+                $recommendations,
+                'AI investment recommendations retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->errorResponse(
+                'Error: ' . $e->getMessage(),
+                500
+            );
         }
-        
-        return $this->successResponse(
-            $recommendations,
-            'AI investment recommendations retrieved successfully'
-        );
-    } catch (\Exception $e) {
-        return $this->errorResponse(
-            'Error: ' . $e->getMessage(),
-            500
-        );
     }
-}
 }
