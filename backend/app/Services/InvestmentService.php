@@ -187,38 +187,64 @@ public function investInVideo($user, $videoId, $amount)
                             ->paginate($perPage);
     }
 
-
     /**
-     * Calculate current returns for an investment.
+     * Calculate investment returns without updating the database.
+     * Use this for displaying investment data without side effects.
      */
-    public function calculateReturns($investmentId)
+    public function calculateInvestmentReturns($investment)
     {
-        $investment = LikeInvestment::with('video')->findOrFail($investmentId);
         $video = $investment->video;
+        
+        // Avoid division by zero
+        if ($video->current_value <= 0) {
+            return [
+                'original_amount' => $investment->amount,
+                'current_value' => $investment->amount, // Preserve original amount
+                'return_percentage' => 0
+            ];
+        }
         
         // Calculate what percentage of the video this investment owns
         $ownershipPercentage = $investment->amount / $video->current_value;
         
         // Calculate current value of the investment
-        $currentInvestmentValue = $video->current_value * $ownershipPercentage;
+        $currentValue = $video->current_value * $ownershipPercentage;
         
         // Calculate return percentage
-        $returnPercentage = (($currentInvestmentValue - $investment->amount) / $investment->amount) * 100;
-        
-        // Update the investment record
-        $investment->update([
-            'current_value' => $currentInvestmentValue,
-            'return_percentage' => $returnPercentage
-        ]);
+        $returnPercentage = (($currentValue - $investment->amount) / $investment->amount) * 100;
         
         return [
-            'investment' => $investment,
             'original_amount' => $investment->amount,
-            'current_value' => $currentInvestmentValue,
+            'current_value' => $currentValue,
             'return_percentage' => $returnPercentage
         ];
     }
 
+    /**
+     * Calculate current returns for an investment and update the database.
+     * This maintains backward compatibility with the original method.
+     */
+    public function calculateReturns($investmentId)
+    {
+        $investment = LikeInvestment::with('video')->findOrFail($investmentId);
+        
+        // Use the read-only method to calculate returns
+        $returns = $this->calculateInvestmentReturns($investment);
+        
+        // Update the investment record
+        $investment->update([
+            'current_value' => $returns['current_value'],
+            'return_percentage' => $returns['return_percentage']
+        ]);
+        
+        // Return the same format as the original method for backward compatibility
+        return [
+            'investment' => $investment,
+            'original_amount' => $returns['original_amount'],
+            'current_value' => $returns['current_value'],
+            'return_percentage' => $returns['return_percentage']
+        ];
+    }
 
     /**
      * Calculate profitability of a video.
@@ -260,9 +286,6 @@ public function investInVideo($user, $videoId, $amount)
         ];
     }
     
-
-
-
     /**
      * Get top investors for a creator across all videos
      */
