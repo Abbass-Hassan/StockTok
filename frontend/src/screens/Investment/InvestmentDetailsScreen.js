@@ -98,10 +98,10 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
   // Render loading state
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#7A67EE" />
+          <ActivityIndicator size="large" color="#00796B" />
           <Text style={styles.loadingText}>Loading investment details...</Text>
         </View>
       </SafeAreaView>
@@ -111,7 +111,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
   // Render error state
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
         <View style={styles.errorContainer}>
           <Icon name="alert-circle-outline" size={50} color="#F44336" />
@@ -129,7 +129,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
   // If investment data is not available
   if (!investment || !performance) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
         <View style={styles.errorContainer}>
           <Icon name="alert-circle-outline" size={50} color="#F44336" />
@@ -150,23 +150,23 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
   const returnIcon = isPositiveReturn ? 'trending-up' : 'trending-down';
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Header */}
+      {/* Header with consistent styling */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#14171A" />
+          <Text style={styles.backText}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Investment Details</Text>
-        <View style={styles.headerRight} />
       </View>
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}>
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
         {/* Video and Creator Info */}
         <View style={styles.videoCard}>
           <Image
@@ -270,7 +270,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
             <Icon
               name="information-circle-outline"
               size={20}
-              color="#7A67EE"
+              color="#00796B"
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
@@ -282,7 +282,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
             <Icon
               name="trending-up"
               size={20}
-              color="#7A67EE"
+              color="#00796B"
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
@@ -294,7 +294,7 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
             <Icon
               name="wallet-outline"
               size={20}
-              color="#7A67EE"
+              color="#00796B"
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
@@ -309,9 +309,9 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#FFFFFF',
   },
   scrollView: {
     flex: 1,
@@ -321,26 +321,31 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
-    padding: 16,
-    paddingTop: Platform.OS === 'ios' ? 8 : 16,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E1E8ED',
+    borderBottomColor: '#E0E0E0',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   backButton: {
-    padding: 4,
+    marginRight: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#14171A',
-  },
-  headerRight: {
-    width: 24, // to balance the back button
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#00796B',
   },
   // Video Card Styles
   videoCard: {
@@ -354,6 +359,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 3.84,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
   },
   videoThumbnail: {
     width: 100,
@@ -373,13 +380,13 @@ const styles = StyleSheet.create({
   },
   creatorName: {
     fontSize: 14,
-    color: '#7A67EE',
+    color: '#00796B',
     marginBottom: 12,
   },
   watchButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#7A67EE',
+    backgroundColor: '#00796B',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 16,
@@ -402,6 +409,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 3.84,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
   },
   sectionTitle: {
     fontSize: 18,
@@ -470,6 +479,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 3.84,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
   },
   detailRow: {
     flexDirection: 'row',
@@ -511,6 +522,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 3.84,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E1E8ED',
   },
   infoItem: {
     flexDirection: 'row',
@@ -553,10 +566,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: '#7A67EE',
+    backgroundColor: '#00796B',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 24,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   retryButtonText: {
     color: '#FFFFFF',
