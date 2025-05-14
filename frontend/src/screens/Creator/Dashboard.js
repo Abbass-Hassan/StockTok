@@ -180,7 +180,7 @@ const Dashboard = ({navigation}) => {
             </View>
           </View>
 
-          {/* Quick Stats Card */}
+          {/* Performance Metrics Card (without Total Views) */}
           <View style={styles.statsCard}>
             <Text style={styles.sectionTitle}>Performance Metrics</Text>
             <View style={styles.statsGrid}>
@@ -189,12 +189,6 @@ const Dashboard = ({navigation}) => {
                   {formatNumber(stats?.total_videos || 0)}
                 </Text>
                 <Text style={styles.statLabel}>Videos</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>
-                  {formatNumber(stats?.total_views || 0)}
-                </Text>
-                <Text style={styles.statLabel}>Total Views</Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statValue}>
@@ -261,11 +255,6 @@ const Dashboard = ({navigation}) => {
                 style={styles.actionButton}
                 onPress={() => navigation.navigate('UploadVideo')}>
                 <Text style={styles.actionText}>Upload Video</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => navigation.navigate('MyVideos')}>
-                <Text style={styles.actionText}>My Videos</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -395,11 +384,9 @@ const styles = StyleSheet.create({
   },
   statsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
   },
   statItem: {
-    width: '48%',
     alignItems: 'center',
     marginBottom: 16,
   },
@@ -468,7 +455,7 @@ const styles = StyleSheet.create({
   },
   actionsGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   actionButton: {
     alignItems: 'center',
@@ -476,7 +463,8 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#00796B',
     borderRadius: 10,
-    width: '45%',
+    width: '100%',
+    maxWidth: 250,
   },
   actionText: {
     fontSize: 16,

@@ -179,7 +179,7 @@ const CreatorProfile = ({navigation}) => {
             </Text>
             <Text style={styles.userType}>Creator</Text>
 
-            {/* Stats */}
+            {/* Stats - Without Views */}
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>
@@ -193,13 +193,6 @@ const CreatorProfile = ({navigation}) => {
                   {formatNumber(stats?.follower_count || 0)}
                 </Text>
                 <Text style={styles.statLabel}>Followers</Text>
-              </View>
-
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>
-                  {formatNumber(stats?.total_views || 0)}
-                </Text>
-                <Text style={styles.statLabel}>Views</Text>
               </View>
             </View>
 
@@ -350,13 +343,13 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    justifyContent: 'center',
+    width: '70%',
     marginBottom: 16,
   },
   statItem: {
     alignItems: 'center',
-    marginHorizontal: 16,
+    marginHorizontal: 24,
   },
   statNumber: {
     fontSize: 18,
