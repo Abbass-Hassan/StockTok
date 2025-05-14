@@ -436,7 +436,7 @@ const PortfolioScreen = ({navigation}) => {
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Your Investments</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('AllInvestmentsScreen')}>
+                onPress={() => navigation.navigate('AllInvestments')}>
                 <Text style={styles.seeAllButton}>See All</Text>
               </TouchableOpacity>
             </View>
