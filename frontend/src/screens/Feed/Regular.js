@@ -131,6 +131,21 @@ const Regular = ({navigation}) => {
               />
               <Text style={styles.menuButtonText}>My Investments</Text>
             </TouchableOpacity>
+
+            {/* AI Recommendations Button */}
+            <TouchableOpacity
+              style={[styles.menuButton, {backgroundColor: '#7A67EE'}]}
+              onPress={() => navigation.navigate('AIRecommendations')}>
+              <Icon
+                name="bulb"
+                size={20}
+                color="#FFFFFF"
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.menuButtonText}>
+                AI Investment Recommendations
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 

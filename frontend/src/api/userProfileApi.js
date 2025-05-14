@@ -3,7 +3,7 @@ import axios from 'axios';
 import {getToken} from '../utils/tokenStorage';
 
 // Use the EXACT same API_URL as in your Postman request
-const API_URL = 'http://13.37.224.245:8000/api';
+const API_URL = 'http://35.181.171.137:8000/api';
 
 // Debug token storage function
 export const debugTokenStorage = async () => {

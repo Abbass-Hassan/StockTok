@@ -19,7 +19,7 @@ import {getToken} from '../../utils/tokenStorage';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 
-const API_URL = 'http://13.37.224.245:8000/api';
+const API_URL = 'http://35.181.171.137:8000/api';
 const {width} = Dimensions.get('window');
 
 const PortfolioScreen = ({navigation}) => {
