@@ -183,7 +183,11 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
             </Text>
             <TouchableOpacity onPress={viewCreatorProfile}>
               <Text style={styles.creatorName}>
-                @{investment.video?.user?.username || 'Unknown Creator'}
+                @
+                {investment.video?.user?.username ||
+                  investment.video?.user?.name ||
+                  investment.creator_name ||
+                  'Unknown Creator'}
               </Text>
             </TouchableOpacity>
           </View>

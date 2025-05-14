@@ -192,7 +192,11 @@ const PortfolioScreen = ({navigation}) => {
           />
           <View style={styles.investmentInfo}>
             <Text style={styles.creatorName} numberOfLines={1}>
-              @{item.video?.user?.username || 'Unknown Creator'}
+              @
+              {item.video?.user?.username ||
+                item.video?.user?.name ||
+                item.creator_name ||
+                'Unknown Creator'}
             </Text>
             <Text style={styles.videoTitle} numberOfLines={1}>
               {item.video?.caption || 'Video'}
