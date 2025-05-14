@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class InvestmentService
 {
@@ -109,7 +110,7 @@ public function investInVideo($user, $videoId, $amount)
                 $investorWallet->increment('balance', $rewardAmount);
                 $investorWallet->update(['last_updated' => now()]); // Added this line
                 
-                // ADDED CODE: Update the investment's current value and return percentage
+                // Update the investment's current value and return percentage
                 $newCurrentValue = $existingInvestment->current_value + $rewardAmount;
                 $newReturnPercentage = (($newCurrentValue - $existingInvestment->amount) / $existingInvestment->amount) * 100;
                 
@@ -117,7 +118,6 @@ public function investInVideo($user, $videoId, $amount)
                     'current_value' => $newCurrentValue,
                     'return_percentage' => $newReturnPercentage
                 ]);
-                // END ADDED CODE
                 
                 // Record transaction - amount is already positive
                 Transaction::create([
@@ -134,7 +134,7 @@ public function investInVideo($user, $videoId, $amount)
             }
 
             // Add debugging information to logs
-            \Log::info('Investor rewards distributed', [
+            Log::info('Investor rewards distributed', [
                 'video_id' => $videoId,
                 'new_investor' => $user->id,
                 'existing_investors' => $existingInvestments->pluck('user_id'),
@@ -154,9 +154,17 @@ public function investInVideo($user, $videoId, $amount)
 
     /**
      * Get details of a specific investment.
+     * MODIFIED: Now consistently updates the investment using calculateReturns
      */
     public function getInvestmentDetails($investmentId)
     {
+        $investment = LikeInvestment::with(['user', 'video', 'video.user'])
+                            ->findOrFail($investmentId);
+        
+        // Always calculate and update current returns before returning
+        $this->calculateReturns($investmentId);
+        
+        // Fetch the fresh investment with updated values
         return LikeInvestment::with(['user', 'video', 'video.user'])
                             ->findOrFail($investmentId);
     }
@@ -164,9 +172,21 @@ public function investInVideo($user, $videoId, $amount)
 
     /**
      * Get all investments made by a user.
+     * MODIFIED: Now updates all investments before returning
      */
     public function getUserInvestments($userId, $perPage = 15)
     {
+        // First get all investment IDs
+        $investmentIds = LikeInvestment::where('user_id', $userId)
+                                      ->where('status', 'active')
+                                      ->pluck('id');
+        
+        // Update all investments
+        foreach ($investmentIds as $id) {
+            $this->calculateReturns($id);
+        }
+        
+        // Now return the updated investments
         return LikeInvestment::with(['video', 'video.user'])
                             ->where('user_id', $userId)
                             ->where('status', 'active')
@@ -180,6 +200,16 @@ public function investInVideo($user, $videoId, $amount)
      */
     public function getVideoInvestments($videoId, $perPage = 15)
     {
+        // First get all investment IDs for this video
+        $investmentIds = LikeInvestment::where('video_id', $videoId)
+                                      ->where('status', 'active')
+                                      ->pluck('id');
+        
+        // Update all investments
+        foreach ($investmentIds as $id) {
+            $this->calculateReturns($id);
+        }
+        
         return LikeInvestment::with('user')
                             ->where('video_id', $videoId)
                             ->where('status', 'active')
@@ -207,11 +237,20 @@ public function investInVideo($user, $videoId, $amount)
         // Calculate what percentage of the video this investment owns
         $ownershipPercentage = $investment->amount / $video->current_value;
         
-        // Calculate current value of the investment
+        // Calculate current value of the investment based on the video's current value
         $currentValue = $video->current_value * $ownershipPercentage;
         
         // Calculate return percentage
         $returnPercentage = (($currentValue - $investment->amount) / $investment->amount) * 100;
+        
+        Log::info('Investment return calculation', [
+            'investment_id' => $investment->id,
+            'original_amount' => $investment->amount,
+            'video_current_value' => $video->current_value,
+            'ownership_percentage' => $ownershipPercentage,
+            'calculated_current_value' => $currentValue,
+            'return_percentage' => $returnPercentage
+        ]);
         
         return [
             'original_amount' => $investment->amount,
@@ -222,7 +261,7 @@ public function investInVideo($user, $videoId, $amount)
 
     /**
      * Calculate current returns for an investment and update the database.
-     * This maintains backward compatibility with the original method.
+     * MODIFIED: Improved logging and return value consistency
      */
     public function calculateReturns($investmentId)
     {
@@ -231,15 +270,27 @@ public function investInVideo($user, $videoId, $amount)
         // Use the read-only method to calculate returns
         $returns = $this->calculateInvestmentReturns($investment);
         
+        // Log before updating
+        Log::info('Updating investment', [
+            'investment_id' => $investmentId,
+            'before_current_value' => $investment->current_value,
+            'before_return_percentage' => $investment->return_percentage,
+            'after_current_value' => $returns['current_value'],
+            'after_return_percentage' => $returns['return_percentage']
+        ]);
+        
         // Update the investment record
         $investment->update([
             'current_value' => $returns['current_value'],
             'return_percentage' => $returns['return_percentage']
         ]);
         
+        // Get the fresh investment
+        $freshInvestment = LikeInvestment::findOrFail($investmentId);
+        
         // Return the same format as the original method for backward compatibility
         return [
-            'investment' => $investment,
+            'investment' => $freshInvestment,
             'original_amount' => $returns['original_amount'],
             'current_value' => $returns['current_value'],
             'return_percentage' => $returns['return_percentage']

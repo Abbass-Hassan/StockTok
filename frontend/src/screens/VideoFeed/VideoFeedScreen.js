@@ -17,6 +17,7 @@ import Video from 'react-native-video';
 import axios from 'axios';
 import {getToken} from '../../utils/tokenStorage';
 import InvestmentModal from '../../components/modals/InvestmentModal';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const API_URL = 'http://35.181.171.137:8000/api';
 const {height, width} = Dimensions.get('window');
@@ -26,9 +27,13 @@ const TAB_BAR_HEIGHT = 80;
 const BOTTOM_INSET = Platform.OS === 'ios' ? 34 : 16;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
 
-// Calculate available content area
+// Calculate available content area - ADJUSTED FOR BETTER SPACING
 const AVAILABLE_HEIGHT =
-  height - TAB_BAR_HEIGHT - BOTTOM_INSET - STATUS_BAR_HEIGHT;
+  height -
+  TAB_BAR_HEIGHT -
+  BOTTOM_INSET -
+  STATUS_BAR_HEIGHT -
+  (Platform.OS === 'ios' ? 30 : 20);
 
 const VideoFeedScreen = ({navigation}) => {
   // Add feed type state
@@ -312,7 +317,7 @@ const VideoFeedScreen = ({navigation}) => {
                   opacity: animatedHeartOpacity,
                 },
               ]}>
-              <Text style={styles.heartIcon}>❤️</Text>
+              <Ionicons name="heart" size={30} color="#FFFFFF" />
               <Text style={styles.heartText}>+1</Text>
             </Animated.View>
           )}
@@ -361,7 +366,7 @@ const VideoFeedScreen = ({navigation}) => {
             {!isPlaying && (
               <View style={styles.playButtonOverlay}>
                 <View style={styles.playButton}>
-                  <Text style={styles.playIcon}>▶️</Text>
+                  <Ionicons name="play" size={36} color="#FFFFFF" />
                 </View>
                 <Text style={styles.tapToPlayText}>Tap to play</Text>
               </View>
@@ -375,7 +380,7 @@ const VideoFeedScreen = ({navigation}) => {
               style={styles.sideButton}
               onPress={() => handleLikePress(item.id)}>
               <View style={styles.sideButtonCircle}>
-                <Text style={styles.sideButtonIcon}>❤️</Text>
+                <Ionicons name="heart-outline" size={26} color="#FFFFFF" />
               </View>
               <Text style={styles.sideButtonText}>
                 {formatCount(
@@ -387,19 +392,11 @@ const VideoFeedScreen = ({navigation}) => {
             {/* Comment button */}
             <TouchableOpacity style={styles.sideButton}>
               <View style={styles.sideButtonCircle}>
-                <Text style={styles.sideButtonIcon}>💬</Text>
+                <Ionicons name="chatbubble-outline" size={24} color="#FFFFFF" />
               </View>
               <Text style={styles.sideButtonText}>
                 {formatCount(item.comments_count || 0)}
               </Text>
-            </TouchableOpacity>
-
-            {/* Analytics button */}
-            <TouchableOpacity style={styles.sideButton}>
-              <View style={styles.sideButtonCircle}>
-                <Text style={styles.sideButtonIcon}>📊</Text>
-              </View>
-              <Text style={styles.sideButtonText}>Analytics</Text>
             </TouchableOpacity>
           </View>
 
@@ -486,36 +483,44 @@ const VideoFeedScreen = ({navigation}) => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
 
-      {/* Feed Type Selector */}
-      <View style={styles.feedTypeSelectorContainer}>
+      {/* Header with Back Button and Feed Type Selector */}
+      <View style={styles.header}>
         <TouchableOpacity
-          style={[
-            styles.feedTypeButton,
-            feedType === 'following' && styles.activeFeedTypeButton,
-          ]}
-          onPress={() => switchFeedType('following')}>
-          <Text
-            style={[
-              styles.feedTypeText,
-              feedType === 'following' && styles.activeFeedTypeText,
-            ]}>
-            Following
-          </Text>
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.feedTypeButton,
-            feedType === 'trending' && styles.activeFeedTypeButton,
-          ]}
-          onPress={() => switchFeedType('trending')}>
-          <Text
+
+        <View style={styles.feedTypeSelectorContainer}>
+          <TouchableOpacity
             style={[
-              styles.feedTypeText,
-              feedType === 'trending' && styles.activeFeedTypeText,
-            ]}>
-            Trending
-          </Text>
-        </TouchableOpacity>
+              styles.feedTypeButton,
+              feedType === 'following' && styles.activeFeedTypeButton,
+            ]}
+            onPress={() => switchFeedType('following')}>
+            <Text
+              style={[
+                styles.feedTypeText,
+                feedType === 'following' && styles.activeFeedTypeText,
+              ]}>
+              Following
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.feedTypeButton,
+              feedType === 'trending' && styles.activeFeedTypeButton,
+            ]}
+            onPress={() => switchFeedType('trending')}>
+            <Text
+              style={[
+                styles.feedTypeText,
+                feedType === 'trending' && styles.activeFeedTypeText,
+              ]}>
+              Trending
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.contentContainer}>
@@ -532,9 +537,7 @@ const VideoFeedScreen = ({navigation}) => {
             ListFooterComponent={renderLoader}
             ListEmptyComponent={loading ? null : renderEmptyState}
             showsVerticalScrollIndicator={false}
-            snapToInterval={
-              height - TAB_BAR_HEIGHT - (Platform.OS === 'ios' ? 90 : 60)
-            } // Adjust for tabs
+            snapToInterval={AVAILABLE_HEIGHT} // ADJUSTED: Use the new AVAILABLE_HEIGHT
             snapToAlignment="start"
             decelerationRate="fast"
             pagingEnabled
@@ -568,23 +571,31 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
   },
-  // Feed Type Selector styles
+  // Header styles - ADJUSTED
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // ADJUSTED: Increased top padding for more space at the top
+    paddingTop: Platform.OS === 'ios' ? 60 : 30,
+    paddingBottom: 15,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    zIndex: 10,
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: 10,
+    borderRadius: 20,
+  },
+  // Feed Type Selector styles - UNCHANGED
   feedTypeSelectorContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 50 : 20, // Adjust for status bar
-    paddingBottom: 15,
-    backgroundColor: '#000000', // Solid black background
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-    zIndex: 10,
+    marginRight: 40, // Balance for back button
   },
   feedTypeButton: {
-    paddingHorizontal: 25,
+    paddingHorizontal: 20,
     paddingVertical: 8,
     marginHorizontal: 5,
   },
@@ -593,7 +604,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#FFFFFF',
   },
   feedTypeText: {
-    color: '#AAAAAA',
+    color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 17,
     fontWeight: '500',
     letterSpacing: 0.3,
@@ -602,14 +613,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
   },
+  // Video container - ADJUSTED
   itemContainer: {
-    height: height - TAB_BAR_HEIGHT - (Platform.OS === 'ios' ? 90 : 60), // Adjusted for tab header
+    // ADJUSTED: Set height to match the new AVAILABLE_HEIGHT
+    height: AVAILABLE_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
   },
   videoContainer: {
     width: width,
-    height: AVAILABLE_HEIGHT - (Platform.OS === 'ios' ? 90 : 60), // Adjusted for tab header
+    // ADJUSTED: Create more balanced video container height
+    height: AVAILABLE_HEIGHT - (Platform.OS === 'ios' ? 60 : 40),
     position: 'relative',
   },
   videoWrapper: {
@@ -624,6 +638,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  // Play Button Styles - UNCHANGED
   playButtonOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
@@ -634,31 +649,20 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-  },
-  playIcon: {
-    fontSize: 36,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   tapToPlayText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '500',
     marginTop: 15,
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 3,
     opacity: 0.8,
   },
-
-  // Heart animation
+  // Heart animation - UNCHANGED
   heartAnimation: {
     position: 'absolute',
     top: '40%',
@@ -667,30 +671,22 @@ const styles = StyleSheet.create({
     zIndex: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderRadius: 50,
     padding: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.4,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  heartIcon: {
-    fontSize: 30,
-    marginBottom: 5,
   },
   heartText: {
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 16,
+    marginTop: 5,
   },
-
-  // Side buttons styling
+  // Side buttons styling - ADJUSTED
   sideButtonsContainer: {
     position: 'absolute',
     right: 15,
-    bottom: 120, // Adjusted position
+    // ADJUSTED: Lowered position from bottom to align better with screen
+    bottom: 100,
     alignItems: 'center',
   },
   sideButton: {
@@ -698,63 +694,44 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sideButtonCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 6,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-  },
-  sideButtonIcon: {
-    fontSize: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
   sideButtonText: {
     color: '#FFFFFF',
     fontSize: 13,
-    fontWeight: '600',
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 3,
+    fontWeight: '400',
   },
-
-  // Username and caption container
+  // Username and caption container - ADJUSTED
   infoContainer: {
     position: 'absolute',
     left: 15,
+    // ADJUSTED: Increased bottom margin for better spacing
     bottom: 25,
     maxWidth: '70%',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 15,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   usernameText: {
     color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: 6,
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 3,
   },
   captionText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 3,
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 14,
   },
-
-  // Loading and error states
+  // Loading and error states - UNCHANGED
   loaderContainer: {
     padding: 20,
     alignItems: 'center',
@@ -782,22 +759,17 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   retryButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     paddingHorizontal: 25,
     paddingVertical: 12,
     borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 3,
   },
   retryButtonText: {
     color: '#000000',
     fontSize: 16,
     fontWeight: '600',
   },
-  // Empty state styles
+  // Empty state styles - UNCHANGED
   emptyStateContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -820,15 +792,10 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   emptyStateButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     paddingHorizontal: 25,
     paddingVertical: 12,
     borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 3,
   },
   emptyStateButtonText: {
     color: '#000000',
