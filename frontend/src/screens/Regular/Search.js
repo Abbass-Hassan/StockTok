@@ -1,4 +1,3 @@
-// src/screens/Regular/Search.js
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -11,6 +10,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   StatusBar,
+  Platform,
 } from 'react-native';
 import {searchUsers, debugTokenStorage} from '../../api/userProfileApi';
 
@@ -107,91 +107,130 @@ const Search = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#00796B" />
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Search Creators</Text>
-      </View>
-
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Enter exact username..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-          autoCapitalize="none"
-        />
-        <TouchableOpacity
-          style={styles.searchButton}
-          onPress={handleSearch}
-          disabled={loading}>
-          <Text style={styles.searchButtonText}>Search</Text>
-        </TouchableOpacity>
-      </View>
-
-      {loading ? (
-        <ActivityIndicator style={styles.loader} size="large" color="#00796B" />
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : searchResults.length > 0 ? (
-        <FlatList
-          data={searchResults}
-          renderItem={renderUserItem}
-          keyExtractor={keyExtractor}
-          contentContainerStyle={styles.resultsList}
-        />
-      ) : searchQuery.length > 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No users found</Text>
-          <Text style={styles.emptySubtext}>
-            Check the username and try again
-          </Text>
+      <View style={styles.container}>
+        {/* Header - Consistent with other screens but adapted for Search */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.backText}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Search Creators</Text>
         </View>
-      ) : (
-        <View style={styles.instructionContainer}>
-          <Text style={styles.instructionText}>
-            Enter the exact username of a creator to find their profile
-          </Text>
-          <Text style={styles.instructionSubtext}>
-            For example: user_1746574414_4515
-          </Text>
+
+        <View style={styles.searchContainer}>
+          <View style={styles.searchInputContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Enter username to search..."
+              placeholderTextColor="#9E9E9E"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              onSubmitEditing={handleSearch}
+              returnKeyType="search"
+              autoCapitalize="none"
+            />
+          </View>
+          <TouchableOpacity
+            style={[
+              styles.searchButton,
+              !searchQuery.trim() && styles.searchButtonDisabled,
+            ]}
+            onPress={handleSearch}
+            disabled={loading || !searchQuery.trim()}>
+            {loading ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Text style={styles.searchButtonText}>Search</Text>
+            )}
+          </TouchableOpacity>
         </View>
-      )}
+
+        {loading ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#00796B" />
+            <Text style={styles.loaderText}>Searching...</Text>
+          </View>
+        ) : error ? (
+          <View style={styles.messageContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : searchResults.length > 0 ? (
+          <FlatList
+            data={searchResults}
+            renderItem={renderUserItem}
+            keyExtractor={keyExtractor}
+            contentContainerStyle={styles.resultsList}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : searchQuery.length > 0 ? (
+          <View style={styles.messageContainer}>
+            <Image
+              source={{uri: 'https://via.placeholder.com/120'}}
+              style={styles.emptyStateImage}
+            />
+            <Text style={styles.emptyText}>No users found</Text>
+            <Text style={styles.emptySubtext}>
+              Check the username and try again
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.messageContainer}>
+            <Image
+              source={{uri: 'https://via.placeholder.com/120'}}
+              style={styles.emptyStateImage}
+            />
+            <Text style={styles.instructionText}>
+              Find creators by username
+            </Text>
+            <Text style={styles.instructionSubtext}>
+              Enter the exact username of a creator to view their profile
+            </Text>
+          </View>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
   header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#00796B',
   },
   backButton: {
     marginRight: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  backButtonText: {
-    fontSize: 24,
-    color: '#FFFFFF',
+  backText: {
+    fontSize: 32,
+    color: '#00796B',
+    marginTop: -4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#00796B',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -199,104 +238,133 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+    alignItems: 'center',
   },
-  searchInput: {
+  searchInputContainer: {
     flex: 1,
-    height: 40,
+    height: 46,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 8,
-    paddingHorizontal: 12,
-    marginRight: 8,
+    marginRight: 10,
     backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+  },
+  searchInput: {
+    fontSize: 16,
+    color: '#212121',
   },
   searchButton: {
     backgroundColor: '#00796B',
     paddingHorizontal: 16,
+    paddingVertical: 0,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    height: 46,
+    minWidth: 80,
+  },
+  searchButtonDisabled: {
+    backgroundColor: '#B0BEC5',
   },
   searchButtonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loaderText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#00796B',
+  },
+  messageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyStateImage: {
+    width: 120,
+    height: 120,
+    marginBottom: 16,
+    borderRadius: 60,
   },
   resultsList: {
     padding: 16,
   },
   userItem: {
     flexDirection: 'row',
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    marginBottom: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   userAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#E0E0E0',
   },
   userInfo: {
-    marginLeft: 12,
+    marginLeft: 16,
     flex: 1,
   },
   username: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#00796B',
+    marginBottom: 4,
   },
   name: {
+    fontSize: 16,
+    color: '#212121',
+    marginBottom: 2,
+  },
+  email: {
     fontSize: 14,
     color: '#757575',
   },
-  email: {
-    fontSize: 12,
-    color: '#9E9E9E',
-    marginTop: 2,
-  },
-  loader: {
-    marginTop: 20,
-  },
   errorText: {
-    margin: 20,
+    fontSize: 16,
     color: '#D32F2F',
     textAlign: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    marginBottom: 8,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#757575',
+    color: '#424242',
     marginBottom: 8,
   },
   emptySubtext: {
-    fontSize: 14,
-    color: '#9E9E9E',
+    fontSize: 16,
+    color: '#757575',
     textAlign: 'center',
   },
-  instructionContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
   instructionText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#757575',
+    color: '#424242',
     textAlign: 'center',
     marginBottom: 8,
   },
   instructionSubtext: {
-    fontSize: 14,
-    color: '#9E9E9E',
+    fontSize: 16,
+    color: '#757575',
     textAlign: 'center',
+    maxWidth: 280,
   },
 });
 

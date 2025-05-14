@@ -180,7 +180,7 @@ const Dashboard = ({navigation}) => {
             </View>
           </View>
 
-          {/* Quick Stats Card */}
+          {/* Performance Metrics Card (without Total Views) */}
           <View style={styles.statsCard}>
             <Text style={styles.sectionTitle}>Performance Metrics</Text>
             <View style={styles.statsGrid}>
@@ -189,12 +189,6 @@ const Dashboard = ({navigation}) => {
                   {formatNumber(stats?.total_videos || 0)}
                 </Text>
                 <Text style={styles.statLabel}>Videos</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>
-                  {formatNumber(stats?.total_views || 0)}
-                </Text>
-                <Text style={styles.statLabel}>Total Views</Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statValue}>
@@ -207,25 +201,6 @@ const Dashboard = ({navigation}) => {
                   {formatNumber(stats?.total_investments || 0)}
                 </Text>
                 <Text style={styles.statLabel}>Investments</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Engagement Stats Card */}
-          <View style={styles.engagementCard}>
-            <Text style={styles.sectionTitle}>Engagement</Text>
-            <View style={styles.engagementRow}>
-              <View style={styles.engagementItem}>
-                <Text style={styles.engagementLabel}>Avg Views per Video</Text>
-                <Text style={styles.engagementValue}>
-                  {formatNumber(stats?.average_views_per_video || 0)}
-                </Text>
-              </View>
-              <View style={styles.engagementItem}>
-                <Text style={styles.engagementLabel}>Engagement Rate</Text>
-                <Text style={styles.engagementValue}>
-                  {stats?.engagement_rate || 0}%
-                </Text>
               </View>
             </View>
           </View>
@@ -279,14 +254,7 @@ const Dashboard = ({navigation}) => {
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() => navigation.navigate('UploadVideo')}>
-                <Text style={styles.actionIcon}>📹</Text>
                 <Text style={styles.actionText}>Upload Video</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => navigation.navigate('MyVideos')}>
-                <Text style={styles.actionIcon}>🎬</Text>
-                <Text style={styles.actionText}>My Videos</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -360,8 +328,8 @@ const styles = StyleSheet.create({
     marginTop: -4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '600',
     color: '#00796B',
   },
   content: {
@@ -416,11 +384,9 @@ const styles = StyleSheet.create({
   },
   statsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
   },
   statItem: {
-    width: '48%',
     alignItems: 'center',
     marginBottom: 16,
   },
@@ -433,36 +399,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
     marginTop: 4,
-  },
-  engagementCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  engagementRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  engagementItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  engagementLabel: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  engagementValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#00796B',
   },
   chartCard: {
     backgroundColor: '#FFFFFF',
@@ -519,23 +455,21 @@ const styles = StyleSheet.create({
   },
   actionsGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   actionButton: {
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#E8F5F3',
-    borderRadius: 12,
-    width: '40%',
-  },
-  actionIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    backgroundColor: '#00796B',
+    borderRadius: 10,
+    width: '100%',
+    maxWidth: 250,
   },
   actionText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#00796B',
+    color: '#FFFFFF',
     textAlign: 'center',
   },
 });

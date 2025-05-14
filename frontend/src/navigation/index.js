@@ -32,6 +32,7 @@ import TransactionHistory from '../screens/Wallet/TransactionHistory';
 import PortfolioScreen from '../screens/Investment/PortfolioScreen';
 import InvestmentDetailsScreen from '../screens/Investment/InvestmentDetailsScreen';
 import AllInvestmentsScreen from '../screens/Investment/AllInvestmentsScreen';
+import AIRecommendations from '../screens/Regular/AIRecommendations'; // Added AI Recommendations import
 
 import Search from '../screens/Regular/Search';
 import UserProfile from '../screens/Regular/UserProfile';
@@ -172,6 +173,14 @@ const Navigation = () => {
         <Stack.Screen
           name="AllInvestments"
           component={AllInvestmentsScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        {/* AI Recommendations Screen - Added */}
+        <Stack.Screen
+          name="AIRecommendations"
+          component={AIRecommendations}
           options={{
             headerShown: false,
           }}

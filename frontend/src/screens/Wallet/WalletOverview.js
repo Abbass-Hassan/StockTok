@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {getWalletDetails} from '../../api/walletApi';
 
 const WalletOverview = ({navigation}) => {
@@ -19,9 +20,15 @@ const WalletOverview = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    loadWalletData();
-  }, []);
+  // Using useFocusEffect instead of useEffect to reload data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadWalletData();
+      return () => {
+        // Optional cleanup if needed
+      };
+    }, []),
+  );
 
   const loadWalletData = async () => {
     try {

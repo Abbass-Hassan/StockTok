@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,19 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
+  StatusBar,
+  ScrollView,
+  Platform,
 } from 'react-native';
 
 const HomeScreen = ({navigation}) => {
+  useEffect(() => {
+    // Hide the navigation header
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
+
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -37,9 +47,18 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome to StockTok</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+      {/* Standard header with StockTok title */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>StockTok</Text>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}>
+        <Text style={styles.welcomeText}>Welcome to StockTok</Text>
         <Text style={styles.subtitle}>You are logged in successfully!</Text>
 
         <View style={styles.menuContainer}>
@@ -77,57 +96,83 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#FFFFFF',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 16 : 12,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#00796B',
   },
   content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
+    paddingBottom: 40,
+    alignItems: 'center',
   },
-  title: {
+  welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#4B7BEC',
+    color: '#00796B',
     marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: '#333',
     marginBottom: 40,
+    textAlign: 'center',
   },
   menuContainer: {
     width: '100%',
+    maxWidth: 350,
     marginTop: 20,
   },
   menuButton: {
-    backgroundColor: '#4B7BEC',
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: '#00796B',
+    padding: 16,
+    borderRadius: 10,
     marginBottom: 15,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   menuButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   logoutButton: {
     backgroundColor: '#FFFFFF',
-    padding: 15,
-    borderRadius: 8,
+    padding: 16,
+    borderRadius: 10,
     marginBottom: 15,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#FF3B30',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   logoutButtonText: {
     color: '#FF3B30',

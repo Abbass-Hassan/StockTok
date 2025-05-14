@@ -18,7 +18,7 @@ import axios from 'axios';
 import {getToken} from '../../utils/tokenStorage';
 import InvestmentModal from '../../components/modals/InvestmentModal';
 
-const API_URL = 'http://13.37.224.245:8000/api';
+const API_URL = 'http://35.181.171.137:8000/api';
 const {height, width} = Dimensions.get('window');
 
 // Calculate tab bar height
