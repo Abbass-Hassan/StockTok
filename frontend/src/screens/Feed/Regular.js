@@ -39,7 +39,6 @@ const Regular = ({navigation}) => {
           style: 'destructive',
           onPress: () => {
             try {
-              // Simply navigate to login screen
               navigation.reset({
                 index: 0,
                 routes: [{name: 'Login'}],
@@ -75,7 +74,6 @@ const Regular = ({navigation}) => {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Discover</Text>
           <View style={styles.menuContainer}>
-            {/* Video Feed Button */}
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('VideoFeed')}>
@@ -88,7 +86,6 @@ const Regular = ({navigation}) => {
               <Text style={styles.menuButtonText}>Discover Videos</Text>
             </TouchableOpacity>
 
-            {/* Search Button */}
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => navigation.navigate('Search')}>
@@ -106,7 +103,6 @@ const Regular = ({navigation}) => {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Investments</Text>
           <View style={styles.menuContainer}>
-            {/* Portfolio Button */}
             <TouchableOpacity
               style={[styles.menuButton, {backgroundColor: '#7A67EE'}]}
               onPress={() => navigation.navigate('Portfolio')}>
@@ -119,7 +115,6 @@ const Regular = ({navigation}) => {
               <Text style={styles.menuButtonText}>Investment Portfolio</Text>
             </TouchableOpacity>
 
-            {/* All Investments Button */}
             <TouchableOpacity
               style={[styles.menuButton, {backgroundColor: '#7A67EE'}]}
               onPress={() => navigation.navigate('AllInvestments')}>
@@ -132,7 +127,6 @@ const Regular = ({navigation}) => {
               <Text style={styles.menuButtonText}>My Investments</Text>
             </TouchableOpacity>
 
-            {/* AI Recommendations Button */}
             <TouchableOpacity
               style={[styles.menuButton, {backgroundColor: '#7A67EE'}]}
               onPress={() => navigation.navigate('AIRecommendations')}>
@@ -265,6 +259,7 @@ const styles = StyleSheet.create({
   },
   buttonIcon: {
     marginRight: 10,
+    fontFamily: 'Ionicons',
   },
   logoutButton: {
     backgroundColor: '#FFFFFF',
