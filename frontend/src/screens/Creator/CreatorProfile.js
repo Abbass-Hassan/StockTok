@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   ScrollView,
   SafeAreaView,
   ActivityIndicator,
@@ -16,10 +15,22 @@ import {
 } from 'react-native';
 import {getCreatorProfile, getCreatorStats} from '../../api/creatorProfileApi';
 import {getMyVideos} from '../../api/videoApi';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const {width} = Dimensions.get('window');
 const numColumns = 3;
 const itemWidth = width / numColumns; // 3 columns with no gap
+
+// UI Colors
+const COLORS = {
+  primary: '#00796B',
+  lightGray: '#EEEEEE',
+  gray: '#888888',
+  darkGray: '#444444',
+  white: '#FFFFFF',
+  black: '#000000',
+  green: '#4CAF50',
+};
 
 const CreatorProfile = ({navigation}) => {
   const [profile, setProfile] = useState(null);
@@ -52,6 +63,7 @@ const CreatorProfile = ({navigation}) => {
       console.log('Video response:', videosRes.data);
       const videoData =
         videosRes.data.videos?.data || videosRes.data.videos || [];
+
       console.log('Video data loaded:', videoData.length, 'items');
       setVideos(videoData);
     } catch (err) {
@@ -78,26 +90,21 @@ const CreatorProfile = ({navigation}) => {
     return num.toString();
   };
 
-  const renderGridItem = ({item}) => (
-    <TouchableOpacity
-      style={styles.gridItem}
-      onPress={() => navigation.navigate('VideoPlayer', {video: item})}>
-      <View style={styles.thumbnail}>
-        {item.thumbnail_url ? (
-          <Image
-            source={{uri: item.thumbnail_url}}
-            style={styles.thumbnailImage}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={styles.thumbnailPlaceholder} />
-        )}
-      </View>
-    </TouchableOpacity>
-  );
+  const renderGridItem = ({item, index}) => {
+    return (
+      <TouchableOpacity
+        style={styles.gridItem}
+        onPress={() => navigation.navigate('VideoPlayer', {video: item})}>
+        <View style={styles.thumbnail}>
+          <Icon name="videocam" size={32} color="#FFFFFF" />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderEmptyContent = () => (
     <View style={styles.emptyContainer}>
+      <Icon name="videocam-outline" size={48} color="#AAAAAA" />
       <Text style={styles.emptyText}>No videos uploaded yet</Text>
       <TouchableOpacity
         style={styles.uploadButton}
@@ -110,7 +117,7 @@ const CreatorProfile = ({navigation}) => {
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#00796B" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
         <Text style={styles.loadingText}>Loading profile...</Text>
       </SafeAreaView>
     );
@@ -128,20 +135,17 @@ const CreatorProfile = ({navigation}) => {
   }
 
   return (
-    // Force white background with inline style as well
-    <SafeAreaView style={[styles.safeArea, {backgroundColor: '#FFFFFF'}]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
 
-      {/* Add another white background layer */}
-      <View style={[styles.container, {backgroundColor: '#FFFFFF'}]}>
-        {/* Force white background for header with important styling */}
-        <View style={[styles.header, {backgroundColor: '#FFFFFF'}]}>
+      <View style={styles.container}>
+        <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}>
-            <Text style={[styles.backText, {color: '#00796B'}]}>‹</Text>
+            <Text style={styles.backText}>‹</Text>
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, {color: '#00796B'}]}>Profile</Text>
+          <Text style={styles.headerTitle}>Profile</Text>
         </View>
 
         <ScrollView
@@ -150,27 +154,20 @@ const CreatorProfile = ({navigation}) => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              colors={['#00796B']}
-              tintColor="#00796B"
+              colors={[COLORS.primary]}
+              tintColor={COLORS.primary}
             />
           }>
           {/* Profile Info */}
           <View style={styles.profileContainer}>
             {/* Profile Image */}
             <View style={styles.profileImageContainer}>
-              {profile?.profile_photo_url ? (
-                <Image
-                  source={{uri: profile.profile_photo_url}}
-                  style={styles.profileImage}
-                />
-              ) : (
-                <View
-                  style={[styles.profileImage, styles.profileImagePlaceholder]}>
-                  <Text style={styles.profileInitials}>
-                    {profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}
-                  </Text>
-                </View>
-              )}
+              <View
+                style={[styles.profileImage, styles.profileImagePlaceholder]}>
+                <Text style={styles.profileInitials}>
+                  {profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}
+                </Text>
+              </View>
             </View>
 
             {/* Username */}
@@ -216,16 +213,19 @@ const CreatorProfile = ({navigation}) => {
           {/* Video Grid */}
           <View style={styles.videoGridContainer}>
             {videos && videos.length > 0 ? (
-              <FlatList
-                data={videos}
-                renderItem={renderGridItem}
-                keyExtractor={item =>
-                  item.id?.toString() || Math.random().toString()
-                }
-                numColumns={numColumns}
-                scrollEnabled={false}
-                contentContainerStyle={styles.gridContainer}
-              />
+              <>
+                <Text style={styles.sectionTitle}>Videos</Text>
+                <FlatList
+                  data={videos}
+                  renderItem={renderGridItem}
+                  keyExtractor={item =>
+                    item.id?.toString() || Math.random().toString()
+                  }
+                  numColumns={numColumns}
+                  scrollEnabled={false}
+                  contentContainerStyle={styles.gridContainer}
+                />
+              </>
             ) : (
               renderEmptyContent()
             )}
@@ -386,8 +386,17 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginBottom: 8,
   },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+    marginLeft: 16,
+    marginBottom: 10,
+    marginTop: 10,
+  },
   videoGridContainer: {
     flex: 1,
+    marginBottom: 20,
   },
   gridContainer: {
     flex: 1,
@@ -395,16 +404,13 @@ const styles = StyleSheet.create({
   gridItem: {
     width: itemWidth,
     height: itemWidth,
+    padding: 2,
   },
   thumbnail: {
     flex: 1,
-  },
-  thumbnailImage: {
-    width: '100%',
-    height: '100%',
-  },
-  thumbnailPlaceholder: {
-    flex: 1,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#E0E0E0',
   },
   emptyContainer: {
@@ -414,7 +420,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#666666',
-    marginBottom: 16,
+    marginVertical: 16,
   },
   uploadButton: {
     backgroundColor: '#00796B',
