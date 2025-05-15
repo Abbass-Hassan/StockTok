@@ -6,13 +6,13 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
-  Image,
   ActivityIndicator,
   SafeAreaView,
   StatusBar,
   Platform,
 } from 'react-native';
 import {searchUsers, debugTokenStorage} from '../../api/userProfileApi';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Search = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,77 +20,64 @@ const Search = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Check token on component mount
   useEffect(() => {
     debugTokenStorage().then(hasToken => {
-      console.log('Search screen - has valid token:', hasToken);
+      if (__DEV__) console.log('Search screen - has valid token:', hasToken);
     });
   }, []);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
-    console.log('Search button pressed with query:', searchQuery);
     setError(null);
-
     try {
       setLoading(true);
+      if (__DEV__)
+        console.log('Calling searchUsers API function with:', searchQuery);
 
-      console.log('Calling searchUsers API function with:', searchQuery);
       const response = await searchUsers(searchQuery);
-      console.log(
-        'Search complete. Users found:',
-        response?.data?.users?.length || 0,
-      );
 
-      // Check if we have users
+      if (__DEV__) {
+        console.log(
+          'Search complete. Users found:',
+          response?.data?.users?.length || 0,
+        );
+      }
+
       if (response?.data?.users && Array.isArray(response.data.users)) {
         if (response.data.users.length > 0) {
-          console.log('Setting search results with user data');
           setSearchResults(response.data.users);
         } else {
-          console.log('No users found in response');
           setSearchResults([]);
           setError('No users found with that username.');
         }
       } else {
-        console.log(
-          'Invalid response format:',
-          JSON.stringify(response).substring(0, 200),
-        );
         setSearchResults([]);
         setError('Invalid response from server. Please try again.');
       }
     } catch (err) {
-      console.error('Uncaught search error in component:', err.message);
-      setError('Search failed: ' + err.message);
+      if (__DEV__) console.error('Search error:', err.message);
+      setSearchResults([]);
+      setError('No users found with that username.');
     } finally {
       setLoading(false);
     }
   };
 
   const renderUserItem = ({item}) => {
-    console.log('Rendering item:', item?.username);
-
-    // Safety check
-    if (!item) {
-      console.warn('Trying to render null item');
-      return null;
-    }
+    if (!item) return null;
 
     return (
       <TouchableOpacity
         style={styles.userItem}
-        onPress={() => {
-          console.log('Navigating to profile for:', item.username);
-          navigation.navigate('UserProfile', {username: item.username});
-        }}>
-        <Image
-          source={{
-            uri: item.profile_photo_url || 'https://via.placeholder.com/50',
-          }}
-          style={styles.userAvatar}
-        />
+        onPress={() =>
+          navigation.navigate('UserProfile', {username: item.username})
+        }>
+        <View style={styles.userAvatarPlaceholder}>
+          <Text style={styles.userInitials}>
+            {item.username ? item.username.charAt(0).toUpperCase() : '?'}
+          </Text>
+        </View>
         <View style={styles.userInfo}>
           <Text style={styles.username}>@{item.username || 'Unknown'}</Text>
           <Text style={styles.name}>{item.name || 'No name provided'}</Text>
@@ -100,7 +87,6 @@ const Search = ({navigation}) => {
     );
   };
 
-  // Safe keyExtractor that won't fail if id is missing
   const keyExtractor = (item, index) => {
     if (!item) return `missing-${index}`;
     return item.id ? `user-${item.id}` : `user-index-${index}`;
@@ -109,9 +95,7 @@ const Search = ({navigation}) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-
       <View style={styles.container}>
-        {/* Header - Consistent with other screens but adapted for Search */}
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
@@ -168,10 +152,9 @@ const Search = ({navigation}) => {
           />
         ) : searchQuery.length > 0 ? (
           <View style={styles.messageContainer}>
-            <Image
-              source={{uri: 'https://via.placeholder.com/120'}}
-              style={styles.emptyStateImage}
-            />
+            <View style={styles.emptyStateIcon}>
+              <Icon name="search" size={50} color="#FFFFFF" />
+            </View>
             <Text style={styles.emptyText}>No users found</Text>
             <Text style={styles.emptySubtext}>
               Check the username and try again
@@ -179,10 +162,9 @@ const Search = ({navigation}) => {
           </View>
         ) : (
           <View style={styles.messageContainer}>
-            <Image
-              source={{uri: 'https://via.placeholder.com/120'}}
-              style={styles.emptyStateImage}
-            />
+            <View style={styles.emptyStateIcon}>
+              <Icon name="people" size={50} color="#FFFFFF" />
+            </View>
             <Text style={styles.instructionText}>
               Find creators by username
             </Text>
@@ -197,14 +179,8 @@ const Search = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
+  safeArea: {flex: 1, backgroundColor: '#FFFFFF'},
+  container: {flex: 1, backgroundColor: '#F5F5F5'},
   header: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
@@ -222,16 +198,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backText: {
-    fontSize: 32,
-    color: '#00796B',
-    marginTop: -4,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#00796B',
-  },
+  backText: {fontSize: 32, color: '#00796B', marginTop: -4},
+  headerTitle: {fontSize: 20, fontWeight: '600', color: '#00796B'},
   searchContainer: {
     flexDirection: 'row',
     padding: 16,
@@ -251,10 +219,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     justifyContent: 'center',
   },
-  searchInput: {
-    fontSize: 16,
-    color: '#212121',
-  },
+  searchInput: {fontSize: 16, color: '#212121'},
   searchButton: {
     backgroundColor: '#00796B',
     paddingHorizontal: 16,
@@ -265,39 +230,26 @@ const styles = StyleSheet.create({
     height: 46,
     minWidth: 80,
   },
-  searchButtonDisabled: {
-    backgroundColor: '#B0BEC5',
-  },
-  searchButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loaderText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#00796B',
-  },
+  searchButtonDisabled: {backgroundColor: '#B0BEC5'},
+  searchButtonText: {color: '#FFFFFF', fontWeight: '600', fontSize: 16},
+  loaderContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  loaderText: {marginTop: 12, fontSize: 16, color: '#00796B'},
   messageContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  emptyStateImage: {
+  emptyStateIcon: {
     width: 120,
     height: 120,
-    marginBottom: 16,
     borderRadius: 60,
+    backgroundColor: '#E1E4E8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  resultsList: {
-    padding: 16,
-  },
+  resultsList: {padding: 16},
   userItem: {
     flexDirection: 'row',
     padding: 16,
@@ -311,31 +263,29 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  userAvatar: {
+  userAvatarPlaceholder: {
     width: 60,
     height: 60,
     borderRadius: 30,
     backgroundColor: '#E0E0E0',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  userInfo: {
-    marginLeft: 16,
-    flex: 1,
+  userInitials: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
+  userInfo: {marginLeft: 16, flex: 1},
   username: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#00796B',
     marginBottom: 4,
   },
-  name: {
-    fontSize: 16,
-    color: '#212121',
-    marginBottom: 2,
-  },
-  email: {
-    fontSize: 14,
-    color: '#757575',
-  },
+  name: {fontSize: 16, color: '#212121', marginBottom: 2},
+  email: {fontSize: 14, color: '#757575'},
   errorText: {
     fontSize: 16,
     color: '#D32F2F',
@@ -348,11 +298,7 @@ const styles = StyleSheet.create({
     color: '#424242',
     marginBottom: 8,
   },
-  emptySubtext: {
-    fontSize: 16,
-    color: '#757575',
-    textAlign: 'center',
-  },
+  emptySubtext: {fontSize: 16, color: '#757575', textAlign: 'center'},
   instructionText: {
     fontSize: 20,
     fontWeight: 'bold',

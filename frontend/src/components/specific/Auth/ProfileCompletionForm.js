@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import TextInput from '../../../components/common/TextInput';
 import Button from '../../../components/common/Button';
-import ImagePicker from '../../../utils/ImagePicker';
+// Removed ImagePicker import since we're replacing it with a title
 
 const ProfileCompletionForm = ({
   username,
@@ -23,8 +23,7 @@ const ProfileCompletionForm = ({
   setGender,
   userType,
   setUserType,
-  profilePhoto,
-  handlePhotoSelect,
+  // Removed profilePhoto and handlePhotoSelect props since we're no longer using them
   handleSubmit,
   loading,
   usernameError,
@@ -41,15 +40,9 @@ const ProfileCompletionForm = ({
       style={styles.scrollContainer}
       showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
-        {/* Profile Photo */}
-        <View style={styles.photoContainer}>
-          <ImagePicker
-            image={profilePhoto}
-            onPress={handlePhotoSelect}
-            title="Upload Profile Photo"
-            size={120}
-            borderColor="#00796B"
-          />
+        {/* Title Heading - Replacing Profile Photo */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>Complete Your Info</Text>
         </View>
 
         {/* Username */}
@@ -180,9 +173,17 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 20,
   },
-  photoContainer: {
+  // New styles for the title
+  titleContainer: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 24, // Same margin as the previous photoContainer
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#00796B', // Using your app's primary color
+    textAlign: 'center',
+    marginVertical: 10, // Add some vertical spacing
   },
   fieldSection: {
     marginBottom: 16,

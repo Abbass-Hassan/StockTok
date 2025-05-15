@@ -107,11 +107,11 @@ const UploadVideo = ({navigation}) => {
             {
               text: 'OK',
               onPress: () => {
-                // Reset form and navigate to My Videos
+                // Reset form and navigate to CreatorProfile instead of MyVideos
                 setVideoFile(null);
                 setCaption('');
                 setInitialInvestment('0');
-                navigation.navigate('MyVideos');
+                navigation.navigate('CreatorProfile');
               },
             },
           ],
@@ -124,11 +124,11 @@ const UploadVideo = ({navigation}) => {
           {
             text: 'OK',
             onPress: () => {
-              // Reset form and navigate to My Videos
+              // Reset form and navigate to CreatorProfile instead of MyVideos
               setVideoFile(null);
               setCaption('');
               setInitialInvestment('0');
-              navigation.navigate('MyVideos');
+              navigation.navigate('CreatorProfile');
             },
           },
         ]);

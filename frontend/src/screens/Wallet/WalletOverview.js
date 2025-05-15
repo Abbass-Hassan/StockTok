@@ -12,6 +12,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {getWalletDetails} from '../../api/walletApi';
 
 const WalletOverview = ({navigation}) => {
@@ -20,13 +21,9 @@ const WalletOverview = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  // Using useFocusEffect instead of useEffect to reload data when screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       loadWalletData();
-      return () => {
-        // Optional cleanup if needed
-      };
     }, []),
   );
 
@@ -83,7 +80,12 @@ const WalletOverview = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}>
-            <Text style={styles.backText}>‹</Text>
+            <Icon
+              name="chevron-back"
+              size={32}
+              color="#00796B"
+              style={styles.backText}
+            />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>My Wallet</Text>
         </View>
@@ -112,14 +114,24 @@ const WalletOverview = ({navigation}) => {
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => navigation.navigate('DepositFunds')}>
-              <Text style={styles.actionIcon}>➕</Text>
+              <Icon
+                name="add-circle-outline"
+                size={24}
+                color="#00796B"
+                style={styles.actionIcon}
+              />
               <Text style={styles.actionText}>Deposit</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => navigation.navigate('WithdrawFunds')}>
-              <Text style={styles.actionIcon}>💸</Text>
+              <Icon
+                name="cash-outline"
+                size={24}
+                color="#00796B"
+                style={styles.actionIcon}
+              />
               <Text style={styles.actionText}>Withdraw</Text>
             </TouchableOpacity>
           </View>
@@ -128,12 +140,22 @@ const WalletOverview = ({navigation}) => {
           <TouchableOpacity
             style={styles.historyButton}
             onPress={() => navigation.navigate('TransactionHistory')}>
-            <Text style={styles.historyIcon}>📜</Text>
+            <Icon
+              name="receipt-outline"
+              size={24}
+              color="#00796B"
+              style={styles.historyIcon}
+            />
             <View style={styles.historyTextContainer}>
               <Text style={styles.historyText}>Transaction History</Text>
               <Text style={styles.historySubtext}>View all transactions</Text>
             </View>
-            <Text style={styles.historyArrow}>›</Text>
+            <Icon
+              name="chevron-forward"
+              size={24}
+              color="#666666"
+              style={styles.historyArrow}
+            />
           </TouchableOpacity>
 
           {/* Wallet Info */}
@@ -219,8 +241,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backText: {
-    fontSize: 32,
-    color: '#00796B',
     marginTop: -4,
   },
   headerTitle: {
@@ -273,7 +293,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   actionIcon: {
-    fontSize: 24,
     marginBottom: 4,
   },
   actionText: {
@@ -295,7 +314,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   historyIcon: {
-    fontSize: 24,
     marginRight: 12,
   },
   historyTextContainer: {
@@ -312,8 +330,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   historyArrow: {
-    fontSize: 24,
-    color: '#666666',
+    marginLeft: 12,
   },
   infoCard: {
     backgroundColor: '#FFFFFF',

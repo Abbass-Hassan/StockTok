@@ -58,12 +58,6 @@ const Regular = ({navigation}) => {
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <View style={styles.header}>
-        <Ionicons
-          name="logo-bitcoin"
-          size={24}
-          color="#00796B"
-          style={{marginRight: 8}}
-        />
         <Text style={styles.headerTitle}>StockTok</Text>
       </View>
 

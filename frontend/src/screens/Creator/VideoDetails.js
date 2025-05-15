@@ -10,6 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import {getVideoDetails, getVideoEarnings} from '../../api/videoApi';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const VideoDetails = ({route, navigation}) => {
   const {video} = route.params;
@@ -31,6 +32,12 @@ const VideoDetails = ({route, navigation}) => {
 
       setVideoStats(statsResponse.data);
       setEarnings(earningsResponse.data);
+
+      // Debug logging to see the structure of the earnings data
+      console.log(
+        'Earnings data:',
+        JSON.stringify(earningsResponse.data?.investments?.data),
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -77,94 +84,97 @@ const VideoDetails = ({route, navigation}) => {
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Video Info */}
-          <View style={styles.videoInfoCard}>
+          <View style={styles.card}>
             <Text style={styles.videoTitle}>{video.caption}</Text>
             <Text style={styles.uploadDate}>
               Uploaded on {new Date(video.created_at).toLocaleDateString()}
             </Text>
           </View>
 
-          {/* Performance Metrics */}
-          <View style={styles.metricsCard}>
-            <Text style={styles.sectionTitle}>Performance Metrics</Text>
-            <View style={styles.metricsGrid}>
-              <View style={styles.metricItem}>
-                <Text style={styles.metricValue}>
-                  {videoStats?.video?.view_count || 0}
-                </Text>
-                <Text style={styles.metricLabel}>Views</Text>
-              </View>
-              <View style={styles.metricItem}>
-                <Text style={styles.metricValue}>
-                  {videoStats?.video?.like_investment_count || 0}
-                </Text>
-                <Text style={styles.metricLabel}>Investments</Text>
-              </View>
+          {/* Performance Metrics - Only showing Investments */}
+          <View style={styles.card}>
+            <View style={styles.sectionTitleRow}>
+              <Icon name="stats-chart" size={20} color="#00796B" />
+              <Text style={styles.sectionTitle}>Performance Metrics</Text>
+            </View>
+
+            <View style={styles.singleMetricContainer}>
+              <Text style={styles.metricValue}>
+                {videoStats?.video?.like_investment_count || 0}
+              </Text>
+              <Text style={styles.metricLabel}>Investments</Text>
             </View>
           </View>
 
-          {/* Earnings Info */}
-          <View style={styles.earningsCard}>
-            <Text style={styles.sectionTitle}>Earnings</Text>
-            <View style={styles.earningsRow}>
-              <Text style={styles.earningsLabel}>Total Earnings:</Text>
-              <Text style={styles.earningsValue}>
+          {/* Earnings Info - Only Total Earnings */}
+          <View style={styles.card}>
+            <View style={styles.sectionTitleRow}>
+              <Icon name="cash" size={20} color="#00796B" />
+              <Text style={styles.sectionTitle}>Earnings</Text>
+            </View>
+
+            <View style={styles.dataRow}>
+              <Text style={styles.rowLabel}>Total Earnings:</Text>
+              <Text style={styles.rowValue}>
                 ${earnings?.earnings?.total_earnings?.toFixed(2) || '0.00'}
               </Text>
             </View>
-            <View style={styles.earningsRow}>
-              <Text style={styles.earningsLabel}>Creator Share:</Text>
-              <Text style={styles.earningsValue}>
-                ${earnings?.earnings?.creator_earnings?.toFixed(2) || '0.00'}
-              </Text>
-            </View>
           </View>
 
-          {/* Profitability Metrics */}
-          <View style={styles.profitabilityCard}>
-            <Text style={styles.sectionTitle}>Profitability</Text>
-            <View style={styles.profitRow}>
-              <Text style={styles.profitLabel}>Initial Investment:</Text>
-              <Text style={styles.profitValue}>
+          {/* Profitability Metrics - ROI removed */}
+          <View style={styles.card}>
+            <View style={styles.sectionTitleRow}>
+              <Icon name="trending-up" size={20} color="#00796B" />
+              <Text style={styles.sectionTitle}>Profitability</Text>
+            </View>
+
+            <View style={styles.dataRow}>
+              <Text style={styles.rowLabel}>Initial Investment:</Text>
+              <Text style={styles.rowValue}>
                 ${videoStats?.video?.initial_investment?.toFixed(2) || '0.00'}
               </Text>
             </View>
-            <View style={styles.profitRow}>
-              <Text style={styles.profitLabel}>Current Value:</Text>
-              <Text style={styles.profitValue}>
+
+            <View style={styles.dataRow}>
+              <Text style={styles.rowLabel}>Current Value:</Text>
+              <Text style={styles.rowValue}>
                 ${videoStats?.video?.current_value?.toFixed(2) || '0.00'}
               </Text>
             </View>
-            <View style={styles.profitRow}>
-              <Text style={styles.profitLabel}>ROI:</Text>
-              <Text
-                style={[
-                  styles.profitValue,
-                  videoStats?.profitability?.roi > 0
-                    ? styles.positiveROI
-                    : styles.negativeROI,
-                ]}>
-                {videoStats?.profitability?.roi?.toFixed(2) || '0.00'}%
-              </Text>
-            </View>
+
+            {/* ROI row removed as requested */}
           </View>
 
           {/* Top Investors */}
           {earnings?.investments?.data?.length > 0 && (
-            <View style={styles.investorsCard}>
-              <Text style={styles.sectionTitle}>Top Investors</Text>
+            <View style={styles.card}>
+              <View style={styles.sectionTitleRow}>
+                <Icon name="trophy" size={20} color="#00796B" />
+                <Text style={styles.sectionTitle}>Top Investors</Text>
+              </View>
+
               {earnings.investments.data
                 .slice(0, 5)
-                .map((investment, index) => (
-                  <View key={index} style={styles.investorRow}>
-                    <Text style={styles.investorName}>
-                      {investment.investor?.name || 'Anonymous'}
-                    </Text>
-                    <Text style={styles.investorAmount}>
-                      ${investment.amount.toFixed(2)}
-                    </Text>
-                  </View>
-                ))}
+                .map((investment, index) => {
+                  // Check all possible places where username might be stored
+                  const username =
+                    investment.investor?.username ||
+                    investment.investor?.name ||
+                    (investment.user?.username
+                      ? `@${investment.user.username}`
+                      : null) ||
+                    (investment.username ? `@${investment.username}` : null) ||
+                    'Anonymous';
+
+                  return (
+                    <View key={index} style={styles.dataRow}>
+                      <Text style={styles.rowLabel}>{username}</Text>
+                      <Text style={styles.rowValue}>
+                        ${investment.amount.toFixed(2)}
+                      </Text>
+                    </View>
+                  );
+                })}
             </View>
           )}
         </ScrollView>
@@ -245,7 +255,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  videoInfoCard: {
+  card: {
     backgroundColor: '#FFFFFF',
     padding: 16,
     borderRadius: 12,
@@ -253,8 +263,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 3,
+    elevation: 2,
   },
   videoTitle: {
     fontSize: 18,
@@ -266,29 +276,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
   },
-  metricsCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#00796B',
-    marginBottom: 16,
+    marginLeft: 8,
   },
-  metricsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  metricItem: {
+  singleMetricContainer: {
     alignItems: 'center',
+    padding: 10,
   },
   metricValue: {
     fontSize: 24,
@@ -300,88 +301,29 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 4,
   },
-  earningsCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  earningsRow: {
+  dataRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
   },
-  earningsLabel: {
+  rowLabel: {
     fontSize: 16,
     color: '#666666',
   },
-  earningsValue: {
+  rowValue: {
     fontSize: 16,
     fontWeight: '600',
     color: '#00796B',
   },
-  profitabilityCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  profitRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  profitLabel: {
-    fontSize: 16,
-    color: '#666666',
-  },
-  profitValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#212121',
-  },
+  // Kept positiveROI and negativeROI styles in case you need them elsewhere
   positiveROI: {
     color: '#4CAF50',
   },
   negativeROI: {
     color: '#F44336',
-  },
-  investorsCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  investorRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  investorName: {
-    fontSize: 16,
-    color: '#212121',
-  },
-  investorAmount: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#00796B',
   },
 });
 

@@ -8,12 +8,12 @@ import {
   View,
 } from 'react-native';
 import * as authApi from '../../api/auth';
-import {launchImageLibrary} from 'react-native-image-picker';
 import {
   getToken,
   clearToken,
   clearUserData,
   storeUserData,
+  getUserData,
 } from '../../utils/tokenStorage';
 
 // Import components
@@ -27,13 +27,14 @@ const ProfileCompletion = ({navigation, route}) => {
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState('Male');
   const [userType, setUserType] = useState('Creator');
-  const [profilePhoto, setProfilePhoto] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Form validation errors
   const [usernameError, setUsernameError] = useState('');
   const [fullNameError, setFullNameError] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
+
+  // API base URL - Removed
 
   // Set navigation options to hide header
   useEffect(() => {
@@ -73,31 +74,7 @@ const ProfileCompletion = ({navigation, route}) => {
     return () => backHandler.remove();
   }, []);
 
-  // Handle photo selection
-  const handlePhotoSelect = async () => {
-    const options = {
-      mediaType: 'photo',
-      quality: 0.8,
-      maxWidth: 500,
-      maxHeight: 500,
-    };
-
-    try {
-      const result = await launchImageLibrary(options);
-
-      if (result.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (result.errorCode) {
-        console.log('ImagePicker Error: ', result.errorMessage);
-        Alert.alert('Error', 'There was an error selecting the image.');
-      } else if (result.assets && result.assets.length > 0) {
-        setProfilePhoto(result.assets[0]);
-      }
-    } catch (error) {
-      console.error('Image picker error:', error);
-      Alert.alert('Error', 'There was an error selecting the image.');
-    }
-  };
+  // Handle photo selection - Removed
 
   // Validate form inputs
   const validateForm = () => {
@@ -186,7 +163,6 @@ const ProfileCompletion = ({navigation, route}) => {
         gender: gender,
         user_type: userType,
         user_type_id: userTypeId,
-        profile_photo: profilePhoto,
       };
 
       // Call API to complete profile
@@ -203,6 +179,14 @@ const ProfileCompletion = ({navigation, route}) => {
         updatedUserData = response.user;
       } else if (response?.data) {
         updatedUserData = response.data;
+      }
+
+      // Log profile photo URL from response - Removed
+      if (updatedUserData?.profile_photo_url) {
+        console.log(
+          'Received profile photo URL:',
+          updatedUserData.profile_photo_url,
+        );
       }
 
       // Update stored user data if available
@@ -287,8 +271,6 @@ const ProfileCompletion = ({navigation, route}) => {
           setGender={setGender}
           userType={userType}
           setUserType={setUserType}
-          profilePhoto={profilePhoto}
-          handlePhotoSelect={handlePhotoSelect}
           handleSubmit={handleSubmit}
           loading={loading}
           usernameError={usernameError}

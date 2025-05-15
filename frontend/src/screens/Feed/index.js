@@ -53,7 +53,9 @@ const HomeScreen = ({navigation}) => {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}>
         <Text style={styles.welcomeText}>Welcome to StockTok</Text>
-        <Text style={styles.subtitle}>You are logged in successfully!</Text>
+        <Text style={styles.subtitle}>
+          You are logged in successfully as a Creator!
+        </Text>
 
         {/* Creator Section */}
         <View style={styles.sectionContainer}>
@@ -77,12 +79,6 @@ const HomeScreen = ({navigation}) => {
               style={styles.icon}
             />
             <Text style={styles.menuButtonText}>Upload Video</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.menuButton}
-            onPress={() => navigation.navigate('MyVideos')}>
-            <Ionicons name="videocam-outline" size={20} style={styles.icon} />
-            <Text style={styles.menuButtonText}>My Videos</Text>
           </TouchableOpacity>
         </View>
 

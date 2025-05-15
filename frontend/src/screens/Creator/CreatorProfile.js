@@ -48,6 +48,7 @@ const CreatorProfile = ({navigation}) => {
     try {
       setError(null);
       setLoading(true);
+      // Removed the problematic line: setImageLoadError(false);
 
       // Fetch profile, stats and videos in parallel
       const [profileRes, statsRes, videosRes] = await Promise.all([
@@ -58,6 +59,13 @@ const CreatorProfile = ({navigation}) => {
 
       setProfile(profileRes.data.profile);
       setStats(statsRes.data);
+
+      // Debug log for profile data
+      console.log('Profile data loaded:', profileRes.data.profile);
+      console.log(
+        'Profile photo URL:',
+        profileRes.data.profile?.profile_photo_url,
+      );
 
       // Make sure we have proper video data
       console.log('Video response:', videosRes.data);
@@ -88,6 +96,10 @@ const CreatorProfile = ({navigation}) => {
       return `${(num / 1000).toFixed(1)}K`;
     }
     return num.toString();
+  };
+
+  const handleImageError = () => {
+    console.log('Image failed to load');
   };
 
   const renderGridItem = ({item, index}) => {
@@ -162,10 +174,13 @@ const CreatorProfile = ({navigation}) => {
           <View style={styles.profileContainer}>
             {/* Profile Image */}
             <View style={styles.profileImageContainer}>
+              {/* Always use placeholder for profile image */}
               <View
                 style={[styles.profileImage, styles.profileImagePlaceholder]}>
                 <Text style={styles.profileInitials}>
-                  {profile?.name ? profile.name.charAt(0).toUpperCase() : '?'}
+                  {profile?.username
+                    ? profile.username.charAt(0).toUpperCase()
+                    : '?'}
                 </Text>
               </View>
             </View>
@@ -206,7 +221,7 @@ const CreatorProfile = ({navigation}) => {
             {profile?.bio ? (
               <Text style={styles.bio}>{profile.bio}</Text>
             ) : (
-              <Text style={styles.tapToBio}>Tap to add bio</Text>
+              <Text style={styles.tapToBio}>No Bio</Text>
             )}
           </View>
 
@@ -319,15 +334,16 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    backgroundColor: '#F0F0F0', // Add a background color for image loading
   },
   profileImagePlaceholder: {
-    backgroundColor: '#E1E4E8',
+    backgroundColor: '#E1E4E8', // Gray background for placeholder
     justifyContent: 'center',
     alignItems: 'center',
   },
   profileInitials: {
     fontSize: 40,
-    color: '#FFFFFF',
+    color: '#FFFFFF', // White text for the initial
     fontWeight: 'bold',
   },
   username: {

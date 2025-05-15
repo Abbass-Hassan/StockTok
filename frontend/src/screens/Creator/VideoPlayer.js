@@ -15,6 +15,7 @@ import {
 import Video from 'react-native-video';
 import {getVideoStreamUrl} from '../../api/videoApi';
 import {getToken} from '../../utils/tokenStorage';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const {width} = Dimensions.get('window');
 
@@ -224,7 +225,12 @@ const VideoPlayer = ({route, navigation}) => {
 
             {error && (
               <View style={styles.errorOverlay}>
-                <Text style={styles.errorIcon}>⚠️</Text>
+                <Icon
+                  name="warning"
+                  size={48}
+                  color="#FFFFFF"
+                  style={styles.errorIcon}
+                />
                 <Text style={styles.errorText}>{error}</Text>
                 <TouchableOpacity
                   style={styles.retryButton}
@@ -244,9 +250,15 @@ const VideoPlayer = ({route, navigation}) => {
                 <TouchableOpacity
                   style={styles.playPauseButton}
                   onPress={togglePlayPause}>
-                  <Text style={styles.playPauseText}>
-                    {paused ? '▶️' : '⏸'}
-                  </Text>
+                  {paused ? (
+                    <View style={styles.playIconContainer}>
+                      <Icon name="play" size={36} color="#FFFFFF" />
+                    </View>
+                  ) : (
+                    <View style={styles.pauseIconContainer}>
+                      <Icon name="pause" size={36} color="#FFFFFF" />
+                    </View>
+                  )}
                 </TouchableOpacity>
 
                 <View style={styles.progressBar}>
@@ -274,24 +286,22 @@ const VideoPlayer = ({route, navigation}) => {
           <Text style={styles.videoTitle}>{video.caption}</Text>
 
           <View style={styles.statsContainer}>
+            {/* Value stat - Left aligned */}
             <View style={styles.statItem}>
-              <Text style={styles.statIcon}>👁</Text>
-              <Text style={styles.statValue}>
-                {formatCount(video.view_count || 0)}
-              </Text>
-              <Text style={styles.statLabel}>Views</Text>
-            </View>
-
-            <View style={styles.statItem}>
-              <Text style={styles.statIcon}>📈</Text>
+              <View style={styles.iconContainer}>
+                <Icon name="trending-up" size={24} color="#00796B" />
+              </View>
               <Text style={styles.statValue}>
                 {formatValue(video.current_value || 0)}
               </Text>
               <Text style={styles.statLabel}>Value</Text>
             </View>
 
+            {/* Likes stat - Right aligned */}
             <View style={styles.statItem}>
-              <Text style={styles.statIcon}>❤️</Text>
+              <View style={styles.iconContainer}>
+                <Icon name="heart" size={24} color="#00796B" />
+              </View>
               <Text style={styles.statValue}>
                 {formatCount(video.like_investment_count || 0)}
               </Text>
@@ -301,7 +311,9 @@ const VideoPlayer = ({route, navigation}) => {
 
           {/* Additional Info Card */}
           <View style={styles.infoCard}>
-            <Text style={styles.infoIcon}>ℹ️</Text>
+            <View style={styles.infoIconContainer}>
+              <Icon name="information-circle" size={24} color="#00796B" />
+            </View>
             <Text style={styles.infoTextWrapper}>
               <Text style={styles.infoText}>
                 Initial Investment: {formatValue(video.initial_investment || 0)}
@@ -388,7 +400,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   errorIcon: {
-    fontSize: 48,
     marginBottom: 16,
   },
   errorText: {
@@ -420,22 +431,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  playPauseText: {
-    fontSize: 40,
+  playIconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'rgba(0, 121, 107, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 5, // Offset for play icon
+  },
+  pauseIconContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'rgba(0, 121, 107, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   progressBar: {
     position: 'absolute',
     bottom: 40,
     left: 20,
     right: 20,
-    height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 2,
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    borderRadius: 3,
   },
   progressFill: {
     height: '100%',
     backgroundColor: '#00796B',
-    borderRadius: 2,
+    borderRadius: 3,
   },
   timeContainer: {
     position: 'absolute',
@@ -448,6 +473,10 @@ const styles = StyleSheet.create({
   timeText: {
     color: '#FFFFFF',
     fontSize: 12,
+    fontWeight: '500',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 2,
   },
   infoContainer: {
     flex: 1,
@@ -472,9 +501,15 @@ const styles = StyleSheet.create({
   },
   statItem: {
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  statIcon: {
-    fontSize: 24,
+  iconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#E0F2F1',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 8,
   },
   statValue: {
@@ -494,8 +529,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
-  infoIcon: {
-    fontSize: 20,
+  infoIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
   },
   infoTextWrapper: {
@@ -512,6 +552,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 20,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   statsButtonText: {
     color: '#FFFFFF',
