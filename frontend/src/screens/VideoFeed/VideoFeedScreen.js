@@ -35,7 +35,11 @@ const AVAILABLE_HEIGHT =
   STATUS_BAR_HEIGHT -
   (Platform.OS === 'ios' ? 30 : 20);
 
-const VideoFeedScreen = ({navigation}) => {
+const VideoFeedScreen = ({navigation, route}) => {
+  // Check if we have initialVideoId from navigation params
+  const initialVideoId = route.params?.initialVideoId;
+  const [hasInitialScrolled, setHasInitialScrolled] = useState(false);
+
   // Add feed type state
   const [feedType, setFeedType] = useState('trending'); // 'trending' or 'following'
 
@@ -156,6 +160,63 @@ const VideoFeedScreen = ({navigation}) => {
   useEffect(() => {
     fetchVideos();
   }, []);
+
+  // Add useEffect to handle scrolling to the initial video when navigating from profile
+  useEffect(() => {
+    if (initialVideoId && videos.length > 0 && !hasInitialScrolled) {
+      // Find the index of the video with initialVideoId
+      const videoIndex = videos.findIndex(video => video.id === initialVideoId);
+
+      if (videoIndex !== -1 && flatListRef.current) {
+        console.log(`Scrolling to video at index ${videoIndex}`);
+
+        // Add a small delay to ensure the FlatList is rendered
+        setTimeout(() => {
+          flatListRef.current.scrollToIndex({
+            index: videoIndex,
+            animated: true,
+            viewPosition: 0,
+          });
+
+          // Update active video index
+          setActiveVideoIndex(videoIndex);
+
+          // Update playing states
+          const updatedPlayingStates = {...playingStates};
+          Object.keys(updatedPlayingStates).forEach(id => {
+            updatedPlayingStates[id] = id === initialVideoId;
+          });
+          setPlayingStates(updatedPlayingStates);
+
+          // Mark that we've scrolled to initial video
+          setHasInitialScrolled(true);
+        }, 500);
+      }
+    }
+  }, [initialVideoId, videos, hasInitialScrolled, playingStates]);
+
+  // Add a handler for scrollToIndex failures
+  const onScrollToIndexFailed = info => {
+    console.log('Failed to scroll to index', info);
+
+    // If we can't scroll directly to the index, try again with a different approach
+    if (initialVideoId && videos.length > 0 && !hasInitialScrolled) {
+      setTimeout(() => {
+        if (flatListRef.current) {
+          // Try scrolling to an approximate position
+          const approxIndex = Math.min(info.index, videos.length - 1);
+          const offset = approxIndex * AVAILABLE_HEIGHT;
+
+          flatListRef.current.scrollToOffset({
+            offset,
+            animated: true,
+          });
+
+          setHasInitialScrolled(true);
+        }
+      }, 500);
+    }
+  };
 
   // Animate heart when like is successful
   const animateHeart = videoId => {
@@ -547,6 +608,7 @@ const VideoFeedScreen = ({navigation}) => {
             maxToRenderPerBatch={3}
             windowSize={5}
             removeClippedSubviews={true}
+            onScrollToIndexFailed={onScrollToIndexFailed}
           />
         )}
       </View>
