@@ -9,14 +9,12 @@ import {
 } from 'react-native';
 
 const {width} = Dimensions.get('window');
-const CARD_WIDTH = width - 32; // Full width minus padding
+const CARD_WIDTH = width - 32;
 
 const VideoCard = ({video, onPress}) => {
-  // Default thumbnail if none provided
   const thumbnailUrl =
     video.thumbnail_url || 'https://via.placeholder.com/400x225';
 
-  // Format view count for display
   const formatViewCount = count => {
     if (!count && count !== 0) return '0 views';
 

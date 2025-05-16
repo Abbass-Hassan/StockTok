@@ -142,11 +142,6 @@ const Dashboard = ({navigation}) => {
       <View style={styles.container}>
         {/* Header with back button */}
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}>
-            <Text style={styles.backText}>‹</Text>
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Creator Dashboard</Text>
         </View>
 
@@ -246,18 +241,6 @@ const Dashboard = ({navigation}) => {
                 ))}
               </View>
             )}
-
-          {/* Quick Actions */}
-          <View style={styles.actionsCard}>
-            <Text style={styles.sectionTitle}>Quick Actions</Text>
-            <View style={styles.actionsGrid}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => navigation.navigate('UploadVideo')}>
-                <Text style={styles.actionText}>Upload Video</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -314,6 +297,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   backButton: {
     marginRight: 16,

@@ -1,4 +1,3 @@
-// src/screens/Regular/UserProfile.js
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -21,6 +20,7 @@ import {
   unfollowUser,
   checkFollowingStatus,
 } from '../../api/userProfileApi';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const {width} = Dimensions.get('window');
 const numColumns = 3;
@@ -173,20 +173,21 @@ const UserProfile = ({route, navigation}) => {
       return null;
     }
 
+    // Replace image with a gray background and icon
     return (
       <TouchableOpacity
         style={styles.gridItem}
         onPress={() => {
           console.log('Video pressed:', item?.id);
-          navigation.navigate('VideoPlayer', {video: item});
+          // Navigate to VideoFeedScreen instead of VideoPlayer
+          navigation.navigate('VideoFeedScreen', {
+            initialVideoId: item.id,
+            username: profile?.username,
+          });
         }}>
-        <Image
-          source={{
-            uri: item.thumbnail_url || 'https://via.placeholder.com/150',
-          }}
-          style={styles.thumbnailImage}
-          resizeMode="cover"
-        />
+        <View style={styles.thumbnailContainer}>
+          <Icon name="videocam" size={32} color="#FFFFFF" />
+        </View>
       </TouchableOpacity>
     );
   };
@@ -360,6 +361,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
+    justifyContent: 'center',
+
     alignItems: 'center',
   },
   backButton: {
@@ -394,7 +397,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
     marginBottom: 16,
     borderWidth: 3,
-    borderColor: '#E0F2F1',
+    borderColor: '#E0E0E0',
   },
   username: {
     fontSize: 20,
@@ -487,6 +490,13 @@ const styles = StyleSheet.create({
     margin: 2,
     borderRadius: 8,
     overflow: 'hidden',
+  },
+  thumbnailContainer: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#E0E0E0', // Light gray color for thumbnails
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   thumbnailImage: {
     width: '100%',

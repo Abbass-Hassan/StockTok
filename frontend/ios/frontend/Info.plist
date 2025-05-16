@@ -16,7 +16,7 @@
         <string>EvilIcons.ttf</string>
         <string>Entypo.ttf</string>
     </array>
-
+    
     <key>LSApplicationCategoryType</key>
     <string></string>
     <key>CFBundleDevelopmentRegion</key>
@@ -48,6 +48,13 @@
         <key>NSExceptionDomains</key>
         <dict>
             <key>13.37.224.245</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+            <key>35.181.171.137</key>
             <dict>
                 <key>NSExceptionAllowsInsecureHTTPLoads</key>
                 <true/>

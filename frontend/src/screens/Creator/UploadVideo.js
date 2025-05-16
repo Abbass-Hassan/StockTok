@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {uploadVideo} from '../../api/videoApi';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const UploadVideo = ({navigation}) => {
   // State variables
@@ -106,28 +107,28 @@ const UploadVideo = ({navigation}) => {
             {
               text: 'OK',
               onPress: () => {
-                // Reset form and navigate to My Videos
+                // Reset form and navigate to CreatorProfile instead of MyVideos
                 setVideoFile(null);
                 setCaption('');
                 setInitialInvestment('0');
-                navigation.navigate('MyVideos');
+                navigation.navigate('CreatorProfile');
               },
             },
           ],
         );
       } else {
-        // Real upload
+        // Real upload (no thumbnail)
         const result = await uploadVideo(videoData, videoFile);
 
         Alert.alert('Success', 'Video uploaded successfully!', [
           {
             text: 'OK',
             onPress: () => {
-              // Reset form and navigate to My Videos
+              // Reset form and navigate to CreatorProfile instead of MyVideos
               setVideoFile(null);
               setCaption('');
               setInitialInvestment('0');
-              navigation.navigate('MyVideos');
+              navigation.navigate('CreatorProfile');
             },
           },
         ]);
@@ -149,7 +150,9 @@ const UploadVideo = ({navigation}) => {
 
     return (
       <View style={styles.videoPreview}>
-        <Text style={styles.videoEmoji}>🎥</Text>
+        <View style={styles.videoIconContainer}>
+          <Icon name="videocam" size={32} color="#00796B" />
+        </View>
         <View style={styles.videoInfo}>
           <Text style={styles.videoName}>
             {videoFile.fileName || 'Selected Video'}
@@ -174,11 +177,6 @@ const UploadVideo = ({navigation}) => {
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}>
-            <Text style={styles.backButtonText}>‹</Text>
-          </TouchableOpacity>
           <Text style={styles.title}>Upload Video</Text>
         </View>
 
@@ -193,7 +191,7 @@ const UploadVideo = ({navigation}) => {
               renderVideoPreview()
             ) : (
               <View style={styles.uploadPlaceholder}>
-                <Text style={styles.uploadEmoji}>📤</Text>
+                <Icon name="cloud-upload-outline" size={48} color="#00796B" />
                 <Text style={styles.uploadText}>
                   Tap to select a video from gallery
                 </Text>
@@ -233,8 +231,14 @@ const UploadVideo = ({navigation}) => {
 
           {/* Info Card */}
           <View style={styles.infoCard}>
+            <Icon
+              name="bulb-outline"
+              size={20}
+              color="#00796B"
+              style={styles.infoIcon}
+            />
             <Text style={styles.infoText}>
-              💡 Initial investment helps boost your video's visibility and
+              Initial investment helps boost your video's visibility and
               potential returns
             </Text>
           </View>
@@ -274,6 +278,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+    justifyContent: 'center',
   },
   backButton: {
     marginRight: 16,
@@ -310,26 +315,30 @@ const styles = StyleSheet.create({
   uploadPlaceholder: {
     alignItems: 'center',
   },
-  uploadEmoji: {
-    fontSize: 48,
-    marginBottom: 12,
-  },
   uploadText: {
     color: '#00796B',
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
+    marginTop: 12,
   },
   videoPreview: {
+    flexDirection: 'row',
     alignItems: 'center',
+    width: '100%',
     paddingVertical: 10,
   },
-  videoEmoji: {
-    fontSize: 48,
-    marginBottom: 12,
+  videoIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#E0F2F1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
   },
   videoInfo: {
-    alignItems: 'center',
+    flex: 1,
   },
   videoName: {
     fontSize: 16,
@@ -376,8 +385,15 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 24,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  infoIcon: {
+    marginRight: 8,
+    marginTop: 2,
   },
   infoText: {
+    flex: 1,
     fontSize: 14,
     color: '#00796B',
     lineHeight: 20,

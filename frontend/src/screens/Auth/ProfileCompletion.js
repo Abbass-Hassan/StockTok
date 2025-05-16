@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Alert,
   Platform,
@@ -8,18 +8,21 @@ import {
   View,
 } from 'react-native';
 import * as authApi from '../../api/auth';
-import {launchImageLibrary} from 'react-native-image-picker';
 import {
   getToken,
   clearToken,
   clearUserData,
   storeUserData,
+  getUserData,
 } from '../../utils/tokenStorage';
+import {AuthContext} from '../../App'; // Import AuthContext
 
 // Import components
 import ProfileCompletionForm from '../../components/specific/Auth/ProfileCompletionForm';
 
 const ProfileCompletion = ({navigation, route}) => {
+  const {setIsLoggedIn} = useContext(AuthContext); // Get setIsLoggedIn from context
+
   // Form state
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
@@ -27,7 +30,6 @@ const ProfileCompletion = ({navigation, route}) => {
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState('Male');
   const [userType, setUserType] = useState('Creator');
-  const [profilePhoto, setProfilePhoto] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Form validation errors
@@ -72,32 +74,6 @@ const ProfileCompletion = ({navigation, route}) => {
 
     return () => backHandler.remove();
   }, []);
-
-  // Handle photo selection
-  const handlePhotoSelect = async () => {
-    const options = {
-      mediaType: 'photo',
-      quality: 0.8,
-      maxWidth: 500,
-      maxHeight: 500,
-    };
-
-    try {
-      const result = await launchImageLibrary(options);
-
-      if (result.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (result.errorCode) {
-        console.log('ImagePicker Error: ', result.errorMessage);
-        Alert.alert('Error', 'There was an error selecting the image.');
-      } else if (result.assets && result.assets.length > 0) {
-        setProfilePhoto(result.assets[0]);
-      }
-    } catch (error) {
-      console.error('Image picker error:', error);
-      Alert.alert('Error', 'There was an error selecting the image.');
-    }
-  };
 
   // Validate form inputs
   const validateForm = () => {
@@ -174,7 +150,7 @@ const ProfileCompletion = ({navigation, route}) => {
         return;
       }
 
-      // Map userType string to user_type_id
+      // Map userType string to user_type_id (as a number, not a string)
       const userTypeId = userType === 'Creator' ? 2 : 1;
 
       // Prepare profile data
@@ -185,9 +161,10 @@ const ProfileCompletion = ({navigation, route}) => {
         bio: bio.trim(),
         gender: gender,
         user_type: userType,
-        user_type_id: userTypeId,
-        profile_photo: profilePhoto,
+        user_type_id: userTypeId, // This is now a number, not a string
       };
+
+      console.log('Sending profile data:', profileData); // Debug log
 
       // Call API to complete profile
       const response = await authApi.completeProfile(token, profileData);
@@ -205,34 +182,40 @@ const ProfileCompletion = ({navigation, route}) => {
         updatedUserData = response.data;
       }
 
-      // Update stored user data if available
+      // Ensure user_type_id is stored as a number before saving
       if (updatedUserData) {
+        // Convert user_type_id to a number if it's a string
+        if (typeof updatedUserData.user_type_id === 'string') {
+          updatedUserData.user_type_id = parseInt(
+            updatedUserData.user_type_id,
+            10,
+          );
+        }
         await storeUserData(updatedUserData);
+        console.log(
+          'Stored user data with user_type_id:',
+          updatedUserData.user_type_id,
+        );
       } else {
         // If no updated user data in response, update stored data with local data
         const currentUserData = await getUserData();
         const mergedUserData = {
           ...currentUserData,
           user_type: userType,
-          user_type_id: userTypeId,
+          user_type_id: userTypeId, // Make sure this is a number
         };
         await storeUserData(mergedUserData);
+        console.log(
+          'Stored merged user data with user_type_id:',
+          mergedUserData.user_type_id,
+        );
       }
 
-      // Navigate based on user type
-      if (userType === 'Creator' || userTypeId === 2) {
-        // Navigate to Creator Feed
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'CreatorFeed'}],
-        });
-      } else {
-        // Navigate to Regular/Investor Feed
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'RegularFeed'}],
-        });
-      }
+      // Set isLoggedIn to true to trigger navigation in the app context
+      // Add a small delay to ensure data is stored before navigation
+      setTimeout(() => {
+        setIsLoggedIn(true);
+      }, 300);
     } catch (error) {
       console.error('Profile completion error details:', error);
 
@@ -287,8 +270,6 @@ const ProfileCompletion = ({navigation, route}) => {
           setGender={setGender}
           userType={userType}
           setUserType={setUserType}
-          profilePhoto={profilePhoto}
-          handlePhotoSelect={handlePhotoSelect}
           handleSubmit={handleSubmit}
           loading={loading}
           usernameError={usernameError}

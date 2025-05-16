@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Image,
   ScrollView,
   SafeAreaView,
   ActivityIndicator,
@@ -14,7 +13,6 @@ import {
   StatusBar,
 } from 'react-native';
 import {updateCreatorProfile} from '../../api/creatorProfileApi';
-import {launchImageLibrary} from 'react-native-image-picker';
 
 const EditCreatorProfile = ({route, navigation}) => {
   const {profile} = route.params || {};
@@ -23,33 +21,10 @@ const EditCreatorProfile = ({route, navigation}) => {
   const [username, setUsername] = useState(profile?.username || '');
   const [bio, setBio] = useState(profile?.bio || '');
   const [phone, setPhone] = useState(profile?.phone || '');
-  const [photo, setPhoto] = useState(null);
-  const [photoUrl, setPhotoUrl] = useState(profile?.profile_photo_url || null);
-
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const selectPhoto = () => {
-    const options = {
-      mediaType: 'photo',
-      maxWidth: 1000,
-      maxHeight: 1000,
-      quality: 0.8,
-    };
-
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-        Alert.alert('Error', 'There was a problem selecting this image.');
-      } else if (response.assets && response.assets.length > 0) {
-        const selectedAsset = response.assets[0];
-        setPhoto(selectedAsset);
-        setPhotoUrl(selectedAsset.uri);
-      }
-    });
-  };
+  // Handle photo selection - Removed
 
   const validateForm = () => {
     let formErrors = {};
@@ -90,16 +65,19 @@ const EditCreatorProfile = ({route, navigation}) => {
         username,
         bio,
         phone,
-        profile_photo: photo,
       };
 
+      console.log('Saving profile data:', profileData);
+
       const response = await updateCreatorProfile(profileData);
+      console.log('Profile update response:', response);
 
       // Navigate back after successful update
       Alert.alert('Success', 'Profile updated successfully', [
         {text: 'OK', onPress: () => navigation.goBack()},
       ]);
     } catch (error) {
+      console.error('Profile update error:', error);
       const errorMessage = error.message || 'Failed to update profile';
 
       // Check if error is about username uniqueness
@@ -147,24 +125,16 @@ const EditCreatorProfile = ({route, navigation}) => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Profile Photo */}
+        {/* Profile Photo - Removed, using placeholder only */}
         <View style={styles.photoContainer}>
-          <TouchableOpacity onPress={selectPhoto}>
-            {photoUrl ? (
-              <Image source={{uri: photoUrl}} style={styles.profileImage} />
-            ) : (
-              <View
-                style={[styles.profileImage, styles.profileImagePlaceholder]}>
-                <Text style={styles.profileInitials}>
-                  {name ? name.charAt(0).toUpperCase() : '?'}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
+          <View style={[styles.profileImage, styles.profileImagePlaceholder]}>
+            <Text style={styles.profileInitials}>
+              {name ? name.charAt(0).toUpperCase() : '?'}
+            </Text>
+          </View>
 
-          <TouchableOpacity onPress={selectPhoto}>
-            <Text style={styles.changePhotoText}>Change Profile Photo</Text>
-          </TouchableOpacity>
+          {/* Removed photo selection functionality */}
+          <Text style={styles.changePhotoText}>Profile Photo</Text>
         </View>
 
         {/* Profile Form */}
@@ -301,6 +271,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     marginBottom: 12,
+    backgroundColor: '#F0F0F0', // Add a background color for image loading
   },
   profileImagePlaceholder: {
     backgroundColor: '#E1E4E8',

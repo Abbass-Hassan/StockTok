@@ -27,15 +27,14 @@ const TAB_BAR_HEIGHT = 80;
 const BOTTOM_INSET = Platform.OS === 'ios' ? 34 : 16;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
 
-// Calculate available content area - ADJUSTED FOR BETTER SPACING
-const AVAILABLE_HEIGHT =
-  height -
-  TAB_BAR_HEIGHT -
-  BOTTOM_INSET -
-  STATUS_BAR_HEIGHT -
-  (Platform.OS === 'ios' ? 30 : 20);
+// Calculate available content area
+const AVAILABLE_HEIGHT = height;
 
-const VideoFeedScreen = ({navigation}) => {
+const VideoFeedScreen = ({navigation, route}) => {
+  // Check if we have initialVideoId from navigation params
+  const initialVideoId = route.params?.initialVideoId;
+  const [hasInitialScrolled, setHasInitialScrolled] = useState(false);
+
   // Add feed type state
   const [feedType, setFeedType] = useState('trending'); // 'trending' or 'following'
 
@@ -156,6 +155,63 @@ const VideoFeedScreen = ({navigation}) => {
   useEffect(() => {
     fetchVideos();
   }, []);
+
+  // Add useEffect to handle scrolling to the initial video when navigating from profile
+  useEffect(() => {
+    if (initialVideoId && videos.length > 0 && !hasInitialScrolled) {
+      // Find the index of the video with initialVideoId
+      const videoIndex = videos.findIndex(video => video.id === initialVideoId);
+
+      if (videoIndex !== -1 && flatListRef.current) {
+        console.log(`Scrolling to video at index ${videoIndex}`);
+
+        // Add a small delay to ensure the FlatList is rendered
+        setTimeout(() => {
+          flatListRef.current.scrollToIndex({
+            index: videoIndex,
+            animated: true,
+            viewPosition: 0,
+          });
+
+          // Update active video index
+          setActiveVideoIndex(videoIndex);
+
+          // Update playing states
+          const updatedPlayingStates = {...playingStates};
+          Object.keys(updatedPlayingStates).forEach(id => {
+            updatedPlayingStates[id] = id === initialVideoId;
+          });
+          setPlayingStates(updatedPlayingStates);
+
+          // Mark that we've scrolled to initial video
+          setHasInitialScrolled(true);
+        }, 500);
+      }
+    }
+  }, [initialVideoId, videos, hasInitialScrolled, playingStates]);
+
+  // Add a handler for scrollToIndex failures
+  const onScrollToIndexFailed = info => {
+    console.log('Failed to scroll to index', info);
+
+    // If we can't scroll directly to the index, try again with a different approach
+    if (initialVideoId && videos.length > 0 && !hasInitialScrolled) {
+      setTimeout(() => {
+        if (flatListRef.current) {
+          // Try scrolling to an approximate position
+          const approxIndex = Math.min(info.index, videos.length - 1);
+          const offset = approxIndex * AVAILABLE_HEIGHT;
+
+          flatListRef.current.scrollToOffset({
+            offset,
+            animated: true,
+          });
+
+          setHasInitialScrolled(true);
+        }
+      }, 500);
+    }
+  };
 
   // Animate heart when like is successful
   const animateHeart = videoId => {
@@ -305,7 +361,7 @@ const VideoFeedScreen = ({navigation}) => {
 
     return (
       <View style={styles.itemContainer}>
-        {/* Video Container with reduced size to center it */}
+        {/* Video Container with full-screen size */}
         <View style={styles.videoContainer}>
           {/* Heart Animation - Only show when actively animating */}
           {isAnimatingLike && (
@@ -317,8 +373,7 @@ const VideoFeedScreen = ({navigation}) => {
                   opacity: animatedHeartOpacity,
                 },
               ]}>
-              <Ionicons name="heart" size={30} color="#FFFFFF" />
-              <Text style={styles.heartText}>+1</Text>
+              <Ionicons name="heart" size={80} color="#FFFFFF" />
             </Animated.View>
           )}
 
@@ -339,14 +394,14 @@ const VideoFeedScreen = ({navigation}) => {
                   },
                 }}
                 style={styles.videoPlayer}
-                resizeMode="contain"
+                resizeMode="cover"
                 repeat={true}
                 playInBackground={false}
                 playWhenInactive={false}
                 paused={!isPlaying}
                 onError={error => handleVideoError(error, item.id)}
                 poster={item.thumbnail_url}
-                posterResizeMode="contain"
+                posterResizeMode="cover"
                 bufferConfig={{
                   minBufferMs: 15000,
                   maxBufferMs: 50000,
@@ -358,7 +413,7 @@ const VideoFeedScreen = ({navigation}) => {
               <Image
                 source={{uri: item.thumbnail_url}}
                 style={styles.thumbnail}
-                resizeMode="contain"
+                resizeMode="cover"
               />
             )}
 
@@ -368,19 +423,28 @@ const VideoFeedScreen = ({navigation}) => {
                 <View style={styles.playButton}>
                   <Ionicons name="play" size={36} color="#FFFFFF" />
                 </View>
-                <Text style={styles.tapToPlayText}>Tap to play</Text>
               </View>
             )}
           </TouchableOpacity>
 
-          {/* Side buttons */}
+          {/* Caption container - Now positioned at the bottom of the screen, left of comment button */}
+          <View style={styles.captionContainer}>
+            <TouchableOpacity onPress={() => goToCreatorProfile(item.user_id)}>
+              <Text style={styles.usernameText}>@{item.username}</Text>
+            </TouchableOpacity>
+            <Text style={styles.captionText} numberOfLines={2}>
+              {item.caption || item.title}
+            </Text>
+          </View>
+
+          {/* Side buttons - with share button removed */}
           <View style={styles.sideButtonsContainer}>
             {/* Heart button */}
             <TouchableOpacity
               style={styles.sideButton}
               onPress={() => handleLikePress(item.id)}>
-              <View style={styles.sideButtonCircle}>
-                <Ionicons name="heart-outline" size={26} color="#FFFFFF" />
+              <View style={styles.iconContainer}>
+                <Ionicons name="heart-outline" size={28} color="#FFFFFF" />
               </View>
               <Text style={styles.sideButtonText}>
                 {formatCount(
@@ -391,23 +455,13 @@ const VideoFeedScreen = ({navigation}) => {
 
             {/* Comment button */}
             <TouchableOpacity style={styles.sideButton}>
-              <View style={styles.sideButtonCircle}>
-                <Ionicons name="chatbubble-outline" size={24} color="#FFFFFF" />
+              <View style={styles.iconContainer}>
+                <Ionicons name="chatbubble-outline" size={26} color="#FFFFFF" />
               </View>
               <Text style={styles.sideButtonText}>
                 {formatCount(item.comments_count || 0)}
               </Text>
             </TouchableOpacity>
-          </View>
-
-          {/* Username and caption */}
-          <View style={styles.infoContainer}>
-            <TouchableOpacity onPress={() => goToCreatorProfile(item.user_id)}>
-              <Text style={styles.usernameText}>@{item.username}</Text>
-            </TouchableOpacity>
-            <Text style={styles.captionText} numberOfLines={1}>
-              {item.caption || item.title}
-            </Text>
           </View>
         </View>
       </View>
@@ -483,14 +537,37 @@ const VideoFeedScreen = ({navigation}) => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
 
-      {/* Header with Back Button and Feed Type Selector */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
+      <View style={styles.contentContainer}>
+        {videos.length === 0 && !loading ? (
+          renderEmptyState()
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            data={videos}
+            renderItem={renderItem}
+            keyExtractor={item => item.id.toString()}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderLoader}
+            ListEmptyComponent={loading ? null : renderEmptyState}
+            showsVerticalScrollIndicator={false}
+            snapToInterval={AVAILABLE_HEIGHT}
+            snapToAlignment="start"
+            decelerationRate="fast"
+            pagingEnabled
+            onViewableItemsChanged={handleViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
+            initialNumToRender={3}
+            maxToRenderPerBatch={3}
+            windowSize={5}
+            removeClippedSubviews={true}
+            onScrollToIndexFailed={onScrollToIndexFailed}
+          />
+        )}
+      </View>
 
+      {/* Header with Feed Type Selector */}
+      <View style={styles.header}>
         <View style={styles.feedTypeSelectorContainer}>
           <TouchableOpacity
             style={[
@@ -523,34 +600,6 @@ const VideoFeedScreen = ({navigation}) => {
         </View>
       </View>
 
-      <View style={styles.contentContainer}>
-        {videos.length === 0 && !loading ? (
-          renderEmptyState()
-        ) : (
-          <FlatList
-            ref={flatListRef}
-            data={videos}
-            renderItem={renderItem}
-            keyExtractor={item => item.id.toString()}
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={renderLoader}
-            ListEmptyComponent={loading ? null : renderEmptyState}
-            showsVerticalScrollIndicator={false}
-            snapToInterval={AVAILABLE_HEIGHT} // ADJUSTED: Use the new AVAILABLE_HEIGHT
-            snapToAlignment="start"
-            decelerationRate="fast"
-            pagingEnabled
-            onViewableItemsChanged={handleViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-            initialNumToRender={3}
-            maxToRenderPerBatch={3}
-            windowSize={5}
-            removeClippedSubviews={true}
-          />
-        )}
-      </View>
-
       {/* Investment Modal */}
       <InvestmentModal
         visible={investmentModalVisible}
@@ -571,28 +620,23 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
   },
-  // Header styles - ADJUSTED
+  // Header styles - Updated without colors/blur
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    // ADJUSTED: Increased top padding for more space at the top
+    justifyContent: 'center',
     paddingTop: Platform.OS === 'ios' ? 60 : 30,
     paddingBottom: 15,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    position: 'absolute',
+    width: '100%',
+    top: 0,
     zIndex: 10,
   },
-  backButton: {
-    padding: 8,
-    marginLeft: 10,
-    borderRadius: 20,
-  },
-  // Feed Type Selector styles - UNCHANGED
+  // Feed Type Selector styles
   feedTypeSelectorContainer: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 40, // Balance for back button
   },
   feedTypeButton: {
     paddingHorizontal: 20,
@@ -613,17 +657,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
   },
-  // Video container - ADJUSTED
+  // Video container
   itemContainer: {
-    // ADJUSTED: Set height to match the new AVAILABLE_HEIGHT
     height: AVAILABLE_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: width,
   },
   videoContainer: {
     width: width,
-    // ADJUSTED: Create more balanced video container height
-    height: AVAILABLE_HEIGHT - (Platform.OS === 'ios' ? 60 : 40),
+    height: AVAILABLE_HEIGHT,
     position: 'relative',
   },
   videoWrapper: {
@@ -638,7 +679,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  // Play Button Styles - UNCHANGED
+  // Play Button Styles
   playButtonOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
@@ -655,83 +696,62 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  tapToPlayText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '500',
-    marginTop: 15,
-    opacity: 0.8,
-  },
-  // Heart animation - UNCHANGED
+  // Heart animation
   heartAnimation: {
     position: 'absolute',
-    top: '40%',
+    top: '45%',
     left: '50%',
-    marginLeft: -50,
+    marginLeft: -40,
     zIndex: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    borderRadius: 50,
-    padding: 10,
   },
-  heartText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 5,
-  },
-  // Side buttons styling - ADJUSTED
+  // Side buttons styling - Removed share button
   sideButtonsContainer: {
     position: 'absolute',
-    right: 15,
-    // ADJUSTED: Lowered position from bottom to align better with screen
+    right: 12,
     bottom: 100,
     alignItems: 'center',
   },
   sideButton: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  sideButtonCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+  iconContainer: {
+    marginBottom: 5,
   },
   sideButtonText: {
     color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '400',
+    fontSize: 14,
+    fontWeight: '500',
   },
-  // Username and caption container - ADJUSTED
-  infoContainer: {
+  // Caption container - UPDATED: Now positioned at the bottom left of the screen
+  captionContainer: {
     position: 'absolute',
     left: 15,
-    // ADJUSTED: Increased bottom margin for better spacing
-    bottom: 25,
-    maxWidth: '70%',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 15,
+    bottom: 100, // Positioned at the bottom of the screen, aligned with comment button
+    maxWidth: '60%', // Reduced width to avoid overlap with comment button
+    padding: 8,
+    zIndex: 20,
   },
   usernameText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 6,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 3,
   },
   captionText: {
     color: 'rgba(255, 255, 255, 0.9)',
     fontSize: 14,
+    lineHeight: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 3,
   },
-  // Loading and error states - UNCHANGED
+  // Loading and error states
   loaderContainer: {
     padding: 20,
     alignItems: 'center',
@@ -769,7 +789,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  // Empty state styles - UNCHANGED
+  // Empty state styles
   emptyStateContainer: {
     flex: 1,
     justifyContent: 'center',

@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {getTransactionHistory} from '../../api/walletApi';
 
 const TransactionHistory = ({navigation}) => {
@@ -41,21 +42,21 @@ const TransactionHistory = ({navigation}) => {
     loadTransactions();
   };
 
-  const getTransactionIcon = type => {
+  const getTransactionIconName = type => {
     switch (type) {
       case 'deposit':
-        return '⬇️';
+        return 'arrow-down-circle-outline';
       case 'withdrawal':
-        return '⬆️';
+        return 'arrow-up-circle-outline';
       case 'investment':
       case 'like_investment':
-        return '💼';
+        return 'briefcase-outline';
       case 'creator_earning':
       case 'investment_return':
       case 'investor_reward':
-        return '💰';
+        return 'cash-outline';
       default:
-        return '📄';
+        return 'document-text-outline';
     }
   };
 
@@ -81,27 +82,29 @@ const TransactionHistory = ({navigation}) => {
   };
 
   const renderTransaction = ({item}) => {
-    // Add null checks for item and item.type
     const type = item?.transaction_type || 'unknown';
     const amount = item?.amount || 0;
     const createdAt = item?.created_at || new Date().toISOString();
 
-    // Format amount properly (remove the negative sign from display)
     const amountDisplay = `$${Math.abs(amount).toFixed(2)}`;
-
-    // Add + or - prefix based on transaction type
-    const displayPrefix =
-      type === 'deposit' ||
-      type === 'creator_earning' ||
-      type === 'investment_return' ||
-      type === 'investor_reward'
-        ? '+'
-        : '-';
+    const displayPrefix = [
+      'deposit',
+      'creator_earning',
+      'investment_return',
+      'investor_reward',
+    ].includes(type)
+      ? '+'
+      : '-';
 
     return (
       <View style={styles.transactionItem}>
         <View style={styles.transactionLeft}>
-          <Text style={styles.transactionIcon}>{getTransactionIcon(type)}</Text>
+          <Icon
+            name={getTransactionIconName(type)}
+            size={24}
+            color="#00796B"
+            style={styles.transactionIcon}
+          />
           <View style={styles.transactionDetails}>
             <Text style={styles.transactionType}>
               {getTransactionTypeDisplay(type)}
@@ -156,7 +159,12 @@ const TransactionHistory = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}>
-            <Text style={styles.backText}>‹</Text>
+            <Icon
+              name="chevron-back"
+              size={32}
+              color="#00796B"
+              style={styles.backIcon}
+            />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Transaction History</Text>
         </View>
@@ -247,9 +255,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backText: {
-    fontSize: 32,
-    color: '#00796B',
+  backIcon: {
     marginTop: -4,
   },
   headerTitle: {
@@ -279,7 +285,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   transactionIcon: {
-    fontSize: 24,
     marginRight: 12,
   },
   transactionDetails: {
