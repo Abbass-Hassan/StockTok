@@ -23,22 +23,25 @@
 <!-- Project Highlights -->
 <img src="./readme/title4.svg"/>
 
-### Add Title Here
+### Project Highlights
 
-- List the sexy features.
+- Paid likes act as investments — users can invest in videos they believe in.
+- AI-powered suggestions recommend promising videos to help investors make smarter decisions.
+- Infinite video streaming with vertical scroll for a TikTok-style experience.
+- Users can upload and stream videos seamlessly with real-time playback.
 
 <br><br>
 
 <!-- Demo -->
 <img src="./readme/title5.svg"/>
 
-### User Screens (Mobile)
+### Investor Screens (Mobile)
 
 | Login screen                            | Register screen                       | Register screen                       |
 | --------------------------------------- | ------------------------------------- | ------------------------------------- |
 | ![Landing](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) |
 
-### Admin Screens (Web)
+### Creator Screens (Mobile)
 
 | Login screen                            | Register screen                       |
 | --------------------------------------- | ------------------------------------- |
@@ -60,9 +63,13 @@
 <!-- Deployment -->
 <img src="./readme/title7.svg"/>
 
-### Add Title Here
+### Deployment Overview
 
-- Description here.
+- The StockTok app is deployed using **AWS EC2 instances**:
+  - **Staging:** `http://13.37.224.245`
+  - **Production:** `http://35.181.171.137`
+- The application is **containerized using Docker** to ensure consistency across all environments.
+- **CI/CD pipelines** are implemented via **GitHub Actions**, enabling automatic testing and deployment on every push to main.
 
 | Postman API 1                           | Postman API 2                         | Postman API 3                         |
 | --------------------------------------- | ------------------------------------- | ------------------------------------- |
