@@ -63,11 +63,17 @@ The database is structured around core entities:
 <!-- Development & Testing -->
 <img src="./readme/title6.svg"/>
 
-### Add Title Here
+### Development & Testing
 
-| Services                                | Validation                            | Testing                               |
-| --------------------------------------- | ------------------------------------- | ------------------------------------- |
-| ![Landing](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) |
+This section highlights how StockTok handles core backend logic, validation layers, and testing.
+
+- **Services:** Core business logic is separated into service classes, making the app modular, maintainable, and scalable.
+- **Validation:** All incoming requests go through dedicated validation layers to ensure data integrity and security.
+- **Testing:** Critical actions like video uploads are covered with feature tests to ensure stability during CI/CD and production.
+
+| Services                                    | Validation                                        | Testing                               |
+| ------------------------------------------- | ------------------------------------------------- | ------------------------------------- |
+| ![Service](./readme/StreamVideoService.png) | ![Validation](./readme/UploadVideoValidation.png) | ![Test](./readme/UploadVideoTest.png) |
 
 <br><br>
 
