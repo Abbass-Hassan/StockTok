@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Alert,
   Platform,
@@ -15,11 +15,14 @@ import {
   storeUserData,
   getUserData,
 } from '../../utils/tokenStorage';
+import {AuthContext} from '../../App'; // Import AuthContext
 
 // Import components
 import ProfileCompletionForm from '../../components/specific/Auth/ProfileCompletionForm';
 
 const ProfileCompletion = ({navigation, route}) => {
+  const {setIsLoggedIn} = useContext(AuthContext); // Get setIsLoggedIn from context
+
   // Form state
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
@@ -33,8 +36,6 @@ const ProfileCompletion = ({navigation, route}) => {
   const [usernameError, setUsernameError] = useState('');
   const [fullNameError, setFullNameError] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
-
-  // API base URL - Removed
 
   // Set navigation options to hide header
   useEffect(() => {
@@ -73,8 +74,6 @@ const ProfileCompletion = ({navigation, route}) => {
 
     return () => backHandler.remove();
   }, []);
-
-  // Handle photo selection - Removed
 
   // Validate form inputs
   const validateForm = () => {
@@ -151,7 +150,7 @@ const ProfileCompletion = ({navigation, route}) => {
         return;
       }
 
-      // Map userType string to user_type_id
+      // Map userType string to user_type_id (as a number, not a string)
       const userTypeId = userType === 'Creator' ? 2 : 1;
 
       // Prepare profile data
@@ -162,8 +161,10 @@ const ProfileCompletion = ({navigation, route}) => {
         bio: bio.trim(),
         gender: gender,
         user_type: userType,
-        user_type_id: userTypeId,
+        user_type_id: userTypeId, // This is now a number, not a string
       };
+
+      console.log('Sending profile data:', profileData); // Debug log
 
       // Call API to complete profile
       const response = await authApi.completeProfile(token, profileData);
@@ -181,42 +182,40 @@ const ProfileCompletion = ({navigation, route}) => {
         updatedUserData = response.data;
       }
 
-      // Log profile photo URL from response - Removed
-      if (updatedUserData?.profile_photo_url) {
-        console.log(
-          'Received profile photo URL:',
-          updatedUserData.profile_photo_url,
-        );
-      }
-
-      // Update stored user data if available
+      // Ensure user_type_id is stored as a number before saving
       if (updatedUserData) {
+        // Convert user_type_id to a number if it's a string
+        if (typeof updatedUserData.user_type_id === 'string') {
+          updatedUserData.user_type_id = parseInt(
+            updatedUserData.user_type_id,
+            10,
+          );
+        }
         await storeUserData(updatedUserData);
+        console.log(
+          'Stored user data with user_type_id:',
+          updatedUserData.user_type_id,
+        );
       } else {
         // If no updated user data in response, update stored data with local data
         const currentUserData = await getUserData();
         const mergedUserData = {
           ...currentUserData,
           user_type: userType,
-          user_type_id: userTypeId,
+          user_type_id: userTypeId, // Make sure this is a number
         };
         await storeUserData(mergedUserData);
+        console.log(
+          'Stored merged user data with user_type_id:',
+          mergedUserData.user_type_id,
+        );
       }
 
-      // Navigate based on user type
-      if (userType === 'Creator' || userTypeId === 2) {
-        // Navigate to Creator Feed
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'CreatorFeed'}],
-        });
-      } else {
-        // Navigate to Regular/Investor Feed
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'RegularFeed'}],
-        });
-      }
+      // Set isLoggedIn to true to trigger navigation in the app context
+      // Add a small delay to ensure data is stored before navigation
+      setTimeout(() => {
+        setIsLoggedIn(true);
+      }, 300);
     } catch (error) {
       console.error('Profile completion error details:', error);
 

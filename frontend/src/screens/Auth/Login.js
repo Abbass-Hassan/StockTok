@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Alert} from 'react-native';
 import * as authApi from '../../api/auth';
 import {storeToken, storeUserData} from '../../utils/tokenStorage';
+import {AuthContext} from '../../App'; // Import AuthContext
 
 // Import components
 import AuthLayout from '../../components/specific/Auth/AuthLayout';
@@ -11,6 +12,7 @@ import SocialLogin from '../../components/specific/Auth/SocialLogin';
 import SignUpPrompt from '../../components/specific/Auth/SignUpPrompt';
 
 const Login = ({navigation}) => {
+  const {setIsLoggedIn} = useContext(AuthContext); // Get setIsLoggedIn from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,6 +56,7 @@ const Login = ({navigation}) => {
     try {
       setLoading(true);
       const response = await authApi.login(email.trim(), password);
+      console.log('Login API full response:', response.data);
       console.log('Login successful:', response);
 
       // Check response structure and extract token and user data
@@ -106,23 +109,9 @@ const Login = ({navigation}) => {
         );
       }
 
-      // Route based on user type
-      const userType = userData?.user_type_id || userData?.user_type;
-
-      // Navigate to appropriate screen based on user type
-      if (userType === 2 || userType === 'Creator') {
-        // Navigate to Creator Feed
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'CreatorFeed'}],
-        });
-      } else {
-        // Navigate to Regular/Investor Feed
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'RegularFeed'}],
-        });
-      }
+      // IMPORTANT: Instead of directly navigating, update the isLoggedIn state
+      // This will trigger the Navigation component to show the appropriate screen
+      setIsLoggedIn(true);
     } catch (error) {
       console.error('Login error details:', error);
 

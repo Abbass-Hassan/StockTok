@@ -177,11 +177,6 @@ const UploadVideo = ({navigation}) => {
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}>
-            <Text style={styles.backButtonText}>‹</Text>
-          </TouchableOpacity>
           <Text style={styles.title}>Upload Video</Text>
         </View>
 
@@ -283,6 +278,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+    justifyContent: 'center',
   },
   backButton: {
     marginRight: 16,

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -12,10 +12,12 @@ import {
   FlatList,
   Dimensions,
   Platform,
+  Alert,
 } from 'react-native';
 import {getCreatorProfile, getCreatorStats} from '../../api/creatorProfileApi';
 import {getMyVideos} from '../../api/videoApi';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {AuthContext} from '../../App'; // Import AuthContext
 
 const {width} = Dimensions.get('window');
 const numColumns = 3;
@@ -33,6 +35,7 @@ const COLORS = {
 };
 
 const CreatorProfile = ({navigation}) => {
+  const {logout} = useContext(AuthContext); // Use the logout function from context
   const [profile, setProfile] = useState(null);
   const [stats, setStats] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -48,7 +51,6 @@ const CreatorProfile = ({navigation}) => {
     try {
       setError(null);
       setLoading(true);
-      // Removed the problematic line: setImageLoadError(false);
 
       // Fetch profile, stats and videos in parallel
       const [profileRes, statsRes, videosRes] = await Promise.all([
@@ -81,6 +83,29 @@ const CreatorProfile = ({navigation}) => {
       setLoading(false);
       setRefreshing(false);
     }
+  };
+
+  // Updated handleLogout function
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: () => {
+            // Use the global logout function from context
+            logout();
+          },
+          style: 'destructive',
+        },
+      ],
+      {cancelable: true},
+    );
   };
 
   const handleRefresh = () => {
@@ -151,13 +176,13 @@ const CreatorProfile = ({navigation}) => {
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
 
       <View style={styles.container}>
+        {/* Updated Header with Centered Title and Logout Button on Right */}
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}>
-            <Text style={styles.backText}>‹</Text>
-          </TouchableOpacity>
+          <View style={styles.headerLeftPlaceholder} />
           <Text style={styles.headerTitle}>Profile</Text>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Icon name="log-out-outline" size={24} color={COLORS.primary} />
+          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -224,6 +249,9 @@ const CreatorProfile = ({navigation}) => {
               <Text style={styles.tapToBio}>No Bio</Text>
             )}
           </View>
+
+          {/* Horizontal Divider Line */}
+          <View style={styles.divider} />
 
           {/* Video Grid */}
           <View style={styles.videoGridContainer}>
@@ -304,23 +332,20 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between', // Keep space-between for the three elements
   },
-  backButton: {
-    marginRight: 16,
+  headerLeftPlaceholder: {
+    width: 40, // Same width as logout button to balance
+  },
+  logoutButton: {
+    padding: 8,
     width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backText: {
-    fontSize: 32,
-    color: '#00796B',
-    marginTop: -4,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: '600',
     color: '#00796B',
+    textAlign: 'center', // Center the text
   },
   profileContainer: {
     alignItems: 'center',
@@ -401,6 +426,12 @@ const styles = StyleSheet.create({
     color: '#999999',
     fontStyle: 'italic',
     marginBottom: 8,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E0E0E0',
+    marginVertical: 10,
+    marginHorizontal: 16,
   },
   sectionTitle: {
     fontSize: 16,

@@ -361,6 +361,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
+    justifyContent: 'center',
+
     alignItems: 'center',
   },
   backButton: {

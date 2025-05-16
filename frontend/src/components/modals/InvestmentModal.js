@@ -21,7 +21,6 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Reset state when modal closes
   React.useEffect(() => {
     if (!visible) {
       setAmount('');
@@ -29,9 +28,7 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
     }
   }, [visible]);
 
-  // Function to handle investment submission
   const handleSubmit = async () => {
-    // Validate input
     if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
       setError('Please enter a valid amount');
       return;
@@ -41,34 +38,27 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
     setError(null);
 
     try {
-      // Call the API to invest in the video
       const response = await investmentApi.investInVideo(videoId, amount);
 
-      // Handle success
       setIsLoading(false);
 
-      // Simple vibration feedback on success
       Vibration.vibrate(50);
 
-      // Show success message
       Alert.alert(
         'Investment Successful',
         `You have successfully invested $${amount} in this video!`,
         [{text: 'OK'}],
       );
 
-      // Call the success callback to update the UI
       if (onSuccess) {
         onSuccess(response.data.investment);
       }
 
-      // Close the modal
       onClose();
     } catch (err) {
       setIsLoading(false);
       setError(err.message);
 
-      // Simple vibration feedback on error
       Vibration.vibrate([0, 50, 50, 50]);
     }
   };
@@ -82,7 +72,6 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            {/* Header with close button */}
             <View style={styles.headerContainer}>
               <Text style={styles.headerText}>Like</Text>
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -90,7 +79,6 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
               </TouchableOpacity>
             </View>
 
-            {/* Amount input section */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>
                 Amount($)
@@ -119,11 +107,9 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
                 editable={!isLoading}
               />
 
-              {/* Error message */}
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
             </View>
 
-            {/* Submit button */}
             <TouchableOpacity
               style={[
                 styles.submitButton,
@@ -138,7 +124,6 @@ const InvestmentModal = ({visible, videoId, onClose, onSuccess}) => {
               )}
             </TouchableOpacity>
 
-            {/* Indicator line at bottom */}
             <View style={styles.indicatorLine} />
           </View>
         </View>

@@ -97,11 +97,6 @@ const Search = ({navigation}) => {
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}>
-            <Text style={styles.backText}>‹</Text>
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Search Creators</Text>
         </View>
 
@@ -189,6 +184,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
+    justifyContent: 'center',
+
     alignItems: 'center',
   },
   backButton: {

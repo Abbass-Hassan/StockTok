@@ -77,16 +77,6 @@ const WalletOverview = ({navigation}) => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}>
-            <Icon
-              name="chevron-back"
-              size={32}
-              color="#00796B"
-              style={styles.backText}
-            />
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>My Wallet</Text>
         </View>
 
@@ -232,6 +222,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   backButton: {
     marginRight: 16,

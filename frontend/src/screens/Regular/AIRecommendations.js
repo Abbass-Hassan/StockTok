@@ -1,6 +1,6 @@
 // AIRecommendations.js
 
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -11,8 +11,10 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {AuthContext} from '../../App'; // Import AuthContext
 
 // many mock recommendations
 const MOCK_RECOMMENDATIONS = [
@@ -96,6 +98,7 @@ const INVESTMENT_STRATEGY =
   'Focus on high-engagement creators with consistent posting schedules. Spread investments across 3–4 different content categories.';
 
 export default function AIRecommendations({navigation}) {
+  const {logout} = useContext(AuthContext); // Use the logout function from context
   const [loading, setLoading] = useState(true);
   const [rec, setRec] = useState(null);
 
@@ -109,6 +112,29 @@ export default function AIRecommendations({navigation}) {
       setLoading(false);
     }, 800);
   }, []);
+
+  // Updated handleLogout function
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: () => {
+            // Use the global logout function from context
+            logout();
+          },
+          style: 'destructive',
+        },
+      ],
+      {cancelable: true},
+    );
+  };
 
   if (loading) {
     return (
@@ -126,12 +152,12 @@ export default function AIRecommendations({navigation}) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
 
-      {/* header */}
+      {/* header with logout button */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.back}>‹</Text>
-        </TouchableOpacity>
         <Text style={styles.title}>AI Recommendations</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Icon name="log-out-outline" size={24} color="#00796B" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -199,12 +225,18 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between', // Changed to space-between for title and logout button
     padding: 16,
     borderBottomWidth: 1,
+    justifyContent: 'center',
+
     borderColor: '#EEE',
   },
   back: {fontSize: 28, color: '#00796B'},
-  title: {fontSize: 18, fontWeight: '600', marginLeft: 12, color: '#00796B'},
+  title: {fontSize: 18, fontWeight: '600', color: '#00796B'},
+  logoutButton: {
+    padding: 8,
+  },
   content: {
     padding: 16,
     paddingBottom: Platform.OS === 'ios' ? 32 : 16,
