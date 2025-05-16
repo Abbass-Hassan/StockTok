@@ -5,9 +5,9 @@
 <!-- project overview -->
 <img src="./readme/title2.svg"/>
 
-> Description here.
->
-> Description here.
+> StockTok is a bold new platform where creators and investors fuel the next wave of viral content.
+> It merges the power of social media with the dynamics of financial markets, letting creativity become a shared investment.
+> In StockTok, every video is an opportunity — and every click can be a return.
 
 <br><br>
 
