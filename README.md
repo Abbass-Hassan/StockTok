@@ -14,9 +14,20 @@
 <!-- System Design -->
 <img src="./readme/title3.svg"/>
 
-### Add Title Here
+### System Design
 
-- To be decided on later on.
+The backend of StockTok is built with a clean relational structure that powers video content, user investments, wallet management, and social interactions.
+
+#### ER Diagram
+
+![ER Diagram](./readme/StockTok-ERDiagram.png)
+
+The database is structured around core entities:
+
+- `users`, `user_types`: handle authentication, roles (creator/investor), and profiles.
+- `videos`: store uploaded video metadata including financial and engagement metrics.
+- `likes_investments` and `transactions`: track investment flows and wallet activity.
+- `wallets`, `comments`, and `follows`: support user funds, community features, and relationships.
 
 <br><br>
 
@@ -25,7 +36,7 @@
 
 ### Project Highlights
 
-- Paid likes act as investments — users can invest in videos they believe in.
+- Paid likes act as investments, users can invest in videos they believe in.
 - AI-powered suggestions recommend promising videos to help investors make smarter decisions.
 - Infinite video streaming with vertical scroll for a TikTok-style experience.
 - Users can upload and stream videos seamlessly with real-time playback.
