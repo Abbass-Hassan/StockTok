@@ -117,7 +117,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/investments', [InvestmentController::class, 'getMyInvestments']);
         Route::get('/investments/portfolio/overview', [InvestmentController::class, 'getPortfolioOverview']);
         
-        // AI Recommendations route - MOVED BEFORE the {id} route
         Route::get('/investments/recommendations', [InvestmentController::class, 'getAIRecommendations']);
         
         // Individual investment details route - NOW COMES AFTER the recommendations route

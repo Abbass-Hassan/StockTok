@@ -245,35 +245,38 @@ class InvestmentController extends Controller
         ], 'Transaction history retrieved successfully');
     }
 
-    /**
-     * Get AI-powered investment recommendations.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getAIRecommendations()
-    {
-        try {
-            $user = auth()->user();
-            
-            // Create AIService instance with the correct namespace
-            $aiService = new \App\Services\AIService();
-            
-            // Get real AI-powered recommendations
-            $recommendations = $aiService->getInvestmentRecommendations($user->id);
-            
-            if (!$recommendations['success']) {
-                return $this->errorResponse($recommendations['message'], 400);
-            }
-            
-            return $this->successResponse(
-                $recommendations,
-                'AI investment recommendations retrieved successfully'
-            );
-        } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error: ' . $e->getMessage(),
-                500
-            );
+ /**
+ * Get AI-powered investment recommendations.
+ *
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function getAIRecommendations()
+{
+    try {
+        $user = auth()->user();
+        
+        // Get recommendations using our AIService
+        $aiService = new \App\Services\AIService();
+        $recommendations = $aiService->getInvestmentRecommendations($user->id);
+        
+        if (!$recommendations['success']) {
+            return $this->errorResponse($recommendations['message'], 400);
         }
+        
+        return $this->successResponse(
+            $recommendations,
+            'AI investment recommendations retrieved successfully'
+        );
+    } catch (\Exception $e) {
+        Log::error('AI recommendation error', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return $this->errorResponse(
+            'Error: ' . $e->getMessage(),
+            500
+        );
     }
+}
 }

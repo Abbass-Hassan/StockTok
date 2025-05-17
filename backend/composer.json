@@ -11,7 +11,8 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
-        "openai-php/client": "^0.12.0"
+        "openai-php/client": "^0.12.0",
+        "prism-php/prism": "^0.67.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
