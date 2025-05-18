@@ -2,7 +2,6 @@ import React from 'react';
 import {View, TouchableOpacity, Text, Image, StyleSheet} from 'react-native';
 
 const SocialLogin = ({isSignUp = false}) => {
-  // Button text based on whether it's sign up or login
   const googleText = isSignUp ? 'Sign up with Google' : 'Continue with Google';
   const facebookText = isSignUp
     ? 'Sign up with Facebook'

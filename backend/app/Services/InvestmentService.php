@@ -18,9 +18,7 @@ class InvestmentService
  */
 public function investInVideo($user, $videoId, $amount)
 {
-    // Start a database transaction to ensure all operations complete successfully
     return DB::transaction(function () use ($user, $videoId, $amount) {
-        // Find the video and creator
         $video = Video::findOrFail($videoId);
         $creator = User::findOrFail($video->user_id);
         
@@ -167,7 +165,6 @@ public function investInVideo($user, $videoId, $amount)
 
     /**
      * Get details of a specific investment.
-     * MODIFIED: Now consistently updates the investment using calculateReturns
      */
     public function getInvestmentDetails($investmentId)
     {
@@ -185,7 +182,6 @@ public function investInVideo($user, $videoId, $amount)
 
     /**
      * Get all investments made by a user.
-     * MODIFIED: Now updates all investments before returning
      */
     public function getUserInvestments($userId, $perPage = 15)
     {
@@ -231,7 +227,7 @@ public function investInVideo($user, $videoId, $amount)
     }
 
     /**
-     * ADDED: Sync investment values with transaction history.
+     * Sync investment values with transaction history.
      * This ensures that investor rewards are properly reflected in investment values.
      */
     public function syncInvestmentWithTransactions($investmentId)
@@ -279,8 +275,7 @@ public function investInVideo($user, $videoId, $amount)
 
     /**
      * Calculate investment returns without updating the database.
-     * Use this for displaying investment data without side effects.
-     * MODIFIED: Now also checks for investor rewards in transactions
+     * for displaying investment data without side effects.
      */
     public function calculateInvestmentReturns($investment)
     {
@@ -335,7 +330,6 @@ public function investInVideo($user, $videoId, $amount)
 
     /**
      * Calculate current returns for an investment and update the database.
-     * MODIFIED: Now also considers investor rewards from transactions
      */
     public function calculateReturns($investmentId)
     {

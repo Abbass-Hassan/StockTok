@@ -7,14 +7,12 @@ import {getToken, getUserData} from '../utils/tokenStorage';
 import {AuthContext} from '../App';
 import {ActivityIndicator, View} from 'react-native';
 
-// Auth screens
 import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
 import ProfileCompletion from '../screens/Auth/ProfileCompletion';
 
 import VideoFeedScreen from '../screens/VideoFeed/VideoFeedScreen';
 
-// Creator screens
 import UploadVideo from '../screens/Creator/UploadVideo';
 import MyVideos from '../screens/Creator/MyVideos';
 import VideoPlayer from '../screens/Creator/VideoPlayer';
@@ -23,13 +21,11 @@ import Dashboard from '../screens/Creator/Dashboard';
 import CreatorProfile from '../screens/Creator/CreatorProfile';
 import EditCreatorProfile from '../screens/Creator/EditCreatorProfile';
 
-// Wallet screens
 import WalletOverview from '../screens/Wallet/WalletOverview';
 import DepositFunds from '../screens/Wallet/DepositFunds';
 import WithdrawFunds from '../screens/Wallet/WithdrawFunds';
 import TransactionHistory from '../screens/Wallet/TransactionHistory';
 
-// Investment screens
 import PortfolioScreen from '../screens/Investment/PortfolioScreen';
 import InvestmentDetailsScreen from '../screens/Investment/InvestmentDetailsScreen';
 import AllInvestmentsScreen from '../screens/Investment/AllInvestmentsScreen';

@@ -24,7 +24,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const {width} = Dimensions.get('window');
 const numColumns = 3;
-const itemWidth = (width - 32) / numColumns; // Accounting for container padding
+const itemWidth = (width - 32) / numColumns;
 
 const UserProfile = ({route, navigation}) => {
   const {username} = route.params;
@@ -48,7 +48,6 @@ const UserProfile = ({route, navigation}) => {
       setLoading(true);
       setError(null);
 
-      // Get user profile by username
       console.log('Fetching user profile...');
       const profileResponse = await getUserByUsername(username);
       console.log(
@@ -70,11 +69,8 @@ const UserProfile = ({route, navigation}) => {
       );
       setProfile(userProfile);
 
-      // At this point, the profile has loaded successfully
-      // Set loading to false so the profile UI shows up
       setLoading(false);
 
-      // Load videos separately and don't block profile display
       if (userProfile.id) {
         try {
           console.log('Fetching videos for user ID:', userProfile.id);
@@ -86,7 +82,6 @@ const UserProfile = ({route, navigation}) => {
             JSON.stringify(videosResponse).substring(0, 200),
           );
 
-          // Handle different response structures
           let videosList = [];
           if (videosResponse?.videos?.data) {
             videosList = videosResponse.videos.data;
@@ -100,13 +95,11 @@ const UserProfile = ({route, navigation}) => {
           setVideos(videosList);
         } catch (videoError) {
           console.error('Error loading videos:', videoError.message);
-          // Videos failed but we'll show an empty list
           setVideos([]);
         } finally {
           setVideoLoading(false);
         }
 
-        // Check follow status (without blocking profile display)
         try {
           console.log('Checking follow status...');
           const followResponse = await checkFollowingStatus(userProfile.id);
@@ -117,7 +110,6 @@ const UserProfile = ({route, navigation}) => {
           setIsFollowing(followResponse?.is_following || false);
         } catch (followError) {
           console.error('Error checking follow status:', followError.message);
-          // Default to not following if status check fails
           setIsFollowing(false);
         }
       }
@@ -173,13 +165,11 @@ const UserProfile = ({route, navigation}) => {
       return null;
     }
 
-    // Replace image with a gray background and icon
     return (
       <TouchableOpacity
         style={styles.gridItem}
         onPress={() => {
           console.log('Video pressed:', item?.id);
-          // Navigate to VideoFeedScreen instead of VideoPlayer
           navigation.navigate('VideoFeedScreen', {
             initialVideoId: item.id,
             username: profile?.username,
@@ -192,7 +182,6 @@ const UserProfile = ({route, navigation}) => {
     );
   };
 
-  // Ensure key extractor never fails
   const keyExtractor = (item, index) => {
     if (!item) return `video-missing-${index}`;
     return item.id ? `video-${item.id}` : `video-index-${index}`;
@@ -223,7 +212,6 @@ const UserProfile = ({route, navigation}) => {
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <View style={styles.container}>
-        {/* Header with white background and teal text */}
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
@@ -234,7 +222,6 @@ const UserProfile = ({route, navigation}) => {
         </View>
 
         <View style={styles.profileSection}>
-          {/* Profile Image */}
           <Image
             source={{
               uri:
@@ -243,7 +230,6 @@ const UserProfile = ({route, navigation}) => {
             style={styles.profileImage}
           />
 
-          {/* Username */}
           <Text style={styles.username}>@{profile?.username || 'Unknown'}</Text>
 
           {/* Stats */}
@@ -261,7 +247,6 @@ const UserProfile = ({route, navigation}) => {
             </View>
           </View>
 
-          {/* Follow Button */}
           <TouchableOpacity
             style={[styles.followButton, isFollowing && styles.followingButton]}
             onPress={handleFollowToggle}>
@@ -274,7 +259,6 @@ const UserProfile = ({route, navigation}) => {
             </Text>
           </TouchableOpacity>
 
-          {/* Bio */}
           {profile?.bio ? (
             <Text style={styles.bio}>{profile.bio}</Text>
           ) : (
@@ -282,7 +266,6 @@ const UserProfile = ({route, navigation}) => {
           )}
         </View>
 
-        {/* Video Grid - Removed "Videos" title */}
         <View style={styles.videoSection}>
           {videoLoading ? (
             <View style={styles.videoLoadingContainer}>
@@ -494,7 +477,7 @@ const styles = StyleSheet.create({
   thumbnailContainer: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#E0E0E0', // Light gray color for thumbnails
+    backgroundColor: '#E0E0E0',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,8 +1,5 @@
-// auth.js - API integration with improved error handling
-
 import axios from 'axios';
 
-// Create an axios instance
 const api = axios.create({
   baseURL: 'http://35.181.171.137:8000/api',
   headers: {
@@ -19,14 +16,12 @@ const api = axios.create({
  */
 export const register = async (email, password, confirmPassword) => {
   try {
-    // Make API request with field names that match the backend
     const response = await api.post('/register', {
       email: email,
       password: password,
-      password_confirmation: confirmPassword, // Using snake_case for API compatibility
+      password_confirmation: confirmPassword,
     });
 
-    // Log the full response for debugging
     console.log(
       'Register API full response:',
       JSON.stringify(response.data, null, 2),
@@ -55,7 +50,6 @@ export const login = async (email, password) => {
       password,
     });
 
-    // Log the full response for debugging
     console.log(
       'Login API full response:',
       JSON.stringify(response.data, null, 2),
@@ -138,10 +132,8 @@ export const forgotPassword = async email => {
  */
 export const completeProfile = async (token, profileData) => {
   try {
-    // Create form data for file upload
     const formData = new FormData();
 
-    // Add profile photo if available
     if (profileData.profile_photo) {
       const photo = profileData.profile_photo;
       formData.append('profile_photo', {
@@ -151,20 +143,17 @@ export const completeProfile = async (token, profileData) => {
       });
     }
 
-    // Add other profile fields
     if (profileData.username) formData.append('username', profileData.username);
     if (profileData.name) formData.append('name', profileData.name);
     if (profileData.phone) formData.append('phone', profileData.phone);
     if (profileData.bio) formData.append('bio', profileData.bio);
     if (profileData.gender) formData.append('gender', profileData.gender);
 
-    // Map user_type to user_type_id
     if (profileData.user_type) {
       const userTypeId = profileData.user_type === 'Creator' ? 2 : 1;
       formData.append('user_type_id', userTypeId);
     }
 
-    // Use the correct API endpoint
     const response = await api.post('/complete-profile', formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -172,7 +161,6 @@ export const completeProfile = async (token, profileData) => {
       },
     });
 
-    // Log the full response for debugging
     console.log(
       'Complete Profile API full response:',
       JSON.stringify(response.data, null, 2),
@@ -188,11 +176,9 @@ export const completeProfile = async (token, profileData) => {
   }
 };
 
-// Add error interceptor to log all API errors
 api.interceptors.response.use(
   response => response,
   error => {
-    // Log all API errors for debugging
     console.error('API Error:', {
       url: error.config?.url,
       method: error.config?.method,

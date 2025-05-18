@@ -17,13 +17,12 @@ import {
 import {getCreatorProfile, getCreatorStats} from '../../api/creatorProfileApi';
 import {getMyVideos} from '../../api/videoApi';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {AuthContext} from '../../App'; // Import AuthContext
+import {AuthContext} from '../../App';
 
 const {width} = Dimensions.get('window');
 const numColumns = 3;
 const itemWidth = width / numColumns; // 3 columns with no gap
 
-// UI Colors
 const COLORS = {
   primary: '#00796B',
   lightGray: '#EEEEEE',
@@ -35,7 +34,7 @@ const COLORS = {
 };
 
 const CreatorProfile = ({navigation}) => {
-  const {logout} = useContext(AuthContext); // Use the logout function from context
+  const {logout} = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [stats, setStats] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -85,7 +84,6 @@ const CreatorProfile = ({navigation}) => {
     }
   };
 
-  // Updated handleLogout function
   const handleLogout = () => {
     Alert.alert(
       'Logout',
@@ -98,7 +96,6 @@ const CreatorProfile = ({navigation}) => {
         {
           text: 'Logout',
           onPress: () => {
-            // Use the global logout function from context
             logout();
           },
           style: 'destructive',
@@ -176,7 +173,6 @@ const CreatorProfile = ({navigation}) => {
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
 
       <View style={styles.container}>
-        {/* Updated Header with Centered Title and Logout Button on Right */}
         <View style={styles.header}>
           <View style={styles.headerLeftPlaceholder} />
           <Text style={styles.headerTitle}>Profile</Text>
@@ -332,10 +328,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Keep space-between for the three elements
+    justifyContent: 'space-between',
   },
   headerLeftPlaceholder: {
-    width: 40, // Same width as logout button to balance
+    width: 40,
   },
   logoutButton: {
     padding: 8,

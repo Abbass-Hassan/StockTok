@@ -1,7 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-// Import auth screens
 import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
 import ProfileCompletion from '../screens/Auth/ProfileCompletion';

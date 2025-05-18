@@ -18,9 +18,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 
 const API_URL = 'http://35.181.171.137:8000/api';
-const ITEMS_PER_PAGE = 10; // Set a consistent items per page
+const ITEMS_PER_PAGE = 10;
 
-// Shared utility functions for consistent formatting
 export const formatCurrency = amount => {
   return '$' + parseFloat(amount).toFixed(2);
 };
@@ -30,7 +29,6 @@ export const formatPercentage = percentage => {
   return value > 0 ? `+${value}%` : `${value}%`;
 };
 
-// Format date
 const formatDate = dateString => {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
@@ -48,7 +46,6 @@ const AllInvestmentsScreen = ({navigation}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMorePages, setHasMorePages] = useState(true);
 
-  // Force refresh when screen comes into focus
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchInvestments(1, true);
@@ -57,7 +54,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
-  // Fetch investments
   const fetchInvestments = async (page = 1, refresh = false) => {
     try {
       if (refresh) {
@@ -110,35 +106,28 @@ const AllInvestmentsScreen = ({navigation}) => {
     }
   };
 
-  // Refresh investments
   const onRefresh = () => {
     fetchInvestments(1, true);
   };
 
-  // Load more investments when reaching the end of the list
   const loadMoreInvestments = () => {
     if (!loading && !refreshing && hasMorePages) {
       fetchInvestments(currentPage + 1);
     }
   };
 
-  // Load initial data
   useEffect(() => {
     console.log('AllInvestmentsScreen - Loading initial data');
     fetchInvestments();
   }, []);
 
-  // View investment details
   const viewInvestmentDetails = investmentId => {
     navigation.navigate('InvestmentDetails', {investmentId});
   };
 
-  // Render investment item
   const renderInvestmentItem = ({item}) => {
-    // Calculate return percentage
     const returnPercentage = item.return_percentage || 0;
 
-    // Determine text color based on return
     const returnColor = returnPercentage >= 0 ? '#4CAF50' : '#F44336';
 
     return (
@@ -192,7 +181,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     );
   };
 
-  // Render list footer (loading indicator when loading more data)
   const renderFooter = () => {
     if (!hasMorePages) return null;
 
@@ -205,7 +193,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     );
   };
 
-  // Render loading state
   if (loading && !refreshing && currentPage === 1) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -218,7 +205,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     );
   }
 
-  // Render error state
   if (error && !refreshing && investments.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -236,7 +222,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     );
   }
 
-  // Render empty state
   if (!loading && !refreshing && investments.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -270,7 +255,6 @@ const AllInvestmentsScreen = ({navigation}) => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Header - Consistent Design */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -289,7 +273,7 @@ const AllInvestmentsScreen = ({navigation}) => {
       <FlatList
         data={investments}
         renderItem={renderInvestmentItem}
-        keyExtractor={(item, index) => `investment-${item.id}-${index}`} // Add index to ensure uniqueness
+        keyExtractor={(item, index) => `investment-${item.id}-${index}`}
         contentContainerStyle={styles.listContent}
         onRefresh={onRefresh}
         refreshing={refreshing}
@@ -347,7 +331,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 30,
   },
-  // Investment Card Styles
   investmentCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
@@ -417,7 +400,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // Loading State Styles
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -429,7 +411,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#657786',
   },
-  // Error State Styles
   errorContainer: {
     flex: 1,
     justifyContent: 'center',

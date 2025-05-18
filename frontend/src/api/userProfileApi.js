@@ -1,11 +1,8 @@
-// src/api/userProfileApi.js
 import axios from 'axios';
 import {getToken} from '../utils/tokenStorage';
 
-// Use the EXACT same API_URL as in your Postman request
 const API_URL = 'http://35.181.171.137:8000/api';
 
-// Debug token storage function
 export const debugTokenStorage = async () => {
   try {
     const token = await getToken();
@@ -13,8 +10,6 @@ export const debugTokenStorage = async () => {
       'Current token (first 10 chars):',
       token ? token.substring(0, 10) + '...' : 'NO TOKEN',
     );
-
-    // No JWT validation since you're using a custom token format
 
     return token ? true : false;
   } catch (error) {
@@ -27,11 +22,9 @@ export const debugTokenStorage = async () => {
 export const searchUsers = async (query, perPage = 15) => {
   console.log('searchUsers called with query:', query);
 
-  // Debug token before search
   await debugTokenStorage();
 
   try {
-    // Get token from storage
     const token = await getToken();
     console.log(
       'Token retrieved (first 10 chars):',
@@ -43,15 +36,12 @@ export const searchUsers = async (query, perPage = 15) => {
       throw new Error('Authentication required');
     }
 
-    // Explicitly encode the query parameter
     const encodedUsername = encodeURIComponent(query);
     console.log('Encoded username:', encodedUsername);
 
-    // Construct the URL
     const url = `${API_URL}/profile/username/${encodedUsername}`;
     console.log('Requesting URL:', url);
 
-    // Log the exact request we're making
     console.log('Making GET request with Authorization header');
 
     const response = await axios.get(url, {
@@ -67,7 +57,6 @@ export const searchUsers = async (query, perPage = 15) => {
       JSON.stringify(response.data).substring(0, 300),
     );
 
-    // Check if there's a profile in the data.profile OR data.data.profile path
     if (response.data?.data?.profile) {
       console.log('Profile found in data.data.profile');
       return {
@@ -88,7 +77,6 @@ export const searchUsers = async (query, perPage = 15) => {
         Object.keys(response.data || {}),
       );
 
-      // Log the full response for debugging
       console.log('Full response body:', JSON.stringify(response.data));
 
       return {data: {users: []}};
@@ -113,7 +101,6 @@ export const getUserByUsername = async username => {
   console.log('getUserByUsername called with:', username);
 
   try {
-    // Get token from storage
     const token = await getToken();
     console.log(
       'Token for profile:',
@@ -125,10 +112,8 @@ export const getUserByUsername = async username => {
       throw new Error('Authentication required');
     }
 
-    // Explicitly encode the username
     const encodedUsername = encodeURIComponent(username);
 
-    // Create full URL
     const url = `${API_URL}/profile/username/${encodedUsername}`;
     console.log('Profile URL:', url);
 
@@ -145,7 +130,6 @@ export const getUserByUsername = async username => {
       JSON.stringify(response.data).substring(0, 300),
     );
 
-    // Check both possible locations for the profile
     if (response.data?.data?.profile) {
       return {
         profile: response.data.data.profile,
@@ -180,7 +164,6 @@ export const getUserByUsername = async username => {
 export const getUserVideos = async (userId, perPage = 15) => {
   console.log('Getting videos for user ID:', userId);
   try {
-    // Get token from storage
     const token = await getToken();
     console.log(
       'Token for videos:',
@@ -191,7 +174,6 @@ export const getUserVideos = async (userId, perPage = 15) => {
       throw new Error('Authentication required');
     }
 
-    // Try the new by-creator endpoint for regular users viewing creator videos
     const creatorVideosUrl = `${API_URL}/regular/videos/by-creator/${userId}`;
     console.log(
       'Trying creator videos URL for regular user:',
@@ -209,14 +191,12 @@ export const getUserVideos = async (userId, perPage = 15) => {
 
       console.log('Creator videos response status:', creatorResponse.status);
 
-      // Process successful response
       return processVideoResponse(creatorResponse);
     } catch (creatorError) {
       console.log(
         'Creator videos endpoint failed, trying regular user endpoint...',
       );
 
-      // If that fails, try the regular user videos endpoint
       const regularUrl = `${API_URL}/regular/videos/user/${userId}`;
       console.log('Trying regular user videos URL:', regularUrl);
 
@@ -232,7 +212,6 @@ export const getUserVideos = async (userId, perPage = 15) => {
         console.log('Regular videos response status:', regularResponse.status);
         return processVideoResponse(regularResponse);
       } catch (regularError) {
-        // If you're a creator viewing your own videos
         console.log(
           'Regular user endpoint failed, trying creator own videos endpoint...',
         );
@@ -254,13 +233,11 @@ export const getUserVideos = async (userId, perPage = 15) => {
           );
           return processVideoResponse(creatorOwnResponse);
         } catch (creatorOwnError) {
-          // All routes failed, log errors
           console.error('All video routes failed');
           console.error('Creator videos error:', creatorError.message);
           console.error('Regular route error:', regularError.message);
           console.error('Creator own route error:', creatorOwnError.message);
 
-          // Return empty array as fallback
           return {videos: {data: []}};
         }
       }
@@ -278,7 +255,6 @@ function processVideoResponse(response) {
     JSON.stringify(response.data).substring(0, 300),
   );
 
-  // Handle different potential response structures
   if (response.data?.videos?.data) {
     console.log('Found videos in data.videos.data');
     return {videos: response.data.videos};
@@ -296,13 +272,11 @@ function processVideoResponse(response) {
     return {videos: {data: response.data}};
   }
 
-  // If structure not recognized, log the full structure for debugging
   console.log(
     'Unrecognized response structure:',
     JSON.stringify(response.data).substring(0, 300),
   );
 
-  // Default to empty array
   return {videos: {data: []}};
 }
 
@@ -310,7 +284,6 @@ function processVideoResponse(response) {
 export const followUser = async followingId => {
   console.log('Following user ID:', followingId);
   try {
-    // Get token from storage
     const token = await getToken();
     if (!token) {
       throw new Error('Authentication required');
@@ -339,7 +312,6 @@ export const followUser = async followingId => {
 export const unfollowUser = async followingId => {
   console.log('Unfollowing user ID:', followingId);
   try {
-    // Get token from storage
     const token = await getToken();
     if (!token) {
       throw new Error('Authentication required');
@@ -363,13 +335,11 @@ export const unfollowUser = async followingId => {
 export const checkFollowingStatus = async followingId => {
   console.log('Checking follow status for user ID:', followingId);
   try {
-    // Get token from storage
     const token = await getToken();
     if (!token) {
       throw new Error('Authentication required');
     }
 
-    // Try the most likely endpoint first
     try {
       const response = await axios.get(
         `${API_URL}/follows/user/${followingId}/status`,
@@ -383,7 +353,6 @@ export const checkFollowingStatus = async followingId => {
 
       console.log('Follow status response:', JSON.stringify(response.data));
 
-      // Handle different response structures
       let isFollowing = false;
 
       if (response.data?.is_following !== undefined) {
@@ -399,7 +368,6 @@ export const checkFollowingStatus = async followingId => {
 
       return {is_following: isFollowing};
     } catch (error) {
-      // If the first endpoint fails, try a fallback
       console.log('First follow status endpoint failed, trying fallback...');
 
       const fallbackResponse = await axios.get(
@@ -424,7 +392,6 @@ export const checkFollowingStatus = async followingId => {
     }
   } catch (error) {
     console.error('Error checking follow status:', error.message);
-    // Return a default value instead of throwing
     return {is_following: false};
   }
 };

@@ -18,12 +18,10 @@ import EmptyState from '../../components/common/EmptyState';
 import FloatingActionButton from '../../components/common/FloatingActionButton';
 
 const MyVideos = ({navigation}) => {
-  // State variables
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Function to load videos
   const loadVideos = async () => {
     try {
       setLoading(true);
@@ -201,7 +199,7 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 80, // Space for FAB
+    paddingBottom: 80,
   },
 });
 

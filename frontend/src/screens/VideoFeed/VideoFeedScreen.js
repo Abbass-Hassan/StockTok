@@ -22,21 +22,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const API_URL = 'http://35.181.171.137:8000/api';
 const {height, width} = Dimensions.get('window');
 
-// Calculate tab bar height
 const TAB_BAR_HEIGHT = 80;
 const BOTTOM_INSET = Platform.OS === 'ios' ? 34 : 16;
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
 
-// Calculate available content area
 const AVAILABLE_HEIGHT = height;
 
 const VideoFeedScreen = ({navigation, route}) => {
-  // Check if we have initialVideoId from navigation params
   const initialVideoId = route.params?.initialVideoId;
   const [hasInitialScrolled, setHasInitialScrolled] = useState(false);
 
-  // Add feed type state
-  const [feedType, setFeedType] = useState('trending'); // 'trending' or 'following'
+  const [feedType, setFeedType] = useState('trending');
 
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,11 +43,9 @@ const VideoFeedScreen = ({navigation, route}) => {
   const [videoToken, setVideoToken] = useState(null);
   const [playingStates, setPlayingStates] = useState({});
 
-  // Investment modal states
   const [investmentModalVisible, setInvestmentModalVisible] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState(null);
 
-  // Animation states for heart
   const [likeAnimations, setLikeAnimations] = useState({});
   const animatedHeartScale = useRef(new Animated.Value(0)).current;
   const animatedHeartOpacity = useRef(new Animated.Value(0)).current;
@@ -59,21 +53,17 @@ const VideoFeedScreen = ({navigation, route}) => {
   const flatListRef = useRef(null);
   const videoRefs = useRef({});
 
-  // Fetch videos from the API based on feed type
   const fetchVideos = async (page = 1, type = feedType) => {
     try {
       setLoading(true);
 
-      // Get auth token
       const token = await getToken();
       if (!token) {
         throw new Error('Authentication required');
       }
 
-      // Store token for video requests
       setVideoToken(token);
 
-      // Determine API endpoint based on feed type
       let endpoint = '';
       if (type === 'trending') {
         endpoint = `${API_URL}/regular/videos/trending?page=${page}`;
@@ -87,7 +77,6 @@ const VideoFeedScreen = ({navigation, route}) => {
         },
       });
 
-      // Check if we have videos data
       if (
         response.data.data &&
         response.data.data.videos &&
@@ -96,7 +85,6 @@ const VideoFeedScreen = ({navigation, route}) => {
         const newVideos = response.data.data.videos.data;
         const isLastPage = !response.data.data.videos.next_page_url;
 
-        // Initialize playing states for new videos
         const newPlayingStates = {};
         newVideos.forEach(video => {
           newPlayingStates[video.id] = false;
@@ -112,7 +100,6 @@ const VideoFeedScreen = ({navigation, route}) => {
 
         setHasMorePages(!isLastPage);
       } else {
-        // Handle case where there are no videos (especially for following feed)
         setVideos([]);
         setHasMorePages(false);
       }
@@ -122,10 +109,9 @@ const VideoFeedScreen = ({navigation, route}) => {
     } catch (err) {
       console.error('Error fetching videos:', err);
 
-      // Check if error is specifically about not following anyone
       if (err.response && err.response.status === 404 && type === 'following') {
         setVideos([]);
-        setError(null); // Clear any existing error
+        setError(null);
         setLoading(false);
       } else {
         setError('Failed to load videos. Please try again.');
@@ -134,7 +120,6 @@ const VideoFeedScreen = ({navigation, route}) => {
     }
   };
 
-  // Switch feed type
   const switchFeedType = type => {
     if (type !== feedType) {
       setFeedType(type);
@@ -144,28 +129,23 @@ const VideoFeedScreen = ({navigation, route}) => {
       setActiveVideoIndex(0);
       fetchVideos(1, type);
 
-      // Scroll to top
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({offset: 0});
       }
     }
   };
 
-  // Load initial videos
   useEffect(() => {
     fetchVideos();
   }, []);
 
-  // Add useEffect to handle scrolling to the initial video when navigating from profile
   useEffect(() => {
     if (initialVideoId && videos.length > 0 && !hasInitialScrolled) {
-      // Find the index of the video with initialVideoId
       const videoIndex = videos.findIndex(video => video.id === initialVideoId);
 
       if (videoIndex !== -1 && flatListRef.current) {
         console.log(`Scrolling to video at index ${videoIndex}`);
 
-        // Add a small delay to ensure the FlatList is rendered
         setTimeout(() => {
           flatListRef.current.scrollToIndex({
             index: videoIndex,
@@ -173,32 +153,26 @@ const VideoFeedScreen = ({navigation, route}) => {
             viewPosition: 0,
           });
 
-          // Update active video index
           setActiveVideoIndex(videoIndex);
 
-          // Update playing states
           const updatedPlayingStates = {...playingStates};
           Object.keys(updatedPlayingStates).forEach(id => {
             updatedPlayingStates[id] = id === initialVideoId;
           });
           setPlayingStates(updatedPlayingStates);
 
-          // Mark that we've scrolled to initial video
           setHasInitialScrolled(true);
         }, 500);
       }
     }
   }, [initialVideoId, videos, hasInitialScrolled, playingStates]);
 
-  // Add a handler for scrollToIndex failures
   const onScrollToIndexFailed = info => {
     console.log('Failed to scroll to index', info);
 
-    // If we can't scroll directly to the index, try again with a different approach
     if (initialVideoId && videos.length > 0 && !hasInitialScrolled) {
       setTimeout(() => {
         if (flatListRef.current) {
-          // Try scrolling to an approximate position
           const approxIndex = Math.min(info.index, videos.length - 1);
           const offset = approxIndex * AVAILABLE_HEIGHT;
 
@@ -213,13 +187,10 @@ const VideoFeedScreen = ({navigation, route}) => {
     }
   };
 
-  // Animate heart when like is successful
   const animateHeart = videoId => {
-    // Reset animations
     animatedHeartScale.setValue(0);
     animatedHeartOpacity.setValue(0);
 
-    // Start animations
     Animated.parallel([
       Animated.timing(animatedHeartScale, {
         toValue: 1,
@@ -233,7 +204,6 @@ const VideoFeedScreen = ({navigation, route}) => {
       }),
     ]).start();
 
-    // Fade out animation
     setTimeout(() => {
       Animated.timing(animatedHeartOpacity, {
         toValue: 0,
@@ -248,58 +218,48 @@ const VideoFeedScreen = ({navigation, route}) => {
     }, 1500);
   };
 
-  // Open investment modal for a video
   const handleLikePress = videoId => {
     setSelectedVideoId(videoId);
     setInvestmentModalVisible(true);
   };
 
-  // Handle successful investment
   const handleInvestmentSuccess = investment => {
-    // Update videos list to reflect the new investment
     setVideos(prevVideos =>
       prevVideos.map(video => {
         if (video.id === selectedVideoId) {
           return {
             ...video,
             like_investment_count: video.like_investment_count + 1,
-            // You may also update other properties if the API returns them
           };
         }
         return video;
       }),
     );
 
-    // Start heart animation for the liked video
     setLikeAnimations(prev => ({
       ...prev,
       [selectedVideoId]: true,
     }));
 
-    // Trigger animation
     animateHeart(selectedVideoId);
   };
 
-  // Handle when a user scrolls to end of the list
   const handleLoadMore = () => {
     if (!loading && hasMorePages) {
       fetchVideos(currentPage + 1);
     }
   };
 
-  // Update active video index and handle playback
   const handleViewableItemsChanged = useRef(({viewableItems}) => {
     if (viewableItems.length > 0) {
       const newActiveIndex = viewableItems[0].index;
       const activeVideoId = viewableItems[0].item.id;
 
-      // Pause all videos
       const updatedPlayingStates = {...playingStates};
       Object.keys(updatedPlayingStates).forEach(videoId => {
         updatedPlayingStates[videoId] = false;
       });
 
-      // Play only the active video
       updatedPlayingStates[activeVideoId] = true;
 
       setActiveVideoIndex(newActiveIndex);
@@ -307,13 +267,11 @@ const VideoFeedScreen = ({navigation, route}) => {
     }
   }).current;
 
-  // Configuration for viewability
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
     minimumViewTime: 300,
   }).current;
 
-  // Format count for display
   const formatCount = count => {
     if (!count) return '0';
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
@@ -321,20 +279,16 @@ const VideoFeedScreen = ({navigation, route}) => {
     return count.toString();
   };
 
-  // Toggle play/pause for a specific video
   const toggleVideoPlayback = videoId => {
-    // Create haptic feedback when toggling video
     if (Platform.OS === 'ios') {
-      // Use light impact for iOS
       const impactLight = require('react-native').ImpactFeedbackGenerator;
       if (impactLight) {
         const impact = new impactLight('light');
         impact.impactOccurred();
       }
     } else if (Platform.OS === 'android') {
-      // Use vibration API for Android
       const Vibration = require('react-native').Vibration;
-      Vibration.vibrate(10); // Very short vibration
+      Vibration.vibrate(10);
     }
 
     setPlayingStates(prev => ({
@@ -343,17 +297,14 @@ const VideoFeedScreen = ({navigation, route}) => {
     }));
   };
 
-  // Navigate to creator profile
   const goToCreatorProfile = userId => {
     navigation.navigate('UserProfile', {userId: userId});
   };
 
-  // Handle video error
   const handleVideoError = (error, videoId) => {
     console.error(`Error playing video ${videoId}:`, error);
   };
 
-  // Render each video item
   const renderItem = ({item, index}) => {
     const isPlaying = playingStates[item.id] || false;
     const videoUrl = `${API_URL}/videos/${item.id}/play`;
@@ -361,9 +312,7 @@ const VideoFeedScreen = ({navigation, route}) => {
 
     return (
       <View style={styles.itemContainer}>
-        {/* Video Container with full-screen size */}
         <View style={styles.videoContainer}>
-          {/* Heart Animation - Only show when actively animating */}
           {isAnimatingLike && (
             <Animated.View
               style={[
@@ -377,7 +326,6 @@ const VideoFeedScreen = ({navigation, route}) => {
             </Animated.View>
           )}
 
-          {/* Video Player */}
           <TouchableOpacity
             activeOpacity={1}
             style={styles.videoWrapper}
@@ -417,7 +365,6 @@ const VideoFeedScreen = ({navigation, route}) => {
               />
             )}
 
-            {/* Play Button Overlay - only when paused */}
             {!isPlaying && (
               <View style={styles.playButtonOverlay}>
                 <View style={styles.playButton}>
@@ -427,7 +374,6 @@ const VideoFeedScreen = ({navigation, route}) => {
             )}
           </TouchableOpacity>
 
-          {/* Caption container - Now positioned at the bottom of the screen, left of comment button */}
           <View style={styles.captionContainer}>
             <TouchableOpacity onPress={() => goToCreatorProfile(item.user_id)}>
               <Text style={styles.usernameText}>@{item.username}</Text>
@@ -437,9 +383,7 @@ const VideoFeedScreen = ({navigation, route}) => {
             </Text>
           </View>
 
-          {/* Side buttons - with share button removed */}
           <View style={styles.sideButtonsContainer}>
-            {/* Heart button */}
             <TouchableOpacity
               style={styles.sideButton}
               onPress={() => handleLikePress(item.id)}>
@@ -453,7 +397,6 @@ const VideoFeedScreen = ({navigation, route}) => {
               </Text>
             </TouchableOpacity>
 
-            {/* Comment button */}
             <TouchableOpacity style={styles.sideButton}>
               <View style={styles.iconContainer}>
                 <Ionicons name="chatbubble-outline" size={26} color="#FFFFFF" />
@@ -468,7 +411,6 @@ const VideoFeedScreen = ({navigation, route}) => {
     );
   };
 
-  // Render loading indicator
   const renderLoader = () => {
     if (!loading) return null;
     return (
@@ -479,7 +421,6 @@ const VideoFeedScreen = ({navigation, route}) => {
     );
   };
 
-  // Render empty state when no videos available
   const renderEmptyState = () => {
     if (loading || videos.length > 0) return null;
 
@@ -512,7 +453,6 @@ const VideoFeedScreen = ({navigation, route}) => {
     );
   };
 
-  // Render error message
   if (error) {
     return (
       <View style={styles.errorContainer}>
@@ -566,7 +506,6 @@ const VideoFeedScreen = ({navigation, route}) => {
         )}
       </View>
 
-      {/* Header with Feed Type Selector */}
       <View style={styles.header}>
         <View style={styles.feedTypeSelectorContainer}>
           <TouchableOpacity
@@ -600,7 +539,6 @@ const VideoFeedScreen = ({navigation, route}) => {
         </View>
       </View>
 
-      {/* Investment Modal */}
       <InvestmentModal
         visible={investmentModalVisible}
         videoId={selectedVideoId}
@@ -620,7 +558,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
   },
-  // Header styles - Updated without colors/blur
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -632,7 +569,6 @@ const styles = StyleSheet.create({
     top: 0,
     zIndex: 10,
   },
-  // Feed Type Selector styles
   feedTypeSelectorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -657,7 +593,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
   },
-  // Video container
   itemContainer: {
     height: AVAILABLE_HEIGHT,
     width: width,
@@ -679,7 +614,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  // Play Button Styles
   playButtonOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
@@ -696,7 +630,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  // Heart animation
   heartAnimation: {
     position: 'absolute',
     top: '45%',
@@ -706,7 +639,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // Side buttons styling - Removed share button
   sideButtonsContainer: {
     position: 'absolute',
     right: 12,
@@ -725,12 +657,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  // Caption container - UPDATED: Now positioned at the bottom left of the screen
   captionContainer: {
     position: 'absolute',
     left: 15,
-    bottom: 100, // Positioned at the bottom of the screen, aligned with comment button
-    maxWidth: '60%', // Reduced width to avoid overlap with comment button
+    bottom: 100,
+    maxWidth: '60%',
     padding: 8,
     zIndex: 20,
   },
@@ -751,7 +682,6 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: 0, height: 1},
     textShadowRadius: 3,
   },
-  // Loading and error states
   loaderContainer: {
     padding: 20,
     alignItems: 'center',
@@ -789,7 +719,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  // Empty state styles
   emptyStateContainer: {
     flex: 1,
     justifyContent: 'center',

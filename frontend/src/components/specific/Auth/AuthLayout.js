@@ -16,17 +16,14 @@ const AuthLayout = ({header, form, socialSection, bottomPrompt}) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Use KeyboardAvoidingView with appropriate behavior and offset */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidContainer}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
-        {/* Add ScrollView to ensure content can be scrolled if needed */}
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
-          {/* Wrap everything in TouchableWithoutFeedback to dismiss keyboard on outside tap */}
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.innerContainer}>
               {header}

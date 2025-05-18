@@ -14,8 +14,6 @@
 <!-- System Design -->
 <img src="./readme/title3.svg"/>
 
-### System Design
-
 The backend of StockTok is built with a clean relational structure that powers video content, user investments, wallet management, and social interactions.
 
 #### ER Diagram
@@ -33,8 +31,6 @@ The database is structured around core entities:
 
 <!-- Project Highlights -->
 <img src="./readme/title4.svg"/>
-
-### Project Highlights
 
 - Paid likes act as investments, users can invest in videos they believe in.
 - AI-powered suggestions recommend promising videos to help investors make smarter decisions.
@@ -63,8 +59,6 @@ The database is structured around core entities:
 <!-- Development & Testing -->
 <img src="./readme/title6.svg"/>
 
-### Development & Testing
-
 This section highlights how StockTok handles core backend logic, validation layers, and testing.
 
 - **Services:** Core business logic is separated into service classes, making the app modular, maintainable, and scalable.
@@ -86,10 +80,10 @@ This section highlights how StockTok handles core backend logic, validation laye
   - **Staging:** `http://13.37.224.245`
   - **Production:** `http://35.181.171.137`
 - The application is **containerized using Docker** to ensure consistency across all environments.
-- **CI/CD pipelines** are implemented via **GitHub Actions**, enabling automatic testing and deployment on every push to main.
+- **CI/CD pipelines** are implemented via **GitHub Actions**, enabling automatic testing and deployment on every push to `main`.
 
-| Postman API 1                           | Postman API 2                         | Postman API 3                         |
-| --------------------------------------- | ------------------------------------- | ------------------------------------- |
-| ![Landing](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) |
+| Postman API 1                      | Postman API 2                      | Postman API 3                      |
+| ---------------------------------- | ---------------------------------- | ---------------------------------- |
+| ![Postman1](./readme/postman1.png) | ![Postman2](./readme/postman2.png) | ![Postman3](./readme/postman3.png) |
 
 <br><br>

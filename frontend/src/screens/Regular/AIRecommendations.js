@@ -1,5 +1,3 @@
-// AIRecommendations.js
-
 import React, {useState, useEffect, useContext} from 'react';
 import {
   SafeAreaView,
@@ -14,120 +12,131 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {AuthContext} from '../../App'; // Import AuthContext
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from '../../App';
 
-// many mock recommendations
-const MOCK_RECOMMENDATIONS = [
-  {
-    video_id: 1,
-    caption: 'Check out this new AI-powered smartphone!',
-    creator: 'TechGuru',
-    category: 'Tech',
-    reason: 'Popular trending video in your favorite Tech category',
-    suggested_amount: '$10–$20',
-    priority: 'high',
-  },
-  {
-    video_id: 2,
-    caption: 'Easy 15-minute pasta recipe everyone will love',
-    creator: 'ChefMasters',
-    category: 'Cooking',
-    reason: 'Diversify with this trending Cooking content',
-    suggested_amount: '$5–$15',
-    priority: 'medium',
-  },
-  {
-    video_id: 3,
-    caption: 'Top 5 gaming strategies that actually work',
-    creator: 'ProGamer',
-    category: 'Gaming',
-    reason: 'High growth potential in the Gaming niche',
-    suggested_amount: '$15–$25',
-    priority: 'high',
-  },
-  {
-    video_id: 4,
-    caption: 'Top 10 summer outfits for 2025',
-    creator: 'StyleIcon',
-    category: 'Fashion',
-    reason: 'Seasonal fashion trends driving high engagement',
-    suggested_amount: '$8–$18',
-    priority: 'medium',
-  },
-  {
-    video_id: 5,
-    caption: 'Quick home workout you can do anywhere',
-    creator: 'FitLife',
-    category: 'Fitness',
-    reason: 'Fitness niche is on the rise—steady returns expected',
-    suggested_amount: '$5–$12',
-    priority: 'low',
-  },
-  {
-    video_id: 6,
-    caption: 'How to meditate: beginner guide',
-    creator: 'ZenMaster',
-    category: 'Wellness',
-    reason: 'Wellness content has consistent engagement',
-    suggested_amount: '$4–$10',
-    priority: 'low',
-  },
-  {
-    video_id: 7,
-    caption: 'DIY home decor hacks for under $20',
-    creator: 'CraftyHands',
-    category: 'DIY',
-    reason: 'DIY projects attract engaged viewers',
-    suggested_amount: '$7–$17',
-    priority: 'medium',
-  },
-  {
-    video_id: 8,
-    caption: 'Mastering personal finance in 5 steps',
-    creator: 'MoneyWise',
-    category: 'Finance',
-    reason: 'Finance tutorials drive high-quality engagement',
-    suggested_amount: '$12–$22',
-    priority: 'high',
-  },
-];
+export default function AIRecommendations({navigation, route}) {
+  const {setIsLoggedIn} = useContext(AuthContext);
 
-const PORTFOLIO_INSIGHTS =
-  'Your portfolio is currently tech-heavy. Consider diversifying into entertainment and lifestyle categories for more balanced returns.';
-const INVESTMENT_STRATEGY =
-  'Focus on high-engagement creators with consistent posting schedules. Spread investments across 3–4 different content categories.';
-
-export default function AIRecommendations({navigation}) {
-  const {logout} = useContext(AuthContext); // Use the logout function from context
   const [loading, setLoading] = useState(true);
-  const [rec, setRec] = useState(null);
+  const [error, setError] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [portfolioAssessment, setPortfolioAssessment] = useState('');
+  const [diversificationStrategy, setDiversificationStrategy] = useState('');
+  const [selectedRecommendation, setSelectedRecommendation] = useState(null);
 
   useEffect(() => {
-    const pick =
-      MOCK_RECOMMENDATIONS[
-        Math.floor(Math.random() * MOCK_RECOMMENDATIONS.length)
-      ];
-    setTimeout(() => {
-      setRec(pick);
-      setLoading(false);
-    }, 800);
+    fetchRecommendations();
   }, []);
 
-  // Updated handleLogout function
+  const fetchRecommendations = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const authToken = await AsyncStorage.getItem('stocktok_auth_token');
+
+      console.log(
+        'Token from stocktok_auth_token:',
+        authToken ? authToken.substring(0, 10) + '...' : 'none',
+      );
+
+      if (!authToken) {
+        console.error('No authentication token found');
+        setError('No authentication token found. Please log in again.');
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(
+        'http://35.181.171.137:8000/api/regular/investments/recommendations',
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        },
+      );
+
+      console.log('API Response status:', response.status);
+
+      if (response.data.status === 'success') {
+        const data = response.data.data.recommendations;
+
+        setPortfolioAssessment(data.portfolio_assessment || '');
+        setDiversificationStrategy(data.diversification_strategy || '');
+        setRecommendations(data.recommended_videos || []);
+
+        if (data.recommended_videos && data.recommended_videos.length > 0) {
+          setSelectedRecommendation(data.recommended_videos[0]);
+        }
+      } else {
+        setError('Failed to load recommendations');
+      }
+    } catch (err) {
+      console.error('Error fetching recommendations:', err);
+
+      if (err.response) {
+        console.log('Response error:', err.response.status);
+
+        if (err.response.status === 401) {
+          setError('Authentication failed. Please log in again.');
+        } else {
+          setError(`Server error: ${err.response.status}`);
+        }
+      } else if (err.request) {
+        console.log('Request error - no response received');
+        setError('No response from server. Check your connection.');
+      } else {
+        console.log('Error setting up request:', err.message);
+        setError(`Request error: ${err.message}`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewVideo = videoId => {
+    console.log('Navigating to VideoFeedScreen with videoId:', videoId);
+    navigation.navigate('Home', {initialVideoId: videoId});
+  };
+
   const handleLogout = () => {
     Alert.alert(
       'Logout',
       'Are you sure you want to logout?',
       [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
+        {text: 'Cancel', style: 'cancel'},
         {
           text: 'Logout',
-          onPress: () => {
-            // Use the global logout function from context
-            logout();
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('stocktok_auth_token');
+              await AsyncStorage.removeItem('stocktok_user_data');
+
+              if (setIsLoggedIn) {
+                setIsLoggedIn(false);
+                console.log('Logged out successfully using AuthContext');
+              } else {
+                console.log(
+                  'setIsLoggedIn function not available in AuthContext',
+                );
+                Alert.alert(
+                  'Logout',
+                  'Please restart the app to complete logout',
+                  [{text: 'OK'}],
+                );
+              }
+            } catch (e) {
+              console.error('Logout error:', e);
+              Alert.alert(
+                'Logout Error',
+                'Failed to complete logout. Please try again.',
+                [{text: 'OK'}],
+              );
+            }
           },
           style: 'destructive',
         },
@@ -145,8 +154,19 @@ export default function AIRecommendations({navigation}) {
     );
   }
 
-  const {caption, creator, category, reason, suggested_amount, priority} = rec;
-  const priorityColors = {high: '#FF6B6B', medium: '#FFD166', low: '#06D6A0'};
+  if (error) {
+    return (
+      <SafeAreaView style={styles.errorContainer}>
+        <StatusBar barStyle="dark-content" backgroundColor="#FFF" />
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={fetchRecommendations}>
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -166,49 +186,74 @@ export default function AIRecommendations({navigation}) {
         {/* insights */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Portfolio Insights</Text>
-          <Text style={styles.text}>{PORTFOLIO_INSIGHTS}</Text>
+          <Text style={styles.text}>{portfolioAssessment}</Text>
           <Text style={[styles.cardTitle, {marginTop: 12}]}>
             Suggested Strategy
           </Text>
-          <Text style={styles.text}>{INVESTMENT_STRATEGY}</Text>
+          <Text style={styles.text}>{diversificationStrategy}</Text>
         </View>
+
+        {/* recommendation selector */}
+        {recommendations.length > 1 && (
+          <View style={styles.recommendationSelector}>
+            <Text style={styles.selectorTitle}>Recommended Videos:</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {recommendations.map((rec, index) => (
+                <TouchableOpacity
+                  key={rec.video_id}
+                  style={[
+                    styles.selectorItem,
+                    selectedRecommendation?.video_id === rec.video_id &&
+                      styles.selectorItemActive,
+                  ]}
+                  onPress={() => setSelectedRecommendation(rec)}>
+                  <Text
+                    style={[
+                      styles.selectorItemText,
+                      selectedRecommendation?.video_id === rec.video_id &&
+                        styles.selectorItemTextActive,
+                    ]}>
+                    Video {index + 1}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         {/* recommendation */}
-        <View style={styles.card}>
-          <View style={styles.rowSpace}>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{category}</Text>
+        {selectedRecommendation && (
+          <View style={styles.card}>
+            <View style={styles.rowSpace}>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>
+                  Video {selectedRecommendation.video_id}
+                </Text>
+              </View>
+              <View style={[styles.badge, {backgroundColor: '#FF6B6B'}]}>
+                <Text style={[styles.badgeText, {color: '#fff'}]}>
+                  RECOMMENDED
+                </Text>
+              </View>
             </View>
-            <View
-              style={[
-                styles.badge,
-                {backgroundColor: priorityColors[priority]},
-              ]}>
-              <Text style={[styles.badgeText, {color: '#fff'}]}>
-                {priority.toUpperCase()}
-              </Text>
-            </View>
-          </View>
 
-          <Text style={styles.caption}>{caption}</Text>
+            <Text style={styles.caption}>Recommended Investment</Text>
 
-          <View style={styles.row}>
-            <Icon name="person-circle-outline" size={16} color="#555" />
-            <Text style={styles.creator}>@{creator}</Text>
-          </View>
-
-          <Text style={[styles.text, styles.italic]}>{reason}</Text>
-
-          <View style={styles.rowSpace}>
-            <Text style={[styles.text, styles.suggested]}>
-              Suggested: {suggested_amount}
+            <Text style={[styles.text, styles.italic]}>
+              {selectedRecommendation.reason}
             </Text>
-            <TouchableOpacity
-              style={[styles.button, {backgroundColor: '#00796B'}]}>
-              <Text style={styles.buttonText}>Recommended</Text>
-            </TouchableOpacity>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.button, {backgroundColor: '#00796B'}]}
+                onPress={() =>
+                  handleViewVideo(selectedRecommendation.video_id)
+                }>
+                <Text style={styles.buttonText}>View Video</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -221,18 +266,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  errorContainer: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#FF6B6B',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: '#00796B',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   container: {flex: 1, backgroundColor: '#FFF'},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Changed to space-between for title and logout button
+    justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    justifyContent: 'center',
-
     borderColor: '#EEE',
   },
-  back: {fontSize: 28, color: '#00796B'},
   title: {fontSize: 18, fontWeight: '600', color: '#00796B'},
   logoutButton: {
     padding: 8,
@@ -274,6 +340,43 @@ const styles = StyleSheet.create({
   creator: {fontSize: 14, color: '#555', marginLeft: 6},
   italic: {fontStyle: 'italic', marginBottom: 12},
   suggested: {fontSize: 14, fontWeight: '600', color: '#00796B'},
-  button: {paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6},
-  buttonText: {color: '#FFF', fontSize: 14, fontWeight: '600'},
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 12,
+  },
+  button: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 150,
+  },
+  buttonText: {color: '#FFF', fontSize: 16, fontWeight: '600'},
+  recommendationSelector: {
+    marginBottom: 16,
+  },
+  selectorTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  selectorItem: {
+    padding: 8,
+    borderRadius: 6,
+    marginRight: 10,
+    backgroundColor: '#E0F2F1',
+  },
+  selectorItemActive: {
+    backgroundColor: '#00796B',
+  },
+  selectorItemText: {
+    color: '#00796B',
+    fontWeight: '600',
+  },
+  selectorItemTextActive: {
+    color: '#FFFFFF',
+  },
 });
