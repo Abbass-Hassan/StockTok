@@ -23,7 +23,6 @@ const ImagePicker = ({
             {placeholder ? (
               placeholder
             ) : (
-              // Using a simple camera icon character instead of an image
               <View style={styles.cameraIconPlaceholder}></View>
             )}
           </View>

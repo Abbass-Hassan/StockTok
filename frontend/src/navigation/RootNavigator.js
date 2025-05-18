@@ -3,7 +3,6 @@ import {ActivityIndicator, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {getToken, getUserData} from '../utils/tokenStorage';
 
-// Import navigators
 import AuthNavigator from './AuthNavigator';
 import CreatorTabNavigator from './CreatorTabNavigator';
 import RegularTabNavigator from './RegularTabNavigator';
@@ -13,7 +12,6 @@ const RootNavigator = () => {
   const [userToken, setUserToken] = useState(null);
   const [userType, setUserType] = useState(null);
 
-  // Create a function to check auth that can be called multiple times
   const checkAuth = useCallback(async () => {
     try {
       const token = await getToken();
@@ -26,7 +24,6 @@ const RootNavigator = () => {
         const userData = await getUserData();
         console.log('RootNavigator - User data:', userData);
 
-        // Set user type based on userData
         const userTypeValue =
           userData?.user_type_id === 2 || userData?.user_type === 'Creator'
             ? 'creator'
@@ -35,13 +32,11 @@ const RootNavigator = () => {
         setUserToken(token);
         setUserType(userTypeValue);
       } else {
-        // Clear state if no token
         setUserToken(null);
         setUserType(null);
       }
     } catch (error) {
       console.error('Error checking authentication:', error);
-      // On error, reset state
       setUserToken(null);
       setUserType(null);
     } finally {
@@ -49,12 +44,9 @@ const RootNavigator = () => {
     }
   }, []);
 
-  // Check auth on mount
   useEffect(() => {
     checkAuth();
 
-    // Set up a periodic check every 1 second
-    // This ensures we detect token changes made in other components
     const interval = setInterval(() => {
       checkAuth();
     }, 1000);

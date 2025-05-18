@@ -13,7 +13,6 @@ class FollowService
      */
     public function followUser($follower, $followingId)
     {
-        // Don't allow users to follow themselves
         if ($follower->id == $followingId) {
             return [
                 'success' => false,
@@ -21,7 +20,6 @@ class FollowService
             ];
         }
         
-        // Check if already following
         $existingFollow = Follow::where('follower_id', $follower->id)
                               ->where('following_id', $followingId)
                               ->first();
@@ -33,10 +31,8 @@ class FollowService
             ];
         }
         
-        // Get the user being followed
         $followingUser = User::findOrFail($followingId);
         
-        // Create the follow relationship
         $follow = Follow::create([
             'follower_id' => $follower->id,
             'following_id' => $followingId,
@@ -68,7 +64,6 @@ class FollowService
             ];
         }
         
-        // Delete the follow relationship
         $follow->delete();
         
         return [

@@ -2,7 +2,6 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// Import regular user screens
 import VideoFeedScreen from '../screens/VideoFeed/VideoFeedScreen';
 import Search from '../screens/Regular/Search';
 import WalletOverview from '../screens/Wallet/WalletOverview';

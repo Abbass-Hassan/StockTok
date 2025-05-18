@@ -318,7 +318,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#00796B',
   },
-  // Kept positiveROI and negativeROI styles in case you need them elsewhere
   positiveROI: {
     color: '#4CAF50',
   },

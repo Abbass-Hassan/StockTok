@@ -14,10 +14,8 @@ class CommentService
      */
     public function createComment($user, $videoId, $content, $parentId = null)
     {
-        // Validate video exists
         $video = Video::findOrFail($videoId);
         
-        // If parent comment is provided, verify it exists and belongs to the same video
         if ($parentId) {
             $parentComment = Comment::findOrFail($parentId);
             if ($parentComment->video_id != $videoId) {
@@ -28,7 +26,6 @@ class CommentService
             }
         }
         
-        // Create the comment
         $comment = Comment::create([
             'user_id' => $user->id,
             'video_id' => $videoId,
@@ -53,7 +50,6 @@ class CommentService
     {
         $comment = Comment::findOrFail($commentId);
         
-        // Check if user owns the comment or is the video owner
         $video = Video::findOrFail($comment->video_id);
         
         if ($comment->user_id != $user->id && $video->user_id != $user->id) {
@@ -63,7 +59,6 @@ class CommentService
             ];
         }
         
-        // Delete the comment
         $comment->delete();
         
         return [
@@ -77,7 +72,6 @@ class CommentService
      */
     public function getVideoComments($videoId, $perPage = 15)
     {
-        // Get only top-level comments (not replies)
         return Comment::with(['user', 'replies.user'])
                     ->where('video_id', $videoId)
                     ->whereNull('parent_id')
@@ -117,7 +111,6 @@ class CommentService
     {
         $comment = Comment::findOrFail($commentId);
         
-        // Check if user owns the comment
         if ($comment->user_id != $user->id) {
             return [
                 'success' => false,
@@ -125,7 +118,6 @@ class CommentService
             ];
         }
         
-        // Update the comment
         $comment->update([
             'content' => $content
         ]);

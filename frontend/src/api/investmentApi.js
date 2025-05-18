@@ -1,10 +1,8 @@
-// src/api/investmentApi.js
 import axios from 'axios';
-import {getToken} from '../utils/tokenStorage'; // Make sure this path is correct
+import {getToken} from '../utils/tokenStorage';
 
 const API_URL = 'http://35.181.171.137:8000/api';
 
-// Investment API functions
 export const investmentApi = {
   /**
    * Invest in a video
@@ -94,7 +92,6 @@ export const investmentApi = {
         JSON.stringify(response.data).substring(0, 100),
       );
 
-      // Return the data directly instead of expecting success property
       return response.data;
     } catch (error) {
       console.error('Investment API Error Full Details:');
@@ -199,7 +196,6 @@ export const investmentApi = {
         JSON.stringify(response.data).substring(0, 100),
       );
 
-      // Return the data directly instead of expecting success property
       return response.data;
     } catch (error) {
       console.error('Investment API Error Full Details:');

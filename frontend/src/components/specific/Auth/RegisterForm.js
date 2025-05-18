@@ -17,19 +17,16 @@ const RegisterForm = ({
   passwordError,
   confirmPasswordError,
 }) => {
-  // Create refs for each input to allow proper focus navigation
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const confirmPasswordInputRef = useRef(null);
 
-  // Function to move focus to the next input
   const focusNextInput = nextInputRef => {
     if (nextInputRef && nextInputRef.current) {
       nextInputRef.current.focus();
     }
   };
 
-  // Function to handle submit when pressing return on the last field
   const handleSubmitEditing = () => {
     Keyboard.dismiss();
     handleRegister();

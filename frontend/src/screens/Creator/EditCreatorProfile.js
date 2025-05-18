@@ -24,8 +24,6 @@ const EditCreatorProfile = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Handle photo selection - Removed
-
   const validateForm = () => {
     let formErrors = {};
     let isValid = true;
@@ -72,7 +70,6 @@ const EditCreatorProfile = ({route, navigation}) => {
       const response = await updateCreatorProfile(profileData);
       console.log('Profile update response:', response);
 
-      // Navigate back after successful update
       Alert.alert('Success', 'Profile updated successfully', [
         {text: 'OK', onPress: () => navigation.goBack()},
       ]);
@@ -271,7 +268,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     marginBottom: 12,
-    backgroundColor: '#F0F0F0', // Add a background color for image loading
+    backgroundColor: '#F0F0F0',
   },
   profileImagePlaceholder: {
     backgroundColor: '#E1E4E8',

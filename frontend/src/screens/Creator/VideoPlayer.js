@@ -31,7 +31,6 @@ const VideoPlayer = ({route, navigation}) => {
   const [retryCount, setRetryCount] = useState(0);
   const [showControls, setShowControls] = useState(true);
 
-  // Get auth token when component mounts
   useEffect(() => {
     const fetchToken = async () => {
       const authToken = await getToken();
@@ -42,18 +41,15 @@ const VideoPlayer = ({route, navigation}) => {
 
   console.log('Video to play:', video);
 
-  // Generate streaming URL for the video
   const videoUrl = getVideoStreamUrl(video.id);
   console.log('Streaming URL:', videoUrl);
 
-  // Handle load start
   const onLoadStart = () => {
     console.log('Video load started');
     setLoading(true);
     setError(null);
   };
 
-  // Handle loading
   const onLoad = data => {
     console.log('Video loaded successfully:', data);
     setDuration(data.duration);

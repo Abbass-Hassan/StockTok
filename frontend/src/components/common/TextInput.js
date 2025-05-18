@@ -7,8 +7,6 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-
-// Use forwardRef to allow parent components to access this input
 const CustomTextInput = forwardRef(
   (
     {
@@ -74,9 +72,8 @@ const CustomTextInput = forwardRef(
             testID={testID}
             multiline={multiline}
             numberOfLines={numberOfLines}
-            // Avoid auto-zoom on iOS for better UX
             autoCorrect={false}
-            textContentType={secureTextEntry ? 'oneTimeCode' : 'none'} // Prevents iOS from suggesting passwords
+            textContentType={secureTextEntry ? 'oneTimeCode' : 'none'}
             autoComplete={secureTextEntry ? 'off' : 'email'}
           />
           {isPasswordField && (
@@ -103,19 +100,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   inputContainer: {
-    height: 56, // Slightly taller for better touch targets
+    height: 56,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    backgroundColor: '#F7F7F7', // Light background for input fields
+    backgroundColor: '#F7F7F7',
   },
   inputContainerFocused: {
     borderColor: '#00796B',
     borderWidth: 2,
-    backgroundColor: '#FFFFFF', // White background when focused
+    backgroundColor: '#FFFFFF',
   },
   inputContainerError: {
     borderColor: '#FF3B30',

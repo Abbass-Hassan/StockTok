@@ -13,26 +13,21 @@ class AIService
 {
     /**
      * Get investment recommendations for a user based on their portfolio.
-     *
-     * @param int $userId
-     * @return array
      */
     public function getInvestmentRecommendations($userId)
     {
         try {
-            // 1. Get user's current investments
             $investments = LikeInvestment::with(['video', 'video.user'])
                 ->where('user_id', $userId)
                 ->where('status', 'active')
                 ->get();
 
-            // 2. Get trending videos (potential recommendations)
             $trendingVideos = Video::where('is_active', true)
                 ->orderBy('like_investment_count', 'desc')
                 ->limit(10)
                 ->get();
 
-            // 3. Prepare data for AI
+            //Prepare data for AI
             $portfolioData = [
                 'current_investments' => $investments->map(function ($investment) {
                     return [
@@ -55,20 +50,19 @@ class AIService
                 })
             ];
 
-            // 4. Create schema for structured AI response
+            // Create schema for structured AI response
             $schema = PortfolioRecommendationSchema::createSchema();
 
-            // 5. Generate the prompt
+            // Generate the prompt
             $prompt = $this->generatePrompt($portfolioData);
 
-            // 6. Get recommendations from Prism
+            // Get recommendations from Prism
             $response = Prism::structured()
                 ->using(Provider::OpenAI, 'gpt-4o')
                 ->withSchema($schema)
                 ->withPrompt($prompt)
                 ->asStructured();
 
-            // 7. Return formatted response
             return [
                 'success' => true,
                 'recommendations' => $response->structured

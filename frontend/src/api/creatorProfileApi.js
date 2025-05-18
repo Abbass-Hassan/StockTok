@@ -2,6 +2,7 @@ import axios from 'axios';
 import {getToken} from '../utils/tokenStorage';
 
 const API_URL = 'http://35.181.171.137:8000/api';
+
 /**
  * Get creator profile information
  */
@@ -24,6 +25,7 @@ export const getCreatorProfile = async () => {
     throw new Error(error.response?.data?.message || 'Failed to fetch profile');
   }
 };
+
 /**
  * Get creator statistics
  */
@@ -48,6 +50,7 @@ export const getCreatorStats = async () => {
     );
   }
 };
+
 /**
  * Update creator profile
  */
@@ -58,7 +61,6 @@ export const updateCreatorProfile = async profileData => {
       throw new Error('Authentication required');
     }
 
-    // Create FormData if there's a profile photo to upload
     let data;
     let headers = {
       Authorization: `Bearer ${token}`,
