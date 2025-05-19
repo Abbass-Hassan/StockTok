@@ -34,22 +34,20 @@
 > - Infinite video streaming with vertical scroll for a TikTok-style experience.
 > - Users can upload and stream videos seamlessly with real-time playback.
 
-<br><br>
-
 <!-- Demo -->
 <img src="./readme/title5.svg"/>
 
 ### Investor Screens (Mobile)
 
-| Login screen                            | Register screen                       | Register screen                       |
-| --------------------------------------- | ------------------------------------- | ------------------------------------- |
-| ![Landing](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) |
+| Investment Details Screen        | Video Feed Screen          |
+| -------------------------------- | -------------------------- |
+| ![Details](./readme/details.png) | ![Feed](./readme/feed.png) |
 
 ### Creator Screens (Mobile)
 
-| Login screen                            | Register screen                       |
-| --------------------------------------- | ------------------------------------- |
-| ![Landing](./readme/demo/1440x1024.png) | ![fsdaf](./readme/demo/1440x1024.png) |
+| Dashboard Screen                     | Wallet Screen                  |
+| ------------------------------------ | ------------------------------ |
+| ![Dashboard](./readme/dashboard.png) | ![Wallet](./readme/wallet.png) |
 
 <br><br>
 
