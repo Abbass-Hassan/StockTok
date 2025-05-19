@@ -208,21 +208,25 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
         }>
         {/* Video and Creator Info */}
         <View style={styles.videoCard}>
-          <Image
-            source={{
-              uri:
-                investment.video?.thumbnail_url ||
-                'https://via.placeholder.com/150',
-            }}
-            style={styles.videoThumbnail}
-          />
+          {investment.video?.thumbnail_url ? (
+            <Image
+              source={{uri: investment.video.thumbnail_url}}
+              style={styles.videoThumbnail}
+            />
+          ) : (
+            <View style={styles.placeholderContainer}>
+              <Icon name="videocam" size={40} color="#FFFFFF" />
+            </View>
+          )}
           <View style={styles.videoInfo}>
-            <Text style={styles.videoTitle} numberOfLines={2}>
-              {investment.video?.caption || 'Video'}
-            </Text>
-            <TouchableOpacity onPress={viewCreatorProfile}>
-              <Text style={styles.creatorName}>{getCreatorName()}</Text>
-            </TouchableOpacity>
+            <View style={styles.textContainer}>
+              <Text style={styles.videoTitle} numberOfLines={2}>
+                {investment.video?.caption || 'Video'}
+              </Text>
+              <TouchableOpacity onPress={viewCreatorProfile}>
+                <Text style={styles.creatorName}>{getCreatorName()}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -410,20 +414,32 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 16,
   },
+  placeholderContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 16,
+    backgroundColor: '#CCCCCC',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   videoInfo: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   videoTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: '#14171A',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   creatorName: {
     fontSize: 14,
     color: '#00796B',
-    marginBottom: 12,
   },
   watchButton: {
     flexDirection: 'row',
