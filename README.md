@@ -14,28 +14,25 @@
 <!-- System Design -->
 <img src="./readme/title3.svg"/>
 
-The backend of StockTok is built with a clean relational structure that powers video content, user investments, wallet management, and social interactions.
+> The backend of StockTok is built with a clean relational structure that powers video content, user investments, wallet management, and social interactions.
 
 #### ER Diagram
 
 ![ER Diagram](./readme/StockTok-ERDiagram.png)
 
-The database is structured around core entities:
+#### Component Diagram
 
-- `users`, `user_types`: handle authentication, roles (creator/investor), and profiles.
-- `videos`: store uploaded video metadata including financial and engagement metrics.
-- `likes_investments` and `transactions`: track investment flows and wallet activity.
-- `wallets`, `comments`, and `follows`: support user funds, community features, and relationships.
+![Component Diagram](./readme/componentdiagram.png)
 
 <br><br>
 
 <!-- Project Highlights -->
 <img src="./readme/title4.svg"/>
 
-- Paid likes act as investments, users can invest in videos they believe in.
-- AI-powered suggestions recommend promising videos to help investors make smarter decisions.
-- Infinite video streaming with vertical scroll for a TikTok-style experience.
-- Users can upload and stream videos seamlessly with real-time playback.
+> - Paid likes act as investments, users can invest in videos they believe in.
+> - AI-powered suggestions recommend promising videos to help investors make smarter decisions.
+> - Infinite video streaming with vertical scroll for a TikTok-style experience.
+> - Users can upload and stream videos seamlessly with real-time playback.
 
 <br><br>
 
@@ -59,11 +56,11 @@ The database is structured around core entities:
 <!-- Development & Testing -->
 <img src="./readme/title6.svg"/>
 
-This section highlights how StockTok handles core backend logic, validation layers, and testing.
-
-- **Services:** Core business logic is separated into service classes, making the app modular, maintainable, and scalable.
-- **Validation:** All incoming requests go through dedicated validation layers to ensure data integrity and security.
-- **Testing:** Critical actions like video uploads are covered with feature tests to ensure stability during CI/CD and production.
+> This section highlights how StockTok handles core backend logic, validation layers, and testing.
+>
+> - **Services:** Core business logic is separated into service classes, making the app modular, maintainable, and scalable.
+> - **Validation:** All incoming requests go through dedicated validation layers to ensure data integrity and security.
+> - **Testing:** Critical actions like video uploads are covered with feature tests to ensure stability during CI/CD and production.
 
 | Services                                    | Validation                                        | Testing                               |
 | ------------------------------------------- | ------------------------------------------------- | ------------------------------------- |
@@ -71,8 +68,23 @@ This section highlights how StockTok handles core backend logic, validation laye
 
 <br><br>
 
-<!-- Deployment -->
+<!-- AI-Powered Recommendations -->
 <img src="./readme/title7.svg"/>
+
+> StockTok uses AI to provide personalized portfolio guidance:
+>
+> 1. **Portfolio Assessment** – The AI reviews the user's current investments and performance.
+> 2. **Diversification Strategy** – It suggests how to balance the portfolio with new content categories or creators.
+> 3. **Recommended Videos** – It identifies trending videos worth investing in with clear reasons for each pick.
+
+| AI Prompt Input (User Portfolio & Trends) | AI Output (Recommendations & Strategy) |
+| ----------------------------------------- | -------------------------------------- |
+| ![AI1](./readme/ai1.png)                  | ![AI2](./readme/ai2.png)               |
+
+<br><br>
+
+<!-- Deployment -->
+<img src="./readme/title8.svg"/>
 
 ### Deployment Overview
 
@@ -82,8 +94,8 @@ This section highlights how StockTok handles core backend logic, validation laye
 - The application is **containerized using Docker** to ensure consistency across all environments.
 - **CI/CD pipelines** are implemented via **GitHub Actions**, enabling automatic testing and deployment on every push to `main`.
 
-| Postman API 1                      | Postman API 2                      | Postman API 3                      |
-| ---------------------------------- | ---------------------------------- | ---------------------------------- |
-| ![Postman1](./readme/postman1.png) | ![Postman2](./readme/postman2.png) | ![Postman3](./readme/postman3.png) |
+| GitHub Actions Deployment Log  | Production Endpoint in Use         | Staging Endpoint in Use            |
+| ------------------------------ | ---------------------------------- | ---------------------------------- |
+| ![Deploy](./readme/deploy.png) | ![Postman2](./readme/postman2.png) | ![Postman3](./readme/postman3.png) |
 
 <br><br>
