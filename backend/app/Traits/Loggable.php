@@ -41,3 +41,24 @@ protected function logUser(string $action, int $userId, array $data = []): void
         'user_id' => $userId,
     ], $data));
 }
+protected function logWallet(string $action, int $walletId, array $data = []): void
+{
+    $this->logActivity("Wallet {$action}", array_merge([
+        'wallet_id' => $walletId,
+    ], $data));
+}
+
+protected function logReturnsCalculation(
+    int $investmentId,
+    float $originalAmount,
+    float $currentValue,
+    float $returnPercentage,
+    array $additionalData = []
+): void
+{
+    $this->logInvestment('returns calculated', $investmentId, array_merge([
+        'original_amount' => $originalAmount,
+        'current_value' => $currentValue,
+        'return_percentage' => $returnPercentage,
+    ], $additionalData));
+}
