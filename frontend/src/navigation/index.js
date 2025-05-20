@@ -21,3 +21,44 @@ const AuthNavigator = () => {
     </Stack.Navigator>
   );
 };
+import VideoFeedScreen from '../screens/VideoFeed/VideoFeedScreen';
+import WalletOverview from '../screens/Wallet/WalletOverview';
+import PortfolioScreen from '../screens/Investment/PortfolioScreen';
+import AIRecommendations from '../screens/Regular/AIRecommendations';
+import Search from '../screens/Regular/Search';
+
+const Tab = createBottomTabNavigator();
+
+const RegularTabs = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Search') {
+            iconName = focused ? 'search' : 'search-outline';
+          } else if (route.name === 'Wallet') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+          } else if (route.name === 'Portfolio') {
+            iconName = focused ? 'analytics' : 'analytics-outline';
+          } else if (route.name === 'AI') {
+            iconName = focused ? 'bulb' : 'bulb-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#00796B',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false,
+      })}>
+      <Tab.Screen name="Home" component={VideoFeedScreen} />
+      <Tab.Screen name="Search" component={Search} />
+      <Tab.Screen name="Portfolio" component={PortfolioScreen} />
+      <Tab.Screen name="Wallet" component={WalletOverview} />
+      <Tab.Screen name="AI" component={AIRecommendations} />
+    </Tab.Navigator>
+  );
+};
