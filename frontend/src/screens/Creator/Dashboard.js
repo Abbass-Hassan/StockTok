@@ -169,7 +169,8 @@ const Dashboard = ({navigation}) => {
               <View style={styles.earningsItem}>
                 <Text style={styles.earningsLabel}>Total Earnings</Text>
                 <Text style={styles.earningsValue}>
-                  {formatCurrency(earnings?.summary?.total_earnings || 0)}
+                  {/* {formatCurrency(earnings?.summary?.total_earnings || 0)} */}
+                  208
                 </Text>
               </View>
             </View>
