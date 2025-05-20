@@ -70,4 +70,10 @@ investInVideo: async (videoId, amount) => {
                 } catch (error) {
                   ...
                 }
-              
+                testApiConnection: async () => {
+                    try {
+                      const token = await getToken();
+                      if (!token) {
+                        throw new Error('Authentication required');
+                      }
+                  
