@@ -77,3 +77,24 @@ protected function logInvestorRewards(
         'transactions_created' => $transactionCount
     ]);
 }
+protected function logInvestorReward(
+    int $userId,
+    int $videoId,
+    int $investmentId,
+    float $rewardAmount,
+    int $transactionId,
+    float $previousValue,
+    float $newValue,
+    float $newReturnPercentage
+): void
+{
+    $this->logUser('investor reward distributed', $userId, [
+        'video_id' => $videoId,
+        'investment_id' => $investmentId,
+        'reward_amount' => $rewardAmount,
+        'transaction_id' => $transactionId,
+        'previous_value' => $previousValue,
+        'new_value' => $newValue,
+        'new_return_percentage' => $newReturnPercentage
+    ]);
+}
