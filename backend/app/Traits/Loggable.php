@@ -21,3 +21,10 @@ protected function logInvestment(string $action, int $investmentId, array $data 
         'investment_id' => $investmentId,
     ], $data));
 }
+protected function logTransaction(string $action, int $transactionId, string $type, array $data = []): void
+{
+    $this->logActivity("Transaction {$action}", array_merge([
+        'transaction_id' => $transactionId,
+        'transaction_type' => $type,
+    ], $data));
+}
