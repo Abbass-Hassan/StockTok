@@ -98,3 +98,18 @@ protected function logInvestorReward(
         'new_return_percentage' => $newReturnPercentage
     ]);
 }
+protected function logInvestmentUpdate(
+    int $investmentId,
+    float $beforeValue,
+    float $beforePercentage,
+    float $afterValue,
+    float $afterPercentage
+): void
+{
+    $this->logInvestment('updated', $investmentId, [
+        'before_current_value' => $beforeValue,
+        'before_return_percentage' => $beforePercentage,
+        'after_current_value' => $afterValue,
+        'after_return_percentage' => $afterPercentage
+    ]);
+}
