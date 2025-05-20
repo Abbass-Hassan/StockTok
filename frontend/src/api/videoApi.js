@@ -42,4 +42,7 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
       const response = await axios.get(`${API_URL}/videos/all?page=${page}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-    
+      getTrendingVideos: async (page = 1) => {
+        ...
+        console.log('Fetching trending videos from:', endpoint);
+      
