@@ -12,9 +12,9 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthContext} from '../../App';
+import {investmentApi} from '../../api/investmentApi';
 
 export default function AIRecommendations({navigation, route}) {
   const {setIsLoggedIn} = useContext(AuthContext);
@@ -35,35 +35,10 @@ export default function AIRecommendations({navigation, route}) {
     setError(null);
 
     try {
-      const authToken = await AsyncStorage.getItem('stocktok_auth_token');
+      const response = await investmentApi.getRecommendations();
 
-      console.log(
-        'Token from stocktok_auth_token:',
-        authToken ? authToken.substring(0, 10) + '...' : 'none',
-      );
-
-      if (!authToken) {
-        console.error('No authentication token found');
-        setError('No authentication token found. Please log in again.');
-        setLoading(false);
-        return;
-      }
-
-      const response = await axios.get(
-        'http://35.181.171.137:8000/api/regular/investments/recommendations',
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        },
-      );
-
-      console.log('API Response status:', response.status);
-
-      if (response.data.status === 'success') {
-        const data = response.data.data.recommendations;
+      if (response.status === 'success') {
+        const data = response.data.recommendations;
 
         setPortfolioAssessment(data.portfolio_assessment || '');
         setDiversificationStrategy(data.diversification_strategy || '');
@@ -77,22 +52,7 @@ export default function AIRecommendations({navigation, route}) {
       }
     } catch (err) {
       console.error('Error fetching recommendations:', err);
-
-      if (err.response) {
-        console.log('Response error:', err.response.status);
-
-        if (err.response.status === 401) {
-          setError('Authentication failed. Please log in again.');
-        } else {
-          setError(`Server error: ${err.response.status}`);
-        }
-      } else if (err.request) {
-        console.log('Request error - no response received');
-        setError('No response from server. Check your connection.');
-      } else {
-        console.log('Error setting up request:', err.message);
-        setError(`Request error: ${err.message}`);
-      }
+      setError(err.message || 'Failed to load recommendations');
     } finally {
       setLoading(false);
     }
