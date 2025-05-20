@@ -37,4 +37,10 @@ investInVideo: async (videoId, amount) => {
         } catch (error) {
           ...
         }
-      
+        getInvestmentDetails: async investmentId => {
+            try {
+              const token = await getToken();
+              if (!token) {
+                throw new Error('Authentication required');
+              }
+          
