@@ -55,4 +55,14 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
         getFollowingVideos: async (page = 1) => {
           ...
           console.log('Fetching following videos from:', endpoint);
+          const response = await axios.get(endpoint, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          ...
+          if (error.response && error.response.status === 404) {
+            return { data: {data: {videos: {data: []}}}, token: token };
+          }
         
