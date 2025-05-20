@@ -29,10 +29,11 @@
 <!-- Project Highlights -->
 <img src="./readme/title4.svg"/>
 
+<img src="./readme/highlights.png" width="100%"/>
+
 > - Paid likes act as investments, users can invest in videos they believe in.
 > - AI-powered suggestions recommend promising videos to help investors make smarter decisions.
-> - Infinite video streaming with vertical scroll for a TikTok-style experience.
-> - Users can upload and stream videos seamlessly with real-time playback.
+> - Infinite video streaming with vertical scroll and real-time playback for a seamless TikTok-style experience.
 
 <!-- Demo -->
 <img src="./readme/title5.svg"/>
