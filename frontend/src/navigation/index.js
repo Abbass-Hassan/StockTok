@@ -100,3 +100,57 @@ const CreatorTabs = () => {
     </Tab.Navigator>
   );
 };
+const Navigation = () => {
+  const {isLoggedIn, setIsLoggedIn} = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userType, setUserType] = useState(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await getToken();
+        if (token) {
+          const userData = await getUserData();
+
+          const userTypeId = userData?.user_type_id;
+          const userTypeStr = userData?.user_type;
+
+          const isCreator =
+            userTypeId === 2 || userTypeId === '2' || userTypeStr === 'Creator';
+
+          const userTypeValue = isCreator ? 'creator' : 'regular';
+
+          setUserType(userTypeValue);
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        setIsLoggedIn(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [setIsLoggedIn]);
+
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color="#FF6B00" />
+      </View>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        {!isLoggedIn ? (
+          <Stack.Screen name="Auth" component={AuthNavigator} />
+        ) : userType === 'creator' ? (
+          <Stack.Screen name="CreatorApp" component={CreatorTabs} />
+        ) : (
+          <Stack.Screen name="RegularApp" component={RegularTabs} />
+        )}
