@@ -76,4 +76,14 @@ investInVideo: async (videoId, amount) => {
                       if (!token) {
                         throw new Error('Authentication required');
                       }
+                      const testResponse = await axios.get(`${API_URL}/profile/me`, {
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                          'Content-Type': 'application/json',
+                        },
+                      });
+                      return testResponse.data;
+                    } catch (error) {
+                      ...
+                    }
                   
