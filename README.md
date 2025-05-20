@@ -35,6 +35,8 @@
 > - AI-powered suggestions recommend promising videos to help investors make smarter decisions.
 > - Infinite video streaming with vertical scroll and real-time playback for a seamless TikTok-style experience.
 
+<br><br>
+
 <!-- Demo -->
 <img src="./readme/title5.svg"/>
 
