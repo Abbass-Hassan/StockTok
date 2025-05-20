@@ -28,3 +28,16 @@ protected function logTransaction(string $action, int $transactionId, string $ty
         'transaction_type' => $type,
     ], $data));
 }
+protected function logVideo(string $action, int $videoId, array $data = []): void
+{
+    $this->logActivity("Video {$action}", array_merge([
+        'video_id' => $videoId,
+    ], $data));
+}
+
+protected function logUser(string $action, int $userId, array $data = []): void
+{
+    $this->logActivity("User {$action}", array_merge([
+        'user_id' => $userId,
+    ], $data));
+}
