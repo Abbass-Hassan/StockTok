@@ -109,4 +109,11 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
                       },
                     },
                   );
-                
+                  getCreatorStats: async () => {
+                    ...
+                    const response = await axios.get(`${API_URL}/creator/stats`, {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    });
+                  
