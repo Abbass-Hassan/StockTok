@@ -15,11 +15,8 @@ import {
   Platform,
 } from 'react-native';
 import {investmentApi} from '../../api/investmentApi';
-import {getToken} from '../../utils/tokenStorage';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
 
-const API_URL = 'http://35.181.171.137:8000/api';
 const {width} = Dimensions.get('window');
 
 // Utility functions for consistent formatting
@@ -57,38 +54,6 @@ const PortfolioScreen = ({navigation}) => {
 
     return unsubscribe;
   }, [navigation]);
-
-  // Test API connection
-  const testApiConnection = async () => {
-    try {
-      const token = await getToken();
-      console.log(
-        'Token for test:',
-        token ? `${token.substring(0, 10)}...` : 'No token',
-      );
-
-      // Test a simple GET request to the profile endpoint
-      console.log('Making test API request to:', `${API_URL}/profile/me`);
-      const testResponse = await axios.get(`${API_URL}/profile/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('Test API connection successful:', testResponse.status);
-      console.log(
-        'Test response data:',
-        JSON.stringify(testResponse.data).substring(0, 100),
-      );
-    } catch (error) {
-      console.error('Test API connection failed:');
-      console.error('Error message:', error.message);
-      console.error('Status code:', error.response?.status);
-      console.error('Response data:', error.response?.data);
-      console.error('Request URL:', error.config?.url);
-    }
-  };
 
   // Fetch portfolio data
   const fetchPortfolioData = async () => {
@@ -167,7 +132,18 @@ const PortfolioScreen = ({navigation}) => {
   // Load initial data
   useEffect(() => {
     console.log('PortfolioScreen useEffect triggered');
-    testApiConnection();
+
+    // Test API connection using the method from investmentApi
+    const runApiTest = async () => {
+      try {
+        await investmentApi.testApiConnection();
+      } catch (error) {
+        console.error('API connection test failed:', error.message);
+        // Continue with portfolio fetch even if test fails
+      }
+    };
+
+    runApiTest();
     fetchPortfolioData();
   }, []);
 

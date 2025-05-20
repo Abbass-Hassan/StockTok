@@ -14,12 +14,10 @@ import {
   Animated,
 } from 'react-native';
 import Video from 'react-native-video';
-import axios from 'axios';
-import {getToken} from '../../utils/tokenStorage';
+import {videoApi} from '../../api/videoApi';
 import InvestmentModal from '../../components/modals/InvestmentModal';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const API_URL = 'http://35.181.171.137:8000/api';
 const {height, width} = Dimensions.get('window');
 
 const TAB_BAR_HEIGHT = 80;
@@ -57,25 +55,15 @@ const VideoFeedScreen = ({navigation, route}) => {
     try {
       setLoading(true);
 
-      const token = await getToken();
-      if (!token) {
-        throw new Error('Authentication required');
-      }
-
-      setVideoToken(token);
-
-      let endpoint = '';
+      let response;
       if (type === 'trending') {
-        endpoint = `${API_URL}/regular/videos/trending?page=${page}`;
+        response = await videoApi.getTrendingVideos(page);
       } else if (type === 'following') {
-        endpoint = `${API_URL}/regular/videos/following?page=${page}`;
+        response = await videoApi.getFollowingVideos(page);
       }
 
-      const response = await axios.get(endpoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Extract the authentication token for video streaming
+      setVideoToken(response.token);
 
       if (
         response.data.data &&
@@ -223,25 +211,33 @@ const VideoFeedScreen = ({navigation, route}) => {
     setInvestmentModalVisible(true);
   };
 
-  const handleInvestmentSuccess = investment => {
-    setVideos(prevVideos =>
-      prevVideos.map(video => {
-        if (video.id === selectedVideoId) {
-          return {
-            ...video,
-            like_investment_count: video.like_investment_count + 1,
-          };
-        }
-        return video;
-      }),
-    );
+  const handleInvestmentSuccess = async investment => {
+    try {
+      // We're using the investInVideo method now
+      await videoApi.investInVideo(selectedVideoId, investment.amount);
 
-    setLikeAnimations(prev => ({
-      ...prev,
-      [selectedVideoId]: true,
-    }));
+      setVideos(prevVideos =>
+        prevVideos.map(video => {
+          if (video.id === selectedVideoId) {
+            return {
+              ...video,
+              like_investment_count: video.like_investment_count + 1,
+            };
+          }
+          return video;
+        }),
+      );
 
-    animateHeart(selectedVideoId);
+      setLikeAnimations(prev => ({
+        ...prev,
+        [selectedVideoId]: true,
+      }));
+
+      animateHeart(selectedVideoId);
+    } catch (error) {
+      console.error('Investment failed:', error);
+      Alert.alert('Investment Failed', error.message);
+    }
   };
 
   const handleLoadMore = () => {
@@ -307,7 +303,7 @@ const VideoFeedScreen = ({navigation, route}) => {
 
   const renderItem = ({item, index}) => {
     const isPlaying = playingStates[item.id] || false;
-    const videoUrl = `${API_URL}/videos/${item.id}/play`;
+    const videoUrl = videoApi.getVideoStreamUrl(item.id);
     const isAnimatingLike = likeAnimations[item.id] || false;
 
     return (

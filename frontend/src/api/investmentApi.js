@@ -213,6 +213,105 @@ export const investmentApi = {
       throw new Error(errorMsg);
     }
   },
+
+  /**
+   * Test API connection by making a simple request to profile endpoint
+   * @returns {Promise} - API response with test results
+   */
+  testApiConnection: async () => {
+    try {
+      const token = await getToken();
+      console.log(
+        'Token for test:',
+        token ? `${token.substring(0, 10)}...` : 'No token',
+      );
+
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      // Test a simple GET request to the profile endpoint
+      console.log('Making test API request to:', `${API_URL}/profile/me`);
+      const testResponse = await axios.get(`${API_URL}/profile/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Test API connection successful:', testResponse.status);
+      console.log(
+        'Test response data:',
+        JSON.stringify(testResponse.data).substring(0, 100),
+      );
+
+      return testResponse.data;
+    } catch (error) {
+      console.error('Test API connection failed:');
+      console.error('Error message:', error.message);
+      console.error('Status code:', error.response?.status);
+      console.error('Response data:', error.response?.data);
+      console.error('Request URL:', error.config?.url);
+
+      throw new Error(
+        'API connection test failed: ' + (error.message || 'Unknown error'),
+      );
+    }
+  },
+
+  /**
+   * Get AI recommendations for investments
+   * @returns {Promise} - API response with AI recommendations
+   */
+  getRecommendations: async () => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      console.log(
+        'Making recommendations request to:',
+        `${API_URL}/regular/investments/recommendations`,
+      );
+
+      const response = await axios.get(
+        `${API_URL}/regular/investments/recommendations`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        },
+      );
+
+      console.log('Recommendations API Response status:', response.status);
+      console.log(
+        'Recommendations API Response data:',
+        JSON.stringify(response.data).substring(0, 100),
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error('Recommendations API Error Full Details:');
+      console.error('Error message:', error.message);
+      console.error('Status code:', error.response?.status);
+      console.error('Response data:', error.response?.data);
+      console.error('Request URL:', error.config?.url);
+
+      if (error.response?.status === 401) {
+        throw new Error('Authentication failed. Please log in again.');
+      } else {
+        const errorMsg =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.message ||
+          'Failed to fetch recommendations';
+        throw new Error(errorMsg);
+      }
+    }
+  },
 };
 
 export default investmentApi;
