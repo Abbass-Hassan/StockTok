@@ -75,4 +75,15 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
                 Authorization: `Bearer ${token}`,
               },
             });
-          
+            likeVideo: async videoId => {
+              ...
+              const response = await axios.post(
+                `${API_URL}/videos/${videoId}/like`,
+                {},
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                },
+              );
+            
