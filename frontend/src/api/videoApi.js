@@ -68,4 +68,11 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
           getVideoStreamUrl: videoId => {
             return `${API_URL}/videos/${videoId}/play`;
           },
+          getVideoDetails: async videoId => {
+            ...
+            const response = await axios.get(`${API_URL}/creator/videos/${videoId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
           
