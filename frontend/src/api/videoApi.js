@@ -65,4 +65,7 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
           if (error.response && error.response.status === 404) {
             return { data: {data: {videos: {data: []}}}, token: token };
           }
-        
+          getVideoStreamUrl: videoId => {
+            return `${API_URL}/videos/${videoId}/play`;
+          },
+          
