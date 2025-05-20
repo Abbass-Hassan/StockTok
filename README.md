@@ -69,9 +69,19 @@
 > - **Validation:** All incoming requests go through dedicated validation layers to ensure data integrity and security.
 > - **Testing:** Critical actions like video uploads are covered with feature tests to ensure stability during CI/CD and production.
 
-| Services                                    | Validation                                        | Testing                               |
-| ------------------------------------------- | ------------------------------------------------- | ------------------------------------- |
-| ![Service](./readme/StreamVideoService.png) | ![Validation](./readme/UploadVideoValidation.png) | ![Test](./readme/UploadVideoTest.png) |
+### Development
+
+#### Services
+
+![Service](./readme/StreamVideoService.png)
+
+#### Validation
+
+![Validation](./readme/UploadVideoValidation.png)
+
+### Testing
+
+![Test](./readme/UploadVideoTest.png)
 
 <br><br>
 
@@ -84,9 +94,13 @@
 > 2. **Diversification Strategy** – It suggests how to balance the portfolio with new content categories or creators.
 > 3. **Recommended Videos** – It identifies trending videos worth investing in with clear reasons for each pick.
 
-| AI Prompt Input (User Portfolio & Trends) | AI Output (Recommendations & Strategy) |
-| ----------------------------------------- | -------------------------------------- |
-| ![AI1](./readme/ai1.png)                  | ![AI2](./readme/ai2.png)               |
+### AI Prompt Input (User Portfolio & Trends)
+
+![AI1](./readme/ai1.png)
+
+### AI Output (Recommendations & Strategy)
+
+![AI2](./readme/ai2.png)
 
 <br><br>
 
