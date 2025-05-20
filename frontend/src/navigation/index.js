@@ -6,29 +6,38 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getToken, getUserData} from '../utils/tokenStorage';
 import {AuthContext} from '../App';
 import {ActivityIndicator, View} from 'react-native';
+
 import Login from '../screens/Auth/Login';
 import Register from '../screens/Auth/Register';
 import ProfileCompletion from '../screens/Auth/ProfileCompletion';
 
-const Stack = createStackNavigator();
-
-const AuthNavigator = () => {
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="ProfileCompletion" component={ProfileCompletion} />
-    </Stack.Navigator>
-  );
-};
 import VideoFeedScreen from '../screens/VideoFeed/VideoFeedScreen';
-import WalletOverview from '../screens/Wallet/WalletOverview';
-import PortfolioScreen from '../screens/Investment/PortfolioScreen';
-import AIRecommendations from '../screens/Regular/AIRecommendations';
-import Search from '../screens/Regular/Search';
 
+import UploadVideo from '../screens/Creator/UploadVideo';
+import MyVideos from '../screens/Creator/MyVideos';
+import VideoPlayer from '../screens/Creator/VideoPlayer';
+import VideoDetails from '../screens/Creator/VideoDetails';
+import Dashboard from '../screens/Creator/Dashboard';
+import CreatorProfile from '../screens/Creator/CreatorProfile';
+import EditCreatorProfile from '../screens/Creator/EditCreatorProfile';
+
+import WalletOverview from '../screens/Wallet/WalletOverview';
+import DepositFunds from '../screens/Wallet/DepositFunds';
+import WithdrawFunds from '../screens/Wallet/WithdrawFunds';
+import TransactionHistory from '../screens/Wallet/TransactionHistory';
+
+import PortfolioScreen from '../screens/Investment/PortfolioScreen';
+import InvestmentDetailsScreen from '../screens/Investment/InvestmentDetailsScreen';
+import AllInvestmentsScreen from '../screens/Investment/AllInvestmentsScreen';
+import AIRecommendations from '../screens/Regular/AIRecommendations';
+
+import Search from '../screens/Regular/Search';
+import UserProfile from '../screens/Regular/UserProfile';
+
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Regular User Tab Navigator - Updated with Portfolio tab
 const RegularTabs = () => {
   return (
     <Tab.Navigator
@@ -62,14 +71,8 @@ const RegularTabs = () => {
     </Tab.Navigator>
   );
 };
-import UploadVideo from '../screens/Creator/UploadVideo';
-import MyVideos from '../screens/Creator/MyVideos';
-import VideoPlayer from '../screens/Creator/VideoPlayer';
-import VideoDetails from '../screens/Creator/VideoDetails';
-import Dashboard from '../screens/Creator/Dashboard';
-import CreatorProfile from '../screens/Creator/CreatorProfile';
-import EditCreatorProfile from '../screens/Creator/EditCreatorProfile';
 
+// Creator Tab Navigator
 const CreatorTabs = () => {
   return (
     <Tab.Navigator
@@ -100,6 +103,18 @@ const CreatorTabs = () => {
     </Tab.Navigator>
   );
 };
+
+// Auth Stack Navigator
+const AuthNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="ProfileCompletion" component={ProfileCompletion} />
+    </Stack.Navigator>
+  );
+};
+
 const Navigation = () => {
   const {isLoggedIn, setIsLoggedIn} = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -112,9 +127,11 @@ const Navigation = () => {
         if (token) {
           const userData = await getUserData();
 
+          // Handle different user_type_id formats (string or number)
           const userTypeId = userData?.user_type_id;
           const userTypeStr = userData?.user_type;
 
+          // Check if user is a creator (handle both string "2" and number 2)
           const isCreator =
             userTypeId === 2 || userTypeId === '2' || userTypeStr === 'Creator';
 
@@ -148,9 +165,39 @@ const Navigation = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {!isLoggedIn ? (
+          // Auth Stack
           <Stack.Screen name="Auth" component={AuthNavigator} />
         ) : userType === 'creator' ? (
+          // Creator Stack
           <Stack.Screen name="CreatorApp" component={CreatorTabs} />
         ) : (
+          // Regular Stack
           <Stack.Screen name="RegularApp" component={RegularTabs} />
         )}
+
+        {/* Additional screens outside of tab navigators */}
+        <Stack.Screen name="VideoPlayer" component={VideoPlayer} />
+        <Stack.Screen name="VideoDetails" component={VideoDetails} />
+        <Stack.Screen name="MyVideos" component={MyVideos} />
+        <Stack.Screen
+          name="EditCreatorProfile"
+          component={EditCreatorProfile}
+        />
+        <Stack.Screen name="DepositFunds" component={DepositFunds} />
+        <Stack.Screen name="WithdrawFunds" component={WithdrawFunds} />
+        <Stack.Screen
+          name="TransactionHistory"
+          component={TransactionHistory}
+        />
+        <Stack.Screen
+          name="InvestmentDetails"
+          component={InvestmentDetailsScreen}
+        />
+        <Stack.Screen name="AllInvestments" component={AllInvestmentsScreen} />
+        <Stack.Screen name="UserProfile" component={UserProfile} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default Navigation;
