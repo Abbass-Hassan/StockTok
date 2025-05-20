@@ -52,4 +52,7 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
           },
         });
         return { data: response.data, token: token };
-      
+        getFollowingVideos: async (page = 1) => {
+          ...
+          console.log('Fetching following videos from:', endpoint);
+        
