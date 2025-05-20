@@ -99,4 +99,14 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
                     },
                   },
                 );
-              
+                getVideoEarnings: async videoId => {
+                  ...
+                  const response = await axios.get(
+                    `${API_URL}/creator/earnings/videos/${videoId}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    },
+                  );
+                
