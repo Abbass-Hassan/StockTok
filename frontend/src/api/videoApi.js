@@ -25,4 +25,15 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
     return response.data;
   } catch (error) {
     ...
-  }
+  }getMyVideos: async () => {
+    try {
+      const token = await getToken();
+      ...
+      const response = await axios.get(`${API_URL}/creator/videos`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      ...
+    }
+  
