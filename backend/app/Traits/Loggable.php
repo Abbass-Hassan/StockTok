@@ -15,3 +15,9 @@ protected function logActivity(string $action, array $data = [], string $level =
 
     Log::$level($action, $context);
 }
+protected function logInvestment(string $action, int $investmentId, array $data = []): void
+{
+    $this->logActivity("Investment {$action}", array_merge([
+        'investment_id' => $investmentId,
+    ], $data));
+}
