@@ -9,3 +9,20 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
     if (!token) {
       throw new Error('Authentication required');
     }
+    const formData = new FormData();
+    formData.append('video_file', {
+      uri: videoFile.uri,
+      type: videoFile.type,
+      name: videoFile.fileName || 'video.mp4',
+    });
+    ...
+    const response = await axios.post(`${API_URL}/creator/videos`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    ...
+  }
