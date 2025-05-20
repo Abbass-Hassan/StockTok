@@ -116,4 +116,14 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
                         Authorization: `Bearer ${token}`,
                       },
                     });
-                  
+                    getDashboard: async () => {
+                      ...
+                      const response = await axios.get(
+                        `${API_URL}/creator/earnings/dashboard`,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                          },
+                        },
+                      );
+                    
