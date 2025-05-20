@@ -62,3 +62,18 @@ protected function logReturnsCalculation(
         'return_percentage' => $returnPercentage,
     ], $additionalData));
 }
+protected function logInvestorRewards(
+    int $videoId,
+    int $newInvestorId,
+    array $existingInvestorIds,
+    float $rewardPool,
+    int $transactionCount
+): void
+{
+    $this->logVideo('investor rewards distributed', $videoId, [
+        'new_investor' => $newInvestorId,
+        'existing_investors' => $existingInvestorIds,
+        'reward_pool' => $rewardPool,
+        'transactions_created' => $transactionCount
+    ]);
+}
