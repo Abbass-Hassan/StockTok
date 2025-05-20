@@ -37,3 +37,9 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
       ...
     }
   
+    getAllVideos: async (page = 1) => {
+      ...
+      const response = await axios.get(`${API_URL}/videos/all?page=${page}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    
