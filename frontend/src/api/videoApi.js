@@ -86,4 +86,17 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
                   },
                 },
               );
-            
+              investInVideo: async (videoId, amount) => {
+                ...
+                const endpoint = `${API_URL}/regular/investments`;
+                const response = await axios.post(
+                  endpoint,
+                  { video_id: videoId, amount: parseFloat(amount) },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                    },
+                  },
+                );
+              
