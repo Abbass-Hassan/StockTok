@@ -126,4 +126,8 @@ uploadVideo: async (videoData, videoFile, thumbnailFile = null) => {
                           },
                         },
                       );
-                    
+                      catch (error) {
+                        console.error(...);
+                        throw new Error(...);
+                      }
+                      
