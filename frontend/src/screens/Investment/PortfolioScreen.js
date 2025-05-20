@@ -189,13 +189,16 @@ const PortfolioScreen = ({navigation}) => {
         style={styles.investmentCard}
         onPress={() => viewInvestmentDetails(item.id)}>
         <View style={styles.investmentCardHeader}>
-          <Image
-            source={{
-              uri:
-                item.video?.thumbnail_url || 'https://via.placeholder.com/150',
-            }}
-            style={styles.videoThumbnail}
-          />
+          {item.video?.thumbnail_url ? (
+            <Image
+              source={{uri: item.video.thumbnail_url}}
+              style={styles.videoThumbnail}
+            />
+          ) : (
+            <View style={styles.placeholderContainer}>
+              <Icon name="videocam" size={30} color="#FFFFFF" />
+            </View>
+          )}
           <View style={styles.investmentInfo}>
             <Text style={styles.creatorName} numberOfLines={1}>
               @
@@ -333,7 +336,10 @@ const PortfolioScreen = ({navigation}) => {
             onPress={() => navigation.goBack()}>
             <Text style={styles.backText}>‹</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Investment Portfolio</Text>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}>Investment Portfolio</Text>
+          </View>
+          <View style={styles.backButton} />
         </View>
 
         <View style={styles.emptyContainer}>
@@ -364,7 +370,10 @@ const PortfolioScreen = ({navigation}) => {
           onPress={() => navigation.goBack()}>
           <Text style={styles.backText}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Investment Portfolio</Text>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>Investment Portfolio</Text>
+        </View>
+        <View style={styles.backButton} />
       </View>
 
       {refreshing && (
@@ -483,14 +492,19 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: '600',
     color: '#00796B',
+    textAlign: 'center',
   },
   backButton: {
-    marginRight: 16,
     width: 40,
     height: 40,
     justifyContent: 'center',
@@ -645,6 +659,15 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 8,
     marginRight: 12,
+  },
+  placeholderContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 12,
+    backgroundColor: '#CCCCCC',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   investmentInfo: {
     flex: 1,

@@ -185,7 +185,10 @@ const InvestmentDetailsScreen = ({route, navigation}) => {
           onPress={() => navigation.goBack()}>
           <Text style={styles.backText}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Investment Details</Text>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>Investment Details</Text>
+        </View>
+        <View style={styles.backButton} />
       </View>
 
       {refreshing && (
@@ -366,9 +369,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   backButton: {
-    marginRight: 16,
     width: 40,
     height: 40,
     justifyContent: 'center',
@@ -379,10 +382,15 @@ const styles = StyleSheet.create({
     color: '#00796B',
     marginTop: -4,
   },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
   headerTitle: {
     fontSize: 20,
     fontWeight: '600',
     color: '#00796B',
+    textAlign: 'center',
   },
   refreshIndicator: {
     backgroundColor: 'rgba(0, 121, 107, 0.1)',
