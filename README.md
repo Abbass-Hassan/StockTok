@@ -42,15 +42,21 @@
 
 ### Investor Screens (Mobile)
 
-| Investment Details Screen        | Video Feed Screen          |
-| -------------------------------- | -------------------------- |
-| ![Details](./readme/details.png) | ![Feed](./readme/feed.png) |
+| Feed Screen                | Portfolio Screen                     | Investment Details Screen        |
+| -------------------------- | ------------------------------------ | -------------------------------- |
+| ![Feed](./readme/feed.png) | ![Portfolio](./readme/portoflio.png) | ![Details](./readme/details.png) |
 
 ### Creator Screens (Mobile)
 
-| Dashboard Screen                     | Wallet Screen                  |
-| ------------------------------------ | ------------------------------ |
-| ![Dashboard](./readme/dashboard.png) | ![Wallet](./readme/wallet.png) |
+| Login Screen                 | Dashboard Screen                     | Wallet Screen                  |
+| ---------------------------- | ------------------------------------ | ------------------------------ |
+| ![Login](./readme/login.png) | ![Dashboard](./readme/dashboard.png) | ![Wallet](./readme/wallet.png) |
+
+### Action Demo (GIFs)
+
+| Scroll                       | Invest                         | Upload                         |
+| ---------------------------- | ------------------------------ | ------------------------------ |
+| ![Scroll](./readme/feed.gif) | ![Invest](./readme/invest.gif) | ![Upload](./readme/upload.gif) |
 
 <br><br>
 
