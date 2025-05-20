@@ -62,3 +62,41 @@ const RegularTabs = () => {
     </Tab.Navigator>
   );
 };
+import UploadVideo from '../screens/Creator/UploadVideo';
+import MyVideos from '../screens/Creator/MyVideos';
+import VideoPlayer from '../screens/Creator/VideoPlayer';
+import VideoDetails from '../screens/Creator/VideoDetails';
+import Dashboard from '../screens/Creator/Dashboard';
+import CreatorProfile from '../screens/Creator/CreatorProfile';
+import EditCreatorProfile from '../screens/Creator/EditCreatorProfile';
+
+const CreatorTabs = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'Dashboard') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Upload') {
+            iconName = focused ? 'add-circle' : 'add-circle-outline';
+          } else if (route.name === 'Wallet') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#00796B',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false,
+      })}>
+      <Tab.Screen name="Dashboard" component={Dashboard} />
+      <Tab.Screen name="Upload" component={UploadVideo} />
+      <Tab.Screen name="Wallet" component={WalletOverview} />
+      <Tab.Screen name="Profile" component={CreatorProfile} />
+    </Tab.Navigator>
+  );
+};
